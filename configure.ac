@@ -1,6 +1,4 @@
-AC_INIT([MyEMSLArchiveInterface],[0.98.0],[David.Brown@pnnl.gov])
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-
+AC_INIT([myemsl-archive-interface],[0.98.0],[David.Brown@pnnl.gov])
 AM_INIT_AUTOMAKE
 
 AC_PROG_CC
@@ -12,5 +10,5 @@ PKG_CHECK_MODULES([LIBHPSS],[libhpss])
 
 AC_OUTPUT([
   Makefile
-  MyEMSLArchiveInterface.spec
+  myemsl-archive-interface.spec
 ])
