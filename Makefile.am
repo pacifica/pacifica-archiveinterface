@@ -1,7 +1,8 @@
 EXTRA_DIST = COPYING
 
+lib_LTLIBRARIES = libmyemslarchive.la
+libmyemslarchive_la_SOURCES = id2filename.c
 
-bin_PROGRAMS = test
+check_PROGRAMS = test
 
-test_SOURCES = id2filename.c
-
+test_SOURCES = libmyemslarchive.la test.c
