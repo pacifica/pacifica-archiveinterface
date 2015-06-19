@@ -14,5 +14,5 @@ RUN cd /app && \
     touch * && \
     bash -xe autogen.sh && \
     ./configure && \
-    make
-
+    make && \
+    make check
