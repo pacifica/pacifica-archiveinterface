@@ -1,7 +1,7 @@
 from centos:centos6
 
 RUN yum -y update && \
-    yum -y install wget unzip autoconf automake make gcc gcc-c++ libtool-devel libtool libtool-ltdl-devel libtool-ltdl file && \
+    yum -y install wget unzip autoconf automake make gcc gcc-c++ libtool-devel libtool libtool-ltdl-devel libtool-ltdl file glib glib-devel && \
     wget -O /srv/foo.zip 'https://jenkins.emsl.pnl.gov/view/HPSS%20Software/job/hpss-client-7.4.1p2/DIST=epel-6-x86_64,label=el6/lastSuccessfulBuild/artifact/*zip*/archive.zip' && \
     cd /srv && \
     unzip foo.zip && \

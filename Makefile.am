@@ -12,3 +12,5 @@ TEST = $(check_PROGRAMS)
 
 test_SOURCES = test.c
 test_LDADD = libmyemslarchive.la
+test_CFLAGS = $(GLIB_CFLAGS)
+test_LDFLAGS = $(GLIB_LIBS)
