@@ -23,15 +23,18 @@ static void myemsl_test_fixture_tear_down (MyEMSLTestFixture *fixture,
 static void test_id2filename_basic (MyEMSLTestFixture *fixture,
                                     gconstpointer user_data)
 {
-  g_assert_cmpstr (id2filename(1234), ==, "initial-value");
+  g_assert_cmpstr (id2filename(1234), ==, "/d2/4d2");
 }
 
 static void test_id2filename_coverage (MyEMSLTestFixture *fixture,
                                   gconstpointer user_data)
 {
-  g_assert_cmpstr (id2filename(-1), ==, "initial-value");
-  g_assert_cmpstr (id2filename(0), ==, "initial-value");
-  g_assert_cmpstr (id2filename(1), ==, "initial-value");
+  g_assert_cmpstr (id2filename(-1), ==, "/ff/ff/ff/ffffffff");
+  g_assert_cmpstr (id2filename(0), ==, "/file.0");
+  g_assert_cmpstr (id2filename(1), ==, "/file.1");
+  g_assert_cmpstr (id2filename((32*1024)-1), ==, "/ff/7fff");
+  g_assert_cmpstr (id2filename((32*1024)), ==, "/00/8000");
+  g_assert_cmpstr (id2filename((32*1024)+1), ==, "/01/8001");
 }
 
 

@@ -8,7 +8,7 @@ libmyemslarchive_la_LDFLAGS = $(LIBHPSS_LIBS)
 libmyemslarchive_la_CFLAGS = $(LIBHPSS_CFLAGS)
 
 check_PROGRAMS = test
-TEST = $(check_PROGRAMS)
+TESTS = $(check_PROGRAMS)
 
 test_SOURCES = test.c
 test_LDADD = libmyemslarchive.la
