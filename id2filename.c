@@ -3,6 +3,15 @@
 #include <string.h>
 #include <ctype.h>
 
+/*! \brief Converts an integer id to a file path
+*
+*
+* Takes an integer id and returns a char * file path.
+* Converts the id to a hex value, and loops on it, via substrings
+* Until a filepath is made. The char * returned is dynamically allocated
+* so the returned value will need to be freed upon finishing.
+*
+*/
 char *id2dirandfilename(int id)
 {
 
@@ -52,7 +61,7 @@ char *id2dirandfilename(int id)
 		free(s);
 
 		//substring out s
-		s = (char *)malloc(strlen(stemp) - 1); //subtract 1 here because we want 2 substring off 2, but still need to add 1 for string termination
+		s = (char *)malloc(strlen(stemp) - 1); //subtract 1 here because we want to substring off 2, but still need to add 1 for string termination
 		strncpy(s, stemp, (strlen(stemp) -2));
 		free(stemp);
 
@@ -74,7 +83,7 @@ char *id2dirandfilename(int id)
 		ff = (char *)malloc(sz + 1);
 		snprintf(ff, sz+1, "/%s", f);
 
-		//free up the memory for f and d (not ff since we need to return it)
+		//free up the memory for f (not ff since we need to return it)
 		free(f);
 
 	}
@@ -99,12 +108,27 @@ char *id2dirandfilename(int id)
 	return ff;
 }
 
+/*! \brief takes integer id and calls method to return file path
+*
+*
+* Takes an integer id and returns a char * file path.
+* Calls the id2dirandfilename method, and returns that methods returned
+* filename
+*
+*/
 char *id2filename(int id)
 {
 	char * filename = id2dirandfilename(id);
 	return filename;
 }
 
+/*! \brief Check to see if string is all digits. 
+*
+*
+* Takes a char * and returns 1 if the string is all integers, or 0 if the 
+* string contains any characters that are not integers
+*
+*/
 int checkisdigit(char* arg)
 {
 	int length = strlen(arg);
@@ -118,6 +142,8 @@ int checkisdigit(char* arg)
 			return 0;
 		}
 	}
+
+	return 1;
 
 }
 
