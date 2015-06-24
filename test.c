@@ -23,18 +23,35 @@ static void myemsl_test_fixture_tear_down (MyEMSLTestFixture *fixture,
 static void test_id2filename_basic (MyEMSLTestFixture *fixture,
                                     gconstpointer user_data)
 {
-  g_assert_cmpstr (id2filename(1234), ==, "/d2/4d2");
+  int i;
+  char *test = id2filename(1234);
+  for(i = 0; i < 6; i++) printf("%c\n", test[i]);
+  g_assert_cmpstr (test, ==, "/d2/4d2");
+  free(test);
 }
 
 static void test_id2filename_coverage (MyEMSLTestFixture *fixture,
                                   gconstpointer user_data)
 {
-  g_assert_cmpstr (id2filename(-1), ==, "/ff/ff/ff/ffffffff");
-  g_assert_cmpstr (id2filename(0), ==, "/file.0");
-  g_assert_cmpstr (id2filename(1), ==, "/file.1");
-  g_assert_cmpstr (id2filename((32*1024)-1), ==, "/ff/7fff");
-  g_assert_cmpstr (id2filename((32*1024)), ==, "/00/8000");
-  g_assert_cmpstr (id2filename((32*1024)+1), ==, "/01/8001");
+  char *test;
+  test = id2filename(-1);
+  g_assert_cmpstr(test, ==, "/ff/ff/ff/ffffffff");
+  free(test);
+  test = id2filename(0);
+  g_assert_cmpstr(test, ==, "/file.0");
+  free(test);
+  test = id2filename(1);
+  g_assert_cmpstr (test, ==, "/file.1");
+  free(test);
+  test = id2filename((32*1024)-1);
+  g_assert_cmpstr(test, ==, "/ff/7fff");
+  free(test);
+  test = id2filename((32*1024));
+  g_assert_cmpstr(test, ==, "/00/8000");
+  free(test);
+  test = id2filename((32*1024)+1);
+  g_assert_cmpstr (test, ==, "/01/8001");
+  free(test);
 }
 
 

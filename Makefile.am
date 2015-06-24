@@ -1,3 +1,5 @@
+include $(srcdir)/doxygen.am
+
 EXTRA_DIST = COPYING
 
 ACLOCAL_AMFLAGS = -I m4
