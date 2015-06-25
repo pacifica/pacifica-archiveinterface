@@ -63,7 +63,7 @@ char *id2dirandfilename(int id)
 		//substring out s
 		sz = strlen(stemp) -2;
 		s = (char *)malloc(strlen(stemp) - 1); //subtract 1 here because we want 2 substring off 2, but still need to add 1 for string termination
-		memcpy(s,&stemp, sz); //substringing off the last two digits (sz cuts off the last two)
+		memcpy(s,&stemp[0], sz); //substringing off the last two digits (sz cuts off the last two)
 		s[sz] = '\0'; //add null terminator on end, sz will point to last character since array indexing starts at 0
 		free(stemp);
 
