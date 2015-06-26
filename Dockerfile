@@ -15,4 +15,5 @@ RUN cd /app && \
     bash -xe autogen.sh && \
     ./configure && \
     make && \
+    make check && \
     make doxygen-doc

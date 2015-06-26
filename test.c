@@ -23,9 +23,7 @@ static void myemsl_test_fixture_tear_down (MyEMSLTestFixture *fixture,
 static void test_id2filename_basic (MyEMSLTestFixture *fixture,
                                     gconstpointer user_data)
 {
-  int i;
   char *test = id2filename(1234);
-  for(i = 0; i < 6; i++) printf("%c\n", test[i]);
   g_assert_cmpstr (test, ==, "/d2/4d2");
   free(test);
 }
