@@ -1,25 +1,54 @@
+/********************************************************************
+ * \brief Test harness for the id2filename method.
+ *
+ * This is the test harness for the id2filename method. This is using
+ * the glib2 test framework 
+ * (https://developer.gnome.org/glib/stable/glib-Testing.html) and
+ * integrated with automake using `make check`.
+ *******************************************************************/
 #include <glib.h>
 #include <locale.h>
 
+#include "myemslarchive.h"
+
+/**
+ * \brief Fake test fixture struct.
+ *
+ * The glib2 testing infrastructure requires this test figure struct
+ * for passing intermediate state between tests. As id2filename is
+ * has no state we have a basic struct with just an integer.
+ */
 typedef struct {
   int test;
 } MyEMSLTestFixture;
 
-#include "myemslarchive.h"
-
+/**
+ * \brief Constructor for test fixture.
+ *
+ * Set the internal state of the test fixture.
+ */
 static void myemsl_test_fixture_set_up (MyEMSLTestFixture *fixture,
                             gconstpointer user_data)
 {
   fixture->test = 0;
 }
 
+/**
+ * \brief Destructor for test fixture.
+ *
+ * Nothing to destroy just return.
+ */
 static void myemsl_test_fixture_tear_down (MyEMSLTestFixture *fixture,
                                gconstpointer user_data)
 {
   return;
 }
 
-
+/**
+ * \brief Test to verify functionality of id2filename.
+ *
+ * This just checks a random value to see that it works.
+ */
 static void test_id2filename_basic (MyEMSLTestFixture *fixture,
                                     gconstpointer user_data)
 {
@@ -28,6 +57,14 @@ static void test_id2filename_basic (MyEMSLTestFixture *fixture,
   free(test);
 }
 
+/**
+ * \brief Coverage tests for id2filename.
+ *
+ * Coverage tests make sure values around 0 work as expected. Also,
+ * there is a requirement for paths to be generated without making
+ * more than 32K directories in a directory. So 32K is also a 
+ * coverage value to be checked.
+ */
 static void test_id2filename_coverage (MyEMSLTestFixture *fixture,
                                   gconstpointer user_data)
 {
@@ -52,7 +89,11 @@ static void test_id2filename_coverage (MyEMSLTestFixture *fixture,
   free(test);
 }
 
-
+/**
+ * \brief Main method.
+ *
+ * Setup glib testing framework and create the tests.
+ */
 int main(int argc, char * argv[])
 {
   setlocale (LC_ALL, "");
