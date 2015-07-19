@@ -15,5 +15,4 @@ RUN cd /app && \
     bash -xe autogen.sh && \
     ./configure --enable-doxygen-dot --enable-doxygen-man --disable-doxygen-html --disable-doxygen-pdf && \
     make && \
-    make check && \
-    make doxygen-doc
+    make check
