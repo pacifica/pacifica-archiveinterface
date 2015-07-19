@@ -85,9 +85,6 @@ class HPSSFile(object):
       self.close()
     
 
-#  >>> myfile = hpssclient.open("/myemsldev/test.txt", "w")
-#  >>> myfile.write('foo')
-#  >>> myfile.close()
 class HPSSClient(object):
   """
   Write the block to the file
