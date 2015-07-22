@@ -14,6 +14,8 @@ AC_PROG_INSTALL
 PKG_CHECK_MODULES([LIBHPSS],[libhpss])
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
 
+AC_CHECK_LIB(fcgi, FCGI_Accept)
+
 DX_INIT_DOXYGEN(myemsl-archive-interface, Doxyfile, docs)
 DX_DOT_FEATURE(ON)
 DX_HTML_FEATURE(ON)
