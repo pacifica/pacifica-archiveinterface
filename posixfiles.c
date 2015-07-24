@@ -7,7 +7,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define PREFIX "/home/chrisExamples/"
+
+
 #define BUFFERSIZE (1<<10)
 
 //for use of the get/put flags
@@ -66,10 +67,24 @@ char * posix_get_filename(int id)
 {
 	char * filename;
 	int sz;
-	int errsv;
+	int errsv; 
+	char * prefixpath = getenv("POSIXFILES_PREFIX_PATH");
+	char * PREFIX;
+	if(prefixpath)
+	{
+		 sz = snprintf(NULL, 0, "%s", prefixpath);
+		 PREFIX = (char *)malloc(sz + 1);
+		 sz = snprintf(PREFIX, sz+1, "%s", prefixpath);
+	}
+	else
+	{
+		sz = snprintf(NULL, 0, "%s", "/tmp/");
+		 PREFIX = (char *)malloc(sz + 1);
+		 sz = snprintf(PREFIX, sz+1, "%s", "/tmp/");
+	}
 
 	//get the size of the filepath string, and set it
-	sz = snprintf(NULL, 0, "%s%d", PREFIX,id);
+	sz = snprintf(NULL, 0, "%s/%d", PREFIX,id);
 	if( sz < 0) //error state, errno was set from snprintf
 	{
 		return NULL;
@@ -78,18 +93,21 @@ char * posix_get_filename(int id)
 	filename = (char *)malloc(sz + 1);
 	if(filename == NULL) //error occured with allocating memory, errno set from the malloc call
 	{
+		free(PREFIX);
 		return NULL;
 	}
 
-	sz = snprintf(filename, sz+1, "%s%d", PREFIX,id);
+	sz = snprintf(filename, sz+1, "%s/%d", PREFIX,id);
 	if( sz < 0) //error state, errno was set from snprintf
 	{
 		errsv = errno;
+		free(PREFIX);
 		free(filename);
 		errno = errsv;
 		return NULL;
 	}
 
+	free(PREFIX);
 	return filename;
 }
 

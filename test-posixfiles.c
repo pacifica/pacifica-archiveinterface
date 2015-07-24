@@ -37,6 +37,7 @@ typedef struct {
 static void myemsl_test_fixture_set_up_putfile (MyEMSLTestFixture *fixture,
                             gconstpointer user_data)
 {
+  setenv ("POSIXFILES_PREFIX_PATH", "/home/chrisExamples", 1);
   fixture->fd = open("fwritetest.txt", O_RDWR | O_CREAT, 777);
   fixture->id = 1;
   fixture->test = 0;
