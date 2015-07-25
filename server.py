@@ -1,27 +1,16 @@
 #!/usr/bin/python
 
-from hpss_ctypes import HPSSClient, HPSSFile
+from argparse import ArgumentParser
+from archive_interface import myemsl_archiveinterface
+from wsgiref.simple_server import make_server
 
-CLIENT = HPSSClient(user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
-block_size = 1<<12
+parser = ArgumentParser(description='Run the archive interface.')
 
-def myemsl_archiveinterface(env, start_response):
-    if env['REQUEST_METHOD'] == 'GET':
-        myfile = CLIENT.open("/myemsldev%s"%(env['PATH_INFO']), "r")
-        start_response('200 OK', [('Content-Type','application/octet-stream')])
-        if 'wsgi.file_wrapper' in env:
-            return env['wsgi.file_wrapper'](myfile, block_size)
-        else:
-            return iter(lambda: myfile.read(block_size), '')
-    else:
-        start_response('200 OK', [('Content-Type','text/html')])
-    return ""
+parser.add_argument('-p', '--port', metavar='PORT', type=int, 
+    nargs=1, required=True, dest='port')
+parser.add_argument('-a', '--address', metavar='PORT', nargs=1, 
+    required=True, dest='address')
 
-def myemsl_test(env, start_response):
-    start_response('200 OK', [('Content-Type','text/html')])
-    return [ "%s=%s\n"%(k,env[k]) for k in env.keys() ]
-
-if __name__ == '__main__':
-    from wsgiref.simple_server import make_server
-    srv = make_server('localhost', 8080, myemsl_archiveinterface)
-    srv.serve_forever()
+args = parser.parse_args()
+srv = make_server(args.address[-1], args.port[-1], myemsl_archiveinterface)
+srv.serve_forever()
