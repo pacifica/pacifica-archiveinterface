@@ -21,8 +21,11 @@ parser.add_argument('-a', '--address', metavar='PORT', nargs=1,
     help="address to listen on")
 parser.add_argument('-t', '--type', dest='type', default='hpss',
     choices=['hpss', 'posix'], help='use the typed backend')
+parser.add_argument('--prefix', metavar='PREFIX', 
+    dest='prefix', default='/tmp', nargs=1,
+    help='prefix to save data at')
 
 args = parser.parse_args()
-srv = make_server(args.address[-1], args.port[-1], 
-  archive_generator(args.type[-1]))
+srv = make_server(args.address, args.port, 
+  archive_generator(args.type, args.prefix))
 srv.serve_forever()
