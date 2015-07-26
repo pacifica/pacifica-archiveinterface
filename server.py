@@ -22,7 +22,7 @@ parser.add_argument('-a', '--address', metavar='PORT', nargs=1,
 parser.add_argument('-t', '--type', dest='type', default='hpss',
     choices=['hpss', 'posix'], help='use the typed backend')
 parser.add_argument('--prefix', metavar='PREFIX', 
-    dest='prefix', default='/tmp', nargs=1,
+    dest='prefix', default='/tmp',
     help='prefix to save data at')
 
 args = parser.parse_args()

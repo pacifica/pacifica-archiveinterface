@@ -6,7 +6,7 @@ from sys import stderr
 from hpss_ctypes import HPSSClient, HPSSFile
 
 CLIENT = HPSSClient(user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
-block_size = 1<<12
+block_size = 1<<20
 
 def path_info_munge(backend_type, path):
     """
