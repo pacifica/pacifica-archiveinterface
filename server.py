@@ -7,8 +7,7 @@ This is the main program that starts the WSGI server.
 The core of the server code is in archive_interface.py.
 """
 from argparse import ArgumentParser
-from archive_interface import myemsl_archiveinterface as hpss_srv
-from posix_interface import myemsl_archiveinterface as posix_srv
+from archive_interface import archive_generator
 from wsgiref.simple_server import make_server
 
 # 
@@ -20,10 +19,10 @@ parser.add_argument('-p', '--port', metavar='PORT', type=int,
 parser.add_argument('-a', '--address', metavar='PORT', nargs=1, 
     default='localhost', dest='address', 
     help="address to listen on")
-parser.add_argument('-t', '--test', dest='server', action='store_const',
-    const=posix_srv, default=hpss_srv, 
-    help='use the posix testing backend')
+parser.add_argument('-t', '--type', dest='type', default='hpss',
+    choices=['hpss', 'posix'], help='use the typed backend')
 
 args = parser.parse_args()
-srv = make_server(args.address[-1], args.port[-1], args.server)
+srv = make_server(args.address[-1], args.port[-1], 
+  archive_generator(args.type[-1]))
 srv.serve_forever()
