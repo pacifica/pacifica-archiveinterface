@@ -80,6 +80,23 @@ class HPSSFile(object):
     self._hpssfile = 0
     self.closed = True
 
+  def flush(self):
+    rc = self._hpsslib.hpss_Fflush(self._hpssfile)
+    if rc < 0:
+      raise HPSSClientError("Failed to fush buffer with error code(%d)"%(rc))
+
+  def seek(self, offsetIn, whence):
+    rc = self._hpsslib.hpss_Fseek(self._hpssfile,offsetIn,whence)
+    if rc < 0:
+      raise HPSSClientError("Failed to seek with error code(%d)"%(rc))
+
+  def tell(self):
+    rc = self._hpsslib.hpss_Ftell()
+    if rc < 0:
+      raise HPSSClientError("Failed fTell with error code(%d)"%(rc))
+    else:
+      return rc
+
   def __del__(self):
     if not self.closed:
       self.close()
