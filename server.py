@@ -16,7 +16,7 @@ parser = ArgumentParser(description='Run the archive interface.')
 parser.add_argument('-p', '--port', metavar='PORT', type=int, 
     nargs=1, default=8080, dest='port', 
     help="port to listen on")
-parser.add_argument('-a', '--address', metavar='PORT', nargs=1, 
+parser.add_argument('-a', '--address', metavar='ADDRESS', nargs=1, 
     default='localhost', dest='address', 
     help="address to listen on")
 parser.add_argument('-t', '--type', dest='type', default='hpss',

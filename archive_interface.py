@@ -5,7 +5,6 @@ from os import path
 from sys import stderr
 from hpss_ctypes import HPSSClient, HPSSFile
 
-CLIENT = HPSSClient(user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
 block_size = 1<<20
 
 def path_info_munge(backend_type, path):
@@ -29,7 +28,12 @@ def backend_open(backend_type, path, mode):
         return CLIENT.open(path, mode)
     return open(path, mode)
 
+CLIENT = None
+
 def archive_generator(backend_type, prefix):
+    global CLIENT
+    if backend_type == 'hpss':
+        CLIENT = HPSSClient(user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
     def get(env, start_response):
         path_info = None
         myfile = None
