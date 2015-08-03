@@ -62,6 +62,13 @@ class HPSSFile(object):
     self._hpssfile = hpss_Fopen(file, mode)
     self.closed = False
 
+  def status(self):
+    """
+    Found the documentation for this in the hpss programmers reference
+    section 2.3.6.2.8 "Get Extanded Attributes"
+    """
+    return None
+
   def read(self, blksize):
     buf = create_string_buffer('\000'*blksize)
     rc = self._hpsslib.hpss_Fread(buf, 1, blksize, self._hpssfile)
