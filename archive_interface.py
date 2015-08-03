@@ -17,15 +17,8 @@ def path_info_munge(backend_type, path):
     '/1234'
     """
     if backend_type == 'hpss':
-        try:
-            path = int(path)
-            path = id2filename(path)
-        except:
-            start_response('500 Internal Server Error', [('Content-Type','application/json')])
-            res = {
-                'message': 'Id for HPSS filename is of none integer type'
-            }
-            return dumps(res)
+        path = int(path)
+        path = id2filename(path)
     return path
 
 def backend_open(backend_type, path, mode):
@@ -48,19 +41,28 @@ def archive_generator(backend_type, prefix):
     def get(env, start_response):
         path_info = None
         myfile = None
+        res = None
         if path.isabs(env['PATH_INFO']):
             path_info = env['PATH_INFO'][1:]
         else:
             path_info = env['PATH_INFO']
-        filename = path.join(prefix, path_info_munge(backend_type, path_info))
+
+        try:
+            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+        except:
+            start_response('500 Internal Server Error', [('Content-Type', 'application/json')])
+            res = {
+                'message': 'Error with Munging filepath for backend type %s and path %s' %(backend_type, path_info)
+            }
+            return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "r")
-            start_response('200 OK', [('Content-Type','application/octet-stream')])
+            start_response('200 OK', [('Content-Type', 'application/octet-stream')])
             if 'wsgi.file_wrapper' in env:
                 return env['wsgi.file_wrapper'](myfile, block_size)
             return iter(lambda: myfile.read(block_size), '')
         except:
-            start_response('404 Not Found', [('Content-Type','application/json')])
+            start_response('404 Not Found', [('Content-Type', 'application/json')])
             res = {
                 'message': 'File not found',
                 'file': str(filename)
@@ -76,7 +78,14 @@ def archive_generator(backend_type, prefix):
             path_info = env['PATH_INFO'][1:]
         else:
             path_info = env['PATH_INFO']
-        filename = path.join(prefix, path_info_munge(backend_type, path_info))
+        try:
+            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+        except:
+            start_response('500 Internal Server Error', [('Content-Type', 'application/json')])
+            res = {
+                'message': 'Error with Munging filepath for backend type %s and path %s' %(backend_type,path_info)
+            }
+            return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "w")
             content_length = int(env['CONTENT_LENGTH'])
@@ -87,14 +96,14 @@ def archive_generator(backend_type, prefix):
                     buf = env['wsgi.input'].read(content_length)
                 myfile.write(buf)
                 content_length -= len(buf)
-            start_response('200 OK', [('Content-Type','application/json')])
+            start_response('200 OK', [('Content-Type', 'application/json')])
             res = {
                 'message': 'Thanks for the data',
                 'total_bytes': env['CONTENT_LENGTH']
             }
         except Exception as ex:
             print >> stderr, ex
-            start_response('500 Internal Server Error', [('Content-Type','application/json')])
+            start_response('500 Internal Server Error', [('Content-Type', 'application/json')])
             res = {
                 'message': 'Error opening file',
                 'file': str(myfile)
@@ -108,7 +117,7 @@ def archive_generator(backend_type, prefix):
         elif env['REQUEST_METHOD'] == 'PUT':
             return put(env, start_response)
         else:
-            start_response('200 OK', [('Content-Type','application/json')])
+            start_response('200 OK', [('Content-Type', 'application/json')])
             res = {
                 'message': 'Unknown request method',
                 'request_method': env['REQUEST_METHOD']
