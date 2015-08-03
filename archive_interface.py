@@ -4,6 +4,7 @@ from json import dumps
 from os import path
 from sys import stderr
 from hpss_ctypes import HPSSClient, HPSSFile
+from id2filename import id2filename
 
 block_size = 1<<20
 
@@ -15,6 +16,16 @@ def path_info_munge(backend_type, path):
     >>> path_info_munge('posix', '/1234')
     '/1234'
     """
+    if backend_type == 'hpss':
+        try:
+            path = int(path)
+            path = id2filename(path)
+        except:
+            start_response('500 Internal Server Error', [('Content-Type','application/json')])
+            res = {
+                'message': 'Id for HPSS filename is of none integer type'
+            }
+            return dumps(res)
     return path
 
 def backend_open(backend_type, path, mode):
@@ -52,7 +63,7 @@ def archive_generator(backend_type, prefix):
             start_response('404 Not Found', [('Content-Type','application/json')])
             res = {
                 'message': 'File not found',
-                'file': str(myfile)
+                'file': str(filename)
             }
             return dumps(res)
 
