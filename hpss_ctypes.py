@@ -90,7 +90,7 @@ class HPSSFile(object):
   def flush(self):
     rc = self._hpsslib.hpss_Fflush(self._hpssfile)
     if rc < 0:
-      raise HPSSClientError("Failed to fush buffer with error code(%d)"%(rc))
+      raise HPSSClientError("Failed to flush buffer with error code(%d)"%(rc))
 
   def seek(self, offsetIn, whence):
     rc = self._hpsslib.hpss_Fseek(self._hpssfile,offsetIn,whence)

@@ -6,6 +6,7 @@ from sys import stderr
 from hpss_ctypes import HPSSClient, HPSSFile
 from id2filename import id2filename
 import archive_interface_responses
+from extendedfile import Extendedfile
 
 block_size = 1<<20
 
@@ -31,7 +32,7 @@ def backend_open(backend_type, path, mode):
     """
     if backend_type == 'hpss':
         return CLIENT.open(path, mode)
-    return open(path, mode)
+    return Extendedfile(path, mode)
 
 def parse_path_info(env):
     path_info = None
@@ -40,6 +41,7 @@ def parse_path_info(env):
     else:
         path_info = env['PATH_INFO']
     return path_info
+
 
 CLIENT = None
 
@@ -96,9 +98,28 @@ def archive_generator(backend_type, prefix):
             res = archive_interface_responses.error_opening_file_exception(start_response, filename)
         return dumps(res)
 
-    def status(enc,start_response):
+    def status(env,start_response):
+        myfile = None
         res = None
-        path_info = None
+        status = None
+        path_info = parse_path_info(env)
+        try:
+            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+        except:
+            res = archive_interface_responses.munging_filepath_exception(start_response, backend_type, path_info)
+            return dumps(res)
+        try:
+            myfile = backend_open(backend_type, filename, "r")        
+        except:
+            res = archive_interface_responses.file_not_found_exception(start_response, filename)
+            return dumps(res)
+        try:
+            status = myfile.status()
+            if status == 'disk':
+                res = archive_interface_responses.file_disk_status(start_response, filename)
+        except:
+            res = archive_interface_responses.file_status_exception(start_response, filename)
+        return dumps(res)
 
     def myemsl_archiveinterface(env, start_response):
         res = None
