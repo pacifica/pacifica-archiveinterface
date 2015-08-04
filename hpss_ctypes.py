@@ -55,11 +55,12 @@ class HPSSClientError(Exception):
   pass
 
 class HPSSFile(object):
-  def __init__(self, file, mode, hpsslib):
+  def __init__(self, filepath, mode, hpsslib):
     self._hpsslib = hpsslib
+    self._filepath = filepath
     hpss_Fopen = self._hpsslib.hpss_Fopen
     hpss_Fopen.restype = c_void_p
-    self._hpssfile = hpss_Fopen(file, mode)
+    self._hpssfile = hpss_Fopen(filepath, mode)
     self.closed = False
 
   def status(self):
@@ -67,6 +68,10 @@ class HPSSFile(object):
     Found the documentation for this in the hpss programmers reference
     section 2.3.6.2.8 "Get Extanded Attributes"
     """
+    attrs = self._hpsslib.hpss_xfileattr_t
+    path = self._filepath
+
+    rc = hpss_FileGetXAttributes(path, API_GET_STATS_FOR_ALL_LEVELS, 0, attrs);
     return None
 
   def read(self, blksize):
