@@ -45,10 +45,10 @@ def parse_path_info(env):
 
 CLIENT = None
 
-def archive_generator(backend_type, prefix):
+def archive_generator(backend_type, prefix, user, auth):
     global CLIENT
     if backend_type == 'hpss':
-        CLIENT = HPSSClient(user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
+        CLIENT = HPSSClient(user = user, auth = auth)
     def get(env, start_response):
         myfile = None
         res = None

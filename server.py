@@ -23,8 +23,12 @@ PARSER.add_argument('-t', '--type', dest='type', default='hpss',
                     help='use the typed backend')
 PARSER.add_argument('--prefix', metavar='PREFIX', dest='prefix',
                     default='/tmp', help='prefix to save data at')
+PARSER.add_argument('-u', metavar='HPSSUSER', dest='user',
+                    default=None, help='User Name for HPSS authentication')
+PARSER.add_argument('--auth', metavar='AUTH', dest='auth',
+                    default=None, help='KeyTab auth path for HPSS authentication')
 
 ARGS = PARSER.parse_args()
 SRV = make_server(ARGS.address, ARGS.port,
-                  archive_generator(ARGS.type, ARGS.prefix))
+                  archive_generator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth))
 SRV.serve_forever()
