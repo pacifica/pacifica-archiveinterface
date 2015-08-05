@@ -36,10 +36,10 @@ def backend_open(backend_type, path, mode):
         return CLIENT.open(path, mode)
     return ExtendedFile(path, mode)
 
-def un_abs_path(path):
-    if path.isabs(path):
-        path = path[1:]
-    return path
+def un_abs_path(path_name):
+    if path.isabs(path_name):
+        path_name = path_name[1:]
+    return path_name
 
 
 CLIENT = None
