@@ -15,14 +15,13 @@ def path_info_munge(backend_type, path):
     Munge the path_info environment variable based on the
     backend type.
 
-    >>> path_info_munge('hpss', '/1234')
-    '/d2/4d2'
-    >>> path_info_munge('posix', '/1234')
-    '/1234'
+    >>> path_info_munge('hpss', '1234')
+    'd2/4d2'
+    >>> path_info_munge('posix', '1234')
+    '1234'
     """
     if backend_type == 'hpss':
-        path = int(path[1:])
-        path = un_abs_path(id2filename(path))
+        path = un_abs_path(id2filename(int(path)))
     return path
 
 def backend_open(backend_type, path, mode):
