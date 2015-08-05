@@ -71,7 +71,7 @@ def archive_generator(backend_type, prefix, user, auth):
     def put(env, start_response):
         myfile = None
         res = None
-        path_info = parse_path_info(env)
+        path_info = un_abs_path(env['PATH_INFO'])
         stderr.flush()
 
         try:
@@ -101,7 +101,7 @@ def archive_generator(backend_type, prefix, user, auth):
         myfile = None
         res = None
         status = None
-        path_info = parse_path_info(env)
+        path_info = un_abs_path(env['PATH_INFO'])
         try:
             filename = path.join(prefix, path_info_munge(backend_type, path_info))
         except:
