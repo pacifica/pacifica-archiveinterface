@@ -5,8 +5,8 @@ from os import path
 from sys import stderr
 from hpss_ctypes import HPSSClient, HPSSFile
 from id2filename import id2filename
-import archive_interface_responses
-from extendedfile import Extendedfile
+from archive_interface_responses import *
+from extendedfile import ExtendedFile
 
 block_size = 1<<20
 
@@ -15,11 +15,13 @@ def path_info_munge(backend_type, path):
     Munge the path_info environment variable based on the
     backend type.
 
+    >>> path_info_munge('hpss', '/1234')
+    '/d2/4d2'
     >>> path_info_munge('posix', '/1234')
     '/1234'
     """
     if backend_type == 'hpss':
-        path = int(path)
+        path = int(path[1:])
         path = id2filename(path)
     return path
 
@@ -28,11 +30,11 @@ def backend_open(backend_type, path, mode):
     Open the file based on the backend type
 
     >>> type(backend_open('posix', '/tmp/1234', 'w'))
-    <type 'file'>
+    <class 'extendedfile.ExtendedFile'>
     """
     if backend_type == 'hpss':
         return CLIENT.open(path, mode)
-    return Extendedfile(path, mode)
+    return ExtendedFile(path, mode)
 
 def parse_path_info(env):
     path_info = None
@@ -57,7 +59,7 @@ def archive_generator(backend_type, prefix):
         try:
             filename = path.join(prefix, path_info_munge(backend_type, path_info))
         except:
-            res = archive_interface_responses.munging_filepath_exception(start_response, backend_type, path_info)
+            res = munging_filepath_exception(start_response, backend_type, path_info)
             return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "r")
@@ -66,7 +68,7 @@ def archive_generator(backend_type, prefix):
                 return env['wsgi.file_wrapper'](myfile, block_size)
             return iter(lambda: myfile.read(block_size), '')
         except:
-            res = archive_interface_responses.file_not_found_exception(start_response, filename)
+            res = file_not_found_exception(start_response, filename)
             return dumps(res)
 
     def put(env, start_response):
@@ -78,7 +80,7 @@ def archive_generator(backend_type, prefix):
         try:
             filename = path.join(prefix, path_info_munge(backend_type, path_info))
         except:
-            res = archive_interface_responses.munging_filepath_exception(start_response, backend_type, path_info)
+            res = munging_filepath_exception(start_response, backend_type, path_info)
             return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "w")
@@ -91,11 +93,11 @@ def archive_generator(backend_type, prefix):
                 myfile.write(buf)
                 content_length -= len(buf)
 
-            res = archive_interface_responses.successful_put_response(start_response, env['CONTENT_LENGTH'])
+            res = successful_put_response(start_response, env['CONTENT_LENGTH'])
             
         except Exception as ex:
             print >> stderr, ex
-            res = archive_interface_responses.error_opening_file_exception(start_response, filename)
+            res = error_opening_file_exception(start_response, filename)
         return dumps(res)
 
     def status(env,start_response):
@@ -106,19 +108,19 @@ def archive_generator(backend_type, prefix):
         try:
             filename = path.join(prefix, path_info_munge(backend_type, path_info))
         except:
-            res = archive_interface_responses.munging_filepath_exception(start_response, backend_type, path_info)
+            res = munging_filepath_exception(start_response, backend_type, path_info)
             return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "r")        
         except:
-            res = archive_interface_responses.file_not_found_exception(start_response, filename)
+            res = file_not_found_exception(start_response, filename)
             return dumps(res)
         try:
             status = myfile.status()
             if status == 'disk':
-                res = archive_interface_responses.file_disk_status(start_response, filename)
+                res = file_disk_status(start_response, filename)
         except:
-            res = archive_interface_responses.file_status_exception(start_response, filename)
+            res = file_status_exception(start_response, filename)
         return dumps(res)
 
     def myemsl_archiveinterface(env, start_response):
@@ -130,7 +132,7 @@ def archive_generator(backend_type, prefix):
         elif env['REQUEST_METHOD'] == 'HEAD':
             return status(env, start_response)
         else:
-            res = archive_interface_responses.unknown_request(start_response, env['REQUEST_METHOD'])
+            res = unknown_request(start_response, env['REQUEST_METHOD'])
         return dumps(res)
     return myemsl_archiveinterface
 

@@ -1,4 +1,4 @@
-class Extendedfile(file):
+class ExtendedFile(file):
 	def __init__(self,path,mode):
 		file.__init__(self,path,mode)
 		

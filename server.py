@@ -13,9 +13,9 @@ from wsgiref.simple_server import make_server
 PARSER = ArgumentParser(description='Run the archive interface.')
 
 PARSER.add_argument('-p', '--port', metavar='PORT', type=int,
-                    nargs=1, default=8080, dest='port',
+                    default=8080, dest='port',
                     help="port to listen on")
-PARSER.add_argument('-a', '--address', metavar='ADDRESS', nargs=1,
+PARSER.add_argument('-a', '--address', metavar='ADDRESS',
                     default='localhost', dest='address',
                     help="address to listen on")
 PARSER.add_argument('-t', '--type', dest='type', default='hpss',
