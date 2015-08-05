@@ -22,7 +22,7 @@ def path_info_munge(backend_type, path):
     """
     if backend_type == 'hpss':
         path = int(path[1:])
-        path = id2filename(path)
+        path = un_abs_path(id2filename(path))
     return path
 
 def backend_open(backend_type, path, mode):
@@ -36,13 +36,10 @@ def backend_open(backend_type, path, mode):
         return CLIENT.open(path, mode)
     return ExtendedFile(path, mode)
 
-def parse_path_info(env):
-    path_info = None
-    if path.isabs(env['PATH_INFO']):
-        path_info = env['PATH_INFO'][1:]
-    else:
-        path_info = env['PATH_INFO']
-    return path_info
+def un_abs_path(path):
+    if path.isabs(path):
+        path = path[1:]
+    return path
 
 
 CLIENT = None
@@ -54,7 +51,7 @@ def archive_generator(backend_type, prefix, user, auth):
     def get(env, start_response):
         myfile = None
         res = None
-        path_info = parse_path_info(env)
+        path_info = un_abs_path(env['PATH_INFO'])
 
         try:
             filename = path.join(prefix, path_info_munge(backend_type, path_info))
