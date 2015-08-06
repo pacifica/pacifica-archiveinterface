@@ -90,6 +90,7 @@ def archive_generator(backend_type, prefix, user, auth):
                 content_length -= len(buf)
 
             res = successful_put_response(start_response, env['CONTENT_LENGTH'])
+            del myfile
             
         except Exception as ex:
             print >> stderr, ex
