@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
+from _archiveinterface import hpss_status
 
 """
 From hpss_types.h
@@ -68,11 +69,7 @@ class HPSSFile(object):
     Found the documentation for this in the hpss programmers reference
     section 2.3.6.2.8 "Get Extanded Attributes"
     """
-    attrs = self._hpsslib.hpss_xfileattr_t
-    path = self._filepath
-
-    rc = hpss_FileGetXAttributes(path, API_GET_STATS_FOR_ALL_LEVELS, 0, attrs);
-    return None
+    return hpss_status(self._filepath)
 
   def read(self, blksize):
     buf = create_string_buffer('\000'*blksize)

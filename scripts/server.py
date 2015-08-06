@@ -7,7 +7,7 @@ This is the main program that starts the WSGI server.
 The core of the server code is in archive_interface.py.
 """
 from argparse import ArgumentParser
-from archive_interface import archive_generator
+from myemsl.archive_interface import archive_generator
 from wsgiref.simple_server import make_server
 
 PARSER = ArgumentParser(description='Run the archive interface.')
