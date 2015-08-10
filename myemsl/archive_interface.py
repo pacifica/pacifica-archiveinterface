@@ -3,14 +3,14 @@
 from json import dumps
 from os import path
 from sys import stderr
-from hpss_ctypes import HPSSClient, HPSSFile
-from id2filename import id2filename
-from archive_interface_responses import *
-from extendedfile import ExtendedFile
+from myemsl.hpss_ctypes import HPSSClient
+from myemsl.id2filename import id2filename
+import myemsl.archive_interface_responses as archive_interface_responses
+from myemsl.extendedfile import ExtendedFile
 
-block_size = 1<<20
+BLOCK_SIZE = 1<<20
 
-def path_info_munge(backend_type, path):
+def path_info_munge(backend_type, filepath):
     """
     Munge the path_info environment variable based on the
     backend type.
@@ -20,11 +20,12 @@ def path_info_munge(backend_type, path):
     >>> path_info_munge('posix', '1234')
     '1234'
     """
+    return_path = filepath
     if backend_type == 'hpss':
-        path = un_abs_path(id2filename(int(path)))
-    return path
+        return_path = un_abs_path(id2filename(int(filepath)))
+    return return_path
 
-def backend_open(backend_type, path, mode):
+def backend_open(backend_type, filepath, mode):
     """
     Open the file based on the backend type
 
@@ -32,8 +33,8 @@ def backend_open(backend_type, path, mode):
     <class 'extendedfile.ExtendedFile'>
     """
     if backend_type == 'hpss':
-        return CLIENT.open(path, mode)
-    return ExtendedFile(path, mode)
+        return CLIENT.open(filepath, mode)
+    return ExtendedFile(filepath, mode)
 
 def un_abs_path(path_name):
     if path.isabs(path_name):
@@ -44,82 +45,103 @@ def un_abs_path(path_name):
 CLIENT = None
 
 def archive_generator(backend_type, prefix, user, auth):
-    global CLIENT
+    """Defines the methods that can be used on files for request types"""
     if backend_type == 'hpss':
-        CLIENT = HPSSClient(user = user, auth = auth)
+        CLIENT = HPSSClient(user=user, auth=auth)
+
     def get(env, start_response):
+        """Gets a file passed in the request"""
         myfile = None
         res = None
         path_info = un_abs_path(env['PATH_INFO'])
 
         try:
-            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+            filename = path.join(prefix, path_info_munge(backend_type,
+                                                         path_info))
         except:
-            res = munging_filepath_exception(start_response, backend_type, path_info)
+            resp = archive_interface_responses.Responses()
+            res = resp.munging_filepath_exception(start_response, backend_type,
+                                                  path_info)
             return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "r")
-            start_response('200 OK', [('Content-Type', 'application/octet-stream')])
+            start_response('200 OK', [('Content-Type',
+                                       'application/octet-stream')])
             if 'wsgi.file_wrapper' in env:
-                return env['wsgi.file_wrapper'](myfile, block_size)
-            return iter(lambda: myfile.read(block_size), '')
+                return env['wsgi.file_wrapper'](myfile, BLOCK_SIZE)
+            return iter(lambda: myfile.read(BLOCK_SIZE), '')
         except:
-            res = file_not_found_exception(start_response, filename)
+            resp = archive_interface_responses.Responses()
+            res = resp.file_not_found_exception(start_response, filename)
             return dumps(res)
 
     def put(env, start_response):
+        """Saves a file passed in the request"""
         myfile = None
         res = None
         path_info = un_abs_path(env['PATH_INFO'])
         stderr.flush()
 
         try:
-            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+            filename = path.join(prefix, path_info_munge(backend_type,
+                                                         path_info))
         except:
-            res = munging_filepath_exception(start_response, backend_type, path_info)
+            resp = archive_interface_responses.Responses()
+            res = resp.munging_filepath_exception(start_response, backend_type,
+                                                  path_info)
             return dumps(res)
         try:
             myfile = backend_open(backend_type, filename, "w")
             content_length = int(env['CONTENT_LENGTH'])
             while content_length > 0:
-                if content_length > block_size:
-                    buf = env['wsgi.input'].read(block_size)
+                if content_length > BLOCK_SIZE:
+                    buf = env['wsgi.input'].read(BLOCK_SIZE)
                 else:
                     buf = env['wsgi.input'].read(content_length)
                 myfile.write(buf)
                 content_length -= len(buf)
 
-            res = successful_put_response(start_response, env['CONTENT_LENGTH'])
-            
+            resp = archive_interface_responses.Responses()
+            res = resp.successful_put_response(start_response,
+                                               env['CONTENT_LENGTH'])
+
         except Exception as ex:
             print >> stderr, ex
-            res = error_opening_file_exception(start_response, filename)
+            res = resp.error_opening_file_exception(start_response, filename)
         return dumps(res)
 
-    def status(env,start_response):
+    def status(env, start_response):
+        """Gets the status of a file passed in the request"""
         myfile = None
         res = None
         status = None
         path_info = un_abs_path(env['PATH_INFO'])
         try:
-            filename = path.join(prefix, path_info_munge(backend_type, path_info))
+            filename = path.join(prefix, path_info_munge(backend_type,
+                                                         path_info))
         except:
-            res = munging_filepath_exception(start_response, backend_type, path_info)
+            resp = archive_interface_responses.Responses()
+            res = resp.munging_filepath_exception(start_response, backend_type,
+                                                  path_info)
             return dumps(res)
         try:
-            myfile = backend_open(backend_type, filename, "r")        
+            myfile = backend_open(backend_type, filename, "r")
         except:
-            res = file_not_found_exception(start_response, filename)
+            resp = archive_interface_responses.Responses()
+            res = resp.file_not_found_exception(start_response, filename)
             return dumps(res)
         try:
             status = myfile.status()
             if status == 'disk':
-                res = file_disk_status(start_response, filename)
+                resp = archive_interface_responses.Responses()
+                res = resp.file_disk_status(start_response, filename)
         except:
-            res = file_status_exception(start_response, filename)
+            resp = archive_interface_responses.Responses()
+            res = resp.file_status_exception(start_response, filename)
         return dumps(res)
 
     def myemsl_archiveinterface(env, start_response):
+        """Parses request method type"""
         res = None
         if env['REQUEST_METHOD'] == 'GET':
             return get(env, start_response)
@@ -128,8 +150,10 @@ def archive_generator(backend_type, prefix, user, auth):
         elif env['REQUEST_METHOD'] == 'HEAD':
             return status(env, start_response)
         else:
-            res = unknown_request(start_response, env['REQUEST_METHOD'])
+            resp = archive_interface_responses.responses()
+            res = resp.unknown_request(start_response, env['REQUEST_METHOD'])
         return dumps(res)
+
     return myemsl_archiveinterface
 
 if __name__ == "__main__":

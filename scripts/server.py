@@ -6,6 +6,10 @@ This is the main program that starts the WSGI server.
 
 The core of the server code is in archive_interface.py.
 """
+import sys
+import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(1, path)
 from argparse import ArgumentParser
 from myemsl.archive_interface import archive_generator
 from wsgiref.simple_server import make_server
