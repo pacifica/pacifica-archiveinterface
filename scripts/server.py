@@ -11,7 +11,7 @@ import os
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(1, path)
 from argparse import ArgumentParser
-from myemsl.archive_interface import archive_generator
+from myemsl.archive_interface import ArchiveGenerator
 from wsgiref.simple_server import make_server
 
 PARSER = ArgumentParser(description='Run the archive interface.')
@@ -33,6 +33,7 @@ PARSER.add_argument('--auth', metavar='AUTH', dest='auth',
                     default=None, help='KeyTab auth path for HPSS authentication')
 
 ARGS = PARSER.parse_args()
+generator = ArchiveGenerator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth)
 SRV = make_server(ARGS.address, ARGS.port,
-                  archive_generator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth))
+                  generator.myemsl_archiveinterface)
 SRV.serve_forever()
