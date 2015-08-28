@@ -27,7 +27,7 @@ enum hpss_rpc_auth_type_t {
 """
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
-#from _archiveinterface import hpss_status
+import _archiveinterface #import hpss_status
 
 
 HPSS_AUTHN_MECH_INVALID = 0
@@ -59,11 +59,15 @@ class HPSSClientError(Exception):
 class HPSSFile(object):
     """class that represents the hpss file struct and its methods"""
     def __init__(self, filepath, mode, hpsslib):
+        self.closed = True
         self._hpsslib = hpsslib
         self._filepath = filepath
         hpss_fopen = self._hpsslib.hpss_Fopen
         hpss_fopen.restype = c_void_p
+        
         self._hpssfile = hpss_fopen(filepath, mode)
+        if self._hpssfile < 0:
+            raise HPSSClientError("Failed Opening File")
         self.closed = False
 
     def status(self):
@@ -72,11 +76,15 @@ class HPSSFile(object):
         Found the documentation for this in the hpss programmers reference
         section 2.3.6.2.8 "Get Extanded Attributes"
         """
-        #placeholder until implemented
-        placeholder = self
-        placeholder = None
+        try:
+            status = _archiveinterface.hpss_status("test")
+
+        except Exception as ex:
+            raise HPSSClientError("Error trying to use c extension for hpss status"+
+                " exception: (%s)\n"%ex)
+
         #return hpss_status(self._filepath)
-        return placeholder
+        return status
 
     def read(self, blksize):
         """Read a file with the the hpss Fread"""
@@ -100,6 +108,7 @@ class HPSSFile(object):
         rcode = self._hpsslib.hpss_Fclose(self._hpssfile)
         if rcode < 0:
             raise HPSSClientError("Failed to close(%d)"%(rcode))
+
         self._hpssfile = 0
         self.closed = True
 
@@ -132,15 +141,18 @@ class HPSSFile(object):
 class HPSSClient(object):
     """
     Write the block to the file
+    Testing conencting to hpss client, writing, and reading a file
 
-    >>> hpssclient = HPSSClient(
-        user="svc-myemsldev", auth="/home/dmlb2000/svc-myemsldev.keytab")
-    >>> myfile = hpssclient.open("/myemsldev/test.txt", "w")
+    >>> user_name = "svc-myemsldev"
+    >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
+    >>> hpssclient = HPSSClient(user=user_name, auth=auth_path)
+    >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "w")
     >>> myfile.write('bar')
     >>> myfile.close()
-    >>> myfile = hpssclient.open("/myemsldev/test.txt", "r")
+    >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "r")
     >>> myfile.read(20)
     'bar'
+    >>> myfile.status()
     >>> myfile.close()
     """
     def __init__(self, library="/opt/hpss/lib/libhpss.so",

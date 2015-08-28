@@ -114,9 +114,15 @@ class ArchiveGenerator(object):
             return dumps(res)
         try:
             status = myfile.status()
+            print >> stderr, "\n Im the response from the c extension "+status+"\n"
             if status == 'disk':
                 resp = archive_interface_responses.Responses()
                 res = resp.file_disk_status(start_response, filename)
+            else:
+                print >> stderr, "\n Im the response from the c extension "+status+"\n"
+                resp = archive_interface_responses.Responses()
+                res = resp.file_disk_status(start_response, filename)
+
         except:
             resp = archive_interface_responses.Responses()
             res = resp.file_status_exception(start_response, filename)

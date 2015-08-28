@@ -8,8 +8,6 @@ The core of the server code is in archive_interface.py.
 """
 import sys
 import os
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(1, path)
 from argparse import ArgumentParser
 from myemsl.archive_interface import ArchiveGenerator
 from wsgiref.simple_server import make_server
@@ -29,11 +27,11 @@ PARSER.add_argument('--prefix', metavar='PREFIX', dest='prefix',
                     default='/tmp', help='prefix to save data at')
 PARSER.add_argument('-u', metavar='HPSSUSER', dest='user',
                     default=None, help='User Name for HPSS authentication')
-PARSER.add_argument('--auth', metavar='AUTH', dest='auth',
-                    default=None, help='KeyTab auth path for HPSS authentication')
+PARSER.add_argument('--auth', metavar='AUTH', dest='auth', default=None,
+                    help='KeyTab auth path for HPSS authentication')
 
 ARGS = PARSER.parse_args()
-generator = ArchiveGenerator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth)
+GENERATOR = ArchiveGenerator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth)
 SRV = make_server(ARGS.address, ARGS.port,
-                  generator.myemsl_archiveinterface)
+                  GENERATOR.myemsl_archiveinterface)
 SRV.serve_forever()
