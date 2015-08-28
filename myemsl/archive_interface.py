@@ -19,7 +19,35 @@ def un_abs_path(path_name):
 
 
 class ArchiveGenerator(object):
-    """Defines the methods that can be used on files for request types"""
+    """Defines the methods that can be used on files for request types
+    doctest for the archive generator class
+
+    HPSS Doc Tests
+    >>> user_name = "svc-myemsldev"
+    >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
+    >>> prefix = "/myemsl-dev/bundle"
+    >>> backend_type = "hpss"
+    >>> archiveHpss = ArchiveGenerator(backend_type, prefix, user_name, auth_path)
+    >>> type(archiveHpss.backend_open("/myemsl-dev/bundle/test.txt", 'w'))
+    <class 'myemsl.hpss_ctypes.HPSSFile'>
+    >>> archiveHpss.path_info_munge('1234')
+    'd2/4d2'
+
+
+
+    Posix file tests
+    >>> u_name = None
+    >>> a_path = None
+    >>> prefix_posix = ""
+    >>> backend_posix = "posix"
+    >>> archivePosix = ArchiveGenerator(backend_posix, prefix_posix, u_name, a_path)
+
+    >>> type(archivePosix.backend_open('/tmp/1234', 'w'))
+    <class 'myemsl.extendedfile.ExtendedFile'>
+    >>> archivePosix.path_info_munge('1234')
+    '1234'
+    >>> type(archivePosix.status())
+    """
     def __init__(self, backend_type, prefix, user, auth):
         self._client = None
         self._backend_type = backend_type
@@ -87,7 +115,6 @@ class ArchiveGenerator(object):
                                                env['CONTENT_LENGTH'])
 
         except Exception as ex:
-            print >> stderr, ex
             res = resp.error_opening_file_exception(start_response, filename)
         return dumps(res)
 
@@ -114,12 +141,10 @@ class ArchiveGenerator(object):
             return dumps(res)
         try:
             status = myfile.status()
-            print >> stderr, "\n Im the response from the c extension "+status+"\n"
             if status == 'disk':
                 resp = archive_interface_responses.Responses()
                 res = resp.file_disk_status(start_response, filename)
             else:
-                print >> stderr, "\n Im the response from the c extension "+status+"\n"
                 resp = archive_interface_responses.Responses()
                 res = resp.file_disk_status(start_response, filename)
 
@@ -132,9 +157,6 @@ class ArchiveGenerator(object):
     def backend_open(self, filepath, mode):
         """
         Open the file based on the backend type
-
-        >>> type(backend_open('posix', '/tmp/1234', 'w'))
-        <class 'extendedfile.ExtendedFile'>
         """
         if self._backend_type == 'hpss':
             return self._client.open(filepath, mode)
@@ -144,11 +166,6 @@ class ArchiveGenerator(object):
         """
         Munge the path_info environment variable based on the
         backend type.
-
-        >>> path_info_munge('hpss', '1234')
-        'd2/4d2'
-        >>> path_info_munge('posix', '1234')
-        '1234'
         """
         return_path = filepath
         if self._backend_type == 'hpss':

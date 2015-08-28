@@ -77,7 +77,7 @@ class HPSSFile(object):
         section 2.3.6.2.8 "Get Extanded Attributes"
         """
         try:
-            status = _archiveinterface.hpss_status("test")
+            status = _archiveinterface.hpss_status(self._filepath)
 
         except Exception as ex:
             raise HPSSClientError("Error trying to use c extension for hpss status"+
@@ -153,6 +153,7 @@ class HPSSClient(object):
     >>> myfile.read(20)
     'bar'
     >>> myfile.status()
+    27
     >>> myfile.close()
     """
     def __init__(self, library="/opt/hpss/lib/libhpss.so",

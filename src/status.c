@@ -4,12 +4,14 @@
 static PyObject *
 myemsl_archiveinterface_status(PyObject *self, PyObject *args)
 {
-    const char *command;
+    const char *filepath;
     int sts;
-
-    if (!PyArg_ParseTuple(args, "s", &command))
+    /*
+        get the filepath passed in from the python code
+    */
+    if (!PyArg_ParseTuple(args, "s", &filepath))
         return NULL;
-    sts = strlen(command);
+    sts = strlen(filepath);
     return Py_BuildValue("i", sts);
 }
 
