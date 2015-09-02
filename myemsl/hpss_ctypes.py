@@ -83,7 +83,6 @@ class HPSSFile(object):
             raise HPSSClientError("Error trying to use c extension for hpss status"+
                 " exception: (%s)\n"%ex)
 
-        #return hpss_status(self._filepath)
         return status
 
     def read(self, blksize):

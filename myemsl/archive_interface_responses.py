@@ -60,6 +60,15 @@ class Responses(object):
         }
         return self._response
 
+    def file_hpss_status(self, start_response, filename):
+        """Response for when file is on the hpss system"""
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'File was found on HPSS',
+            'file': str(filename)
+        }
+        return self._response
+
     def file_tape_status(self, start_response, filename):
         """Response for when the file is found on tape"""
         start_response('200 OK', [('Content-Type', 'application/json')])

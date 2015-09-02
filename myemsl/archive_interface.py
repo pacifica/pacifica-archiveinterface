@@ -146,7 +146,7 @@ class ArchiveGenerator(object):
                 res = resp.file_disk_status(start_response, filename)
             else:
                 resp = archive_interface_responses.Responses()
-                res = resp.file_disk_status(start_response, filename)
+                res = resp.file_hpss_status(start_response, filename)
 
         except:
             resp = archive_interface_responses.Responses()
