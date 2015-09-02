@@ -5,7 +5,9 @@ from distutils.core import setup, Extension
 myemsl_archiveinterface = Extension('myemsl._archiveinterface', ['src/status.c'],
       include_dirs = ['/opt/hpss/include'],
       library_dirs=['/opt/hpss/lib'],
-      libraries=['hpss'])
+      libraries=['hpss'],
+      extra_compile_args = ['-DLINUX', '-DHPSS51', '-DLITTLEEND']
+)
 
 setup(name='MyEMSLArchiveInterface',
       version='1.0',
