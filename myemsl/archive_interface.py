@@ -4,6 +4,7 @@ from json import dumps
 from os import path
 from sys import stderr
 from myemsl.hpss_ctypes import HPSSClient
+from myemsl.hpss_ctypes import HPSSStatus
 from myemsl.id2filename import id2filename
 import myemsl.archive_interface_responses as archive_interface_responses
 from myemsl.extendedfile import ExtendedFile
@@ -126,27 +127,28 @@ class ArchiveGenerator(object):
         backend_type = self._backend_type
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
+        resp = archive_interface_responses.Responses()
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
         except:
-            resp = archive_interface_responses.Responses()
             res = resp.munging_filepath_exception(start_response, backend_type,
                                                   path_info)
             return dumps(res)
         try:
             myfile = self.backend_open(filename, "r")
         except:
-            resp = archive_interface_responses.Responses()
             res = resp.file_not_found_exception(start_response, filename)
             return dumps(res)
         try:
             status = myfile.status()
             if status == 'disk':
-                resp = archive_interface_responses.Responses()
                 res = resp.file_disk_status(start_response, filename)
+            elif isinstance(status, HPSSStatus) == True:
+                res = resp.file_hpss_status(start_response, filename, status._mtime,
+                                            status._ctime, status._bytes_per_level)
             else:
-                resp = archive_interface_responses.Responses()
-                res = resp.file_hpss_status(start_response, filename)
+                res = resp.file_status_exception(start_response, type(status))
+
 
         except:
             resp = archive_interface_responses.Responses()

@@ -76,8 +76,12 @@ class HPSSFile(object):
         Found the documentation for this in the hpss programmers reference
         section 2.3.6.2.8 "Get Extanded Attributes"
         """
+        mtime = None
+        ctime = None
+        bytes_per_level = None
         try:
-            status = _archiveinterface.hpss_status(self._filepath)
+            mtime = _archiveinterface.hpss_status(self._filepath)
+            status = HPSSStatus(mtime, ctime, bytes_per_level)
 
         except Exception as ex:
             raise HPSSClientError("Error trying to use c extension for hpss status"+
@@ -151,8 +155,8 @@ class HPSSClient(object):
     >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "r")
     >>> myfile.read(20)
     'bar'
-    >>> myfile.status()
-    27
+    >>> type(myfile.status())
+    <class '__main__.HPSSStatus'>
     >>> myfile.close()
     """
     def __init__(self, library="/opt/hpss/lib/libhpss.so",
@@ -174,6 +178,19 @@ class HPSSClient(object):
     def gethpsslib(self):
         """get the HPSS client libraries"""
         return self._hpsslib
+
+class HPSSStatus(object):
+    """Class for handling hpss status pieces
+    needs mtime,ctime, bytes per level array
+    >>> status = HPSSStatus(None, None, None)
+    >>> type(status)
+    <class '__main__.HPSSStatus'>
+    """
+    def __init__(self, mtime, ctime, bytes_per_level):
+        self._mtime = mtime
+        self._ctime = ctime
+        self._bytes_per_level = bytes_per_level
+
 
 if __name__ == "__main__":
     import doctest
