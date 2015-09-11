@@ -13,12 +13,13 @@ class Responses(object):
         }
         return self._response
 
-    def file_not_found_exception(self, start_response, filename):
+    def file_not_found_exception(self, start_response, filename, ex):
         """Response for when the file specified does not exists"""
         start_response('404 Not Found', [('Content-Type', 'application/json')])
         self._response = {
             'message': 'File not found',
-            'file': str(filename)
+            'file': str(filename),
+            'exception': str(ex)
         }
         return self._response
 

@@ -178,6 +178,7 @@ class HPSSClient(object):
 
     def open(self, filename, mode):
         """Open an hpss file"""
+        ping_core()
         return HPSSFile(filename, mode, self._hpsslib)
 
     def gethpsslib(self):
@@ -211,6 +212,12 @@ class HPSSStatus(object):
 
         return levelArray[level]
 
+def ping_core():
+    """Ping the Core server to see if its still active"""
+    latency = _archiveinterface.hpss_ping_core()
+    if latency > 5:
+        raise HPSSClientError("The archive core server is not responding")
+    return
 
 
 if __name__ == "__main__":

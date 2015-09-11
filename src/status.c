@@ -126,6 +126,13 @@ myemsl_archiveinterface_status(PyObject *self, PyObject *args)
     return bytes_per_level;
 }
 
+static PyObject *
+myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
+{
+      
+    return Py_BuildValue("i", 1);
+}
+
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", myemsl_archiveinterface_status, METH_VARARGS,
      "Get the status for a file in the archive."},
@@ -134,7 +141,9 @@ static PyMethodDef StatusMethods[] = {
      {"hpss_ctime", myemsl_archiveinterface_ctime, METH_VARARGS,
      "Get the ctime for a file in the archive."},
      {"hpss_filesize", myemsl_archiveinterface_filesize, METH_VARARGS,
-     "Get the ctime for a file in the archive."},
+     "Get the filesize for a file in the archive."},
+     {"hpss_ping_core", myemsl_archiveinterface_ping_core, METH_VARARGS,
+     "Check if the Core Server is actively responding."},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

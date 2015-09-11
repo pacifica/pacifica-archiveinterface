@@ -65,6 +65,7 @@ class ArchiveGenerator(object):
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
         resp = archive_interface_responses.Responses()
+        stderr.flush()
 
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
@@ -124,6 +125,7 @@ class ArchiveGenerator(object):
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
         resp = archive_interface_responses.Responses()
+        stderr.flush()
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
         except:
@@ -132,8 +134,8 @@ class ArchiveGenerator(object):
             return self.return_response()
         try:
             myfile = self.backend_open(filename, "r")
-        except:
-            self._response = resp.file_not_found_exception(start_response, filename)
+        except Exception as ex:
+            self._response = resp.file_not_found_exception(start_response, filename, ex)
             return self.return_response()
         try:
             status = myfile.status()
