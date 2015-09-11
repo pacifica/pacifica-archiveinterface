@@ -53,6 +53,7 @@ class ArchiveGenerator(object):
         self._client = None
         self._backend_type = backend_type
         self._prefix = prefix
+        self._response = None
 
         if backend_type == 'hpss':
             self._client = HPSSClient(user=user, auth=auth)
@@ -60,18 +61,17 @@ class ArchiveGenerator(object):
     def get(self, env, start_response):
         """Gets a file passed in the request"""
         myfile = None
-        res = None
         backend_type = self._backend_type
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
+        resp = archive_interface_responses.Responses()
 
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
         except:
-            resp = archive_interface_responses.Responses()
-            res = resp.munging_filepath_exception(start_response, backend_type,
+            self._response = resp.munging_filepath_exception(start_response, backend_type,
                                                   path_info)
-            return dumps(res)
+            return self.return_response()
         try:
             myfile = self.backend_open(filename, "r")
             start_response('200 OK', [('Content-Type',
@@ -80,26 +80,24 @@ class ArchiveGenerator(object):
                 return env['wsgi.file_wrapper'](myfile, BLOCK_SIZE)
             return iter(lambda: myfile.read(BLOCK_SIZE), '')
         except:
-            resp = archive_interface_responses.Responses()
-            res = resp.file_not_found_exception(start_response, filename)
-            return dumps(res)
+            self._response = resp.file_not_found_exception(start_response, filename)
+            return self.return_response()
 
     def put(self, env, start_response):
         """Saves a file passed in the request"""
         myfile = None
-        res = None
         backend_type = self._backend_type
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
+        resp = archive_interface_responses.Responses()
         stderr.flush()
 
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
         except:
-            resp = archive_interface_responses.Responses()
-            res = resp.munging_filepath_exception(start_response, backend_type,
+            self._response = resp.munging_filepath_exception(start_response, backend_type,
                                                   path_info)
-            return dumps(res)
+            return self.return_response()
         try:
             myfile = self.backend_open(filename, "w")
             content_length = int(env['CONTENT_LENGTH'])
@@ -111,18 +109,16 @@ class ArchiveGenerator(object):
                 myfile.write(buf)
                 content_length -= len(buf)
 
-            resp = archive_interface_responses.Responses()
-            res = resp.successful_put_response(start_response,
+            self._response = resp.successful_put_response(start_response,
                                                env['CONTENT_LENGTH'])
 
         except Exception as ex:
-            res = resp.error_opening_file_exception(start_response, filename)
-        return dumps(res)
+            self._response = resp.error_opening_file_exception(start_response, filename)
+        return self.return_response()
 
     def status(self, env, start_response):
         """Gets the status of a file passed in the request"""
         myfile = None
-        res = None
         status = None
         backend_type = self._backend_type
         prefix = self._prefix
@@ -131,29 +127,29 @@ class ArchiveGenerator(object):
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
         except:
-            res = resp.munging_filepath_exception(start_response, backend_type,
+            self._response = resp.munging_filepath_exception(start_response, backend_type,
                                                   path_info)
-            return dumps(res)
+            return self.return_response()
         try:
             myfile = self.backend_open(filename, "r")
         except:
-            res = resp.file_not_found_exception(start_response, filename)
-            return dumps(res)
+            self._response = resp.file_not_found_exception(start_response, filename)
+            return self.return_response()
         try:
             status = myfile.status()
             if status == 'disk':
-                res = resp.file_disk_status(start_response, filename)
+                self._response = resp.file_disk_status(start_response, filename)
             elif isinstance(status, HPSSStatus) == True:
-                res = resp.file_hpss_status(start_response, filename, status._mtime,
+                self._response = resp.file_hpss_status(start_response, filename, status._mtime,
                                             status._ctime, status._bytes_per_level,
                                             status._filesize, status._file_storage_media)
             else:
-                res = resp.file_status_exception(start_response, type(status))
+                self.response = resp.file_status_exception(start_response, type(status))
 
 
         except Exception as ex:
-            res = resp.file_status_exception(start_response, filename, ex)
-        return dumps(res)
+            self._response = resp.file_status_exception(start_response, filename, ex)
+        return self.return_response()
 
 
     def backend_open(self, filepath, mode):
@@ -174,6 +170,11 @@ class ArchiveGenerator(object):
             return_path = un_abs_path(id2filename(int(filepath)))
         return return_path
 
+    def return_response(self):
+        """Prints all responses in a nice fashion"""
+        return dumps(self._response, sort_keys=True, indent=4)
+
+
     def myemsl_archiveinterface(self, env, start_response):
         """Parses request method type"""
         res = None
@@ -185,8 +186,8 @@ class ArchiveGenerator(object):
             return self.status(env, start_response)
         else:
             resp = archive_interface_responses.Responses()
-            res = resp.unknown_request(start_response, env['REQUEST_METHOD'])
-        return dumps(res)
+            self._response = resp.unknown_request(start_response, env['REQUEST_METHOD'])
+        return self.return_response()
 
 if __name__ == "__main__":
     import doctest
