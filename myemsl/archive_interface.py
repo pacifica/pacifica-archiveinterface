@@ -145,13 +145,13 @@ class ArchiveGenerator(object):
                 res = resp.file_disk_status(start_response, filename)
             elif isinstance(status, HPSSStatus) == True:
                 res = resp.file_hpss_status(start_response, filename, status._mtime,
-                                            status._ctime, status._bytes_per_level)
+                                            status._ctime, status._bytes_per_level,
+                                            status._filesize)
             else:
                 res = resp.file_status_exception(start_response, type(status))
 
 
         except:
-            resp = archive_interface_responses.Responses()
             res = resp.file_status_exception(start_response, filename)
         return dumps(res)
 

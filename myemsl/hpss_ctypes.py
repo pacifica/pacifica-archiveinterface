@@ -27,7 +27,7 @@ enum hpss_rpc_auth_type_t {
 """
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
-import _archiveinterface #import hpss_status
+import _archiveinterface 
 
 
 HPSS_AUTHN_MECH_INVALID = 0
@@ -79,9 +79,12 @@ class HPSSFile(object):
         mtime = None
         ctime = None
         bytes_per_level = None
+        filesize = None
         try:
-            mtime = _archiveinterface.hpss_status(self._filepath)
-            status = HPSSStatus(mtime, ctime, bytes_per_level)
+            mtime = _archiveinterface.hpss_mtime(self._filepath)
+            ctime = _archiveinterface.hpss_ctime(self._filepath)
+            bytes_per_level = _archiveinterface.hpss_status(self._filepath)
+            status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
 
         except Exception as ex:
             raise HPSSClientError("Error trying to use c extension for hpss status"+
@@ -186,10 +189,11 @@ class HPSSStatus(object):
     >>> type(status)
     <class '__main__.HPSSStatus'>
     """
-    def __init__(self, mtime, ctime, bytes_per_level):
+    def __init__(self, mtime, ctime, bytes_per_level, filesize):
         self._mtime = mtime
         self._ctime = ctime
         self._bytes_per_level = bytes_per_level
+        self._filesize = filesize
 
 
 if __name__ == "__main__":

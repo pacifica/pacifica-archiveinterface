@@ -61,12 +61,16 @@ class Responses(object):
         return self._response
 
     def file_hpss_status(self, start_response, filename, mtime, ctime,
-                         bytes_per_level):
+                         bytes_per_level, filesize):
         """Response for when file is on the hpss system"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
             'message': 'File was found on HPSS',
-            'file': str(filename)
+            'file': str(filename),
+            'filesize': str(filesize),
+            'mtime': str(mtime),
+            'ctime': str(ctime),
+            'bytes_per_level': str(bytes_per_level)
         }
         return self._response
 
