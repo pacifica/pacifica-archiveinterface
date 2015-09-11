@@ -84,9 +84,11 @@ class HPSSFile(object):
             mtime = _archiveinterface.hpss_mtime(self._filepath)
             ctime = _archiveinterface.hpss_ctime(self._filepath)
             bytes_per_level = _archiveinterface.hpss_status(self._filepath)
+            filesize = _archiveinterface.hpss_filesize(self._filepath)
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
 
         except Exception as ex:
+            """Push the excpetion up the chain to the response"""
             raise HPSSClientError("Error trying to use c extension for hpss status"+
                 " exception: (%s)\n"%ex)
 
@@ -194,6 +196,21 @@ class HPSSStatus(object):
         self._ctime = ctime
         self._bytes_per_level = bytes_per_level
         self._filesize = filesize
+        self._file_storage_media = self.findFileStorageMedia()
+
+    def findFileStorageMedia(self):
+        """Set if file is on disk or tape"""
+        levelArray = ["disk", "disk", "disk", "tape", "tape"]
+        numLevels = len(self._bytes_per_level)
+        level = 0
+        for bytes in self._bytes_per_level:
+            if bytes == self._filesize:
+                break
+            level += 1
+
+
+        return levelArray[level]
+
 
 
 if __name__ == "__main__":

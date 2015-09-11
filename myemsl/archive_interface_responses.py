@@ -61,7 +61,7 @@ class Responses(object):
         return self._response
 
     def file_hpss_status(self, start_response, filename, mtime, ctime,
-                         bytes_per_level, filesize):
+                         bytes_per_level, filesize, file_storage_media):
         """Response for when file is on the hpss system"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
@@ -70,7 +70,8 @@ class Responses(object):
             'filesize': str(filesize),
             'mtime': str(mtime),
             'ctime': str(ctime),
-            'bytes_per_level': str(bytes_per_level)
+            'bytes_per_level': str(bytes_per_level),
+            'file_storage_media': str(file_storage_media)
         }
         return self._response
 
@@ -92,14 +93,15 @@ class Responses(object):
         }
         return self._response
 
-    def file_status_exception(self, start_response, filename):
+    def file_status_exception(self, start_response, filename, ex):
         """Response when there is an error getting the status"""
         start_response(
             '500 Internal Server Error',
             [('Content-Type', 'application/json')])
         self._response = {
             'message': 'Error getting file status',
-            'file': str(filename)
+            'file': str(filename),
+            'exception': str(ex)
         }
         return self._response
 

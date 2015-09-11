@@ -146,13 +146,13 @@ class ArchiveGenerator(object):
             elif isinstance(status, HPSSStatus) == True:
                 res = resp.file_hpss_status(start_response, filename, status._mtime,
                                             status._ctime, status._bytes_per_level,
-                                            status._filesize)
+                                            status._filesize, status._file_storage_media)
             else:
                 res = resp.file_status_exception(start_response, type(status))
 
 
-        except:
-            res = resp.file_status_exception(start_response, filename)
+        except Exception as ex:
+            res = resp.file_status_exception(start_response, filename, ex)
         return dumps(res)
 
 
