@@ -61,12 +61,12 @@ class Responses(object):
         }
         return self._response
 
-    def file_hpss_status(self, start_response, filename, mtime, ctime,
+    def file_status(self, start_response, filename, mtime, ctime,
                          bytes_per_level, filesize, file_storage_media):
         """Response for when file is on the hpss system"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
-            'message': 'File was found on HPSS',
+            'message': 'File was found',
             'file': str(filename),
             'filesize': str(filesize),
             'mtime': str(mtime),
@@ -89,7 +89,7 @@ class Responses(object):
         """Response for an unknown file status"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
-            'message': 'File has an unknown status',
+            'message': 'File has an unknown status type',
             'file': str(filename)
         }
         return self._response

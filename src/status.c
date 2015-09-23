@@ -120,7 +120,7 @@ myemsl_archiveinterface_status(PyObject *self, PyObject *args)
     for(i=0; i < HPSS_MAX_STORAGE_LEVELS; i++)
     {
         bytes = attrs.SCAttrib[i].BytesAtLevel;
-        PyTuple_SetItem(bytes_per_level, i,  Py_BuildValue("l", (long)bytes));
+        PyTuple_SetItem(bytes_per_level, i,  Py_BuildValue("L", (long long)bytes));
     }
 
     return bytes_per_level;

@@ -27,7 +27,7 @@ enum hpss_rpc_auth_type_t {
 """
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
-import _archiveinterface 
+import myemsl._archiveinterface as _archiveinterface
 
 
 HPSS_AUTHN_MECH_INVALID = 0
@@ -64,7 +64,7 @@ class HPSSFile(object):
         self._filepath = filepath
         hpss_fopen = self._hpsslib.hpss_Fopen
         hpss_fopen.restype = c_void_p
-        
+
         self._hpssfile = hpss_fopen(filepath, mode)
         if self._hpssfile < 0:
             raise HPSSClientError("Failed Opening File")
@@ -76,10 +76,10 @@ class HPSSFile(object):
         Found the documentation for this in the hpss programmers reference
         section 2.3.6.2.8 "Get Extanded Attributes"
         """
-        mtime = None
-        ctime = None
-        bytes_per_level = None
-        filesize = None
+        mtime = ""
+        ctime = ""
+        bytes_per_level = ""
+        filesize = ""
         try:
             mtime = _archiveinterface.hpss_mtime(self._filepath)
             ctime = _archiveinterface.hpss_ctime(self._filepath)
@@ -88,9 +88,9 @@ class HPSSFile(object):
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
 
         except Exception as ex:
-            """Push the excpetion up the chain to the response"""
-            raise HPSSClientError("Error trying to use c extension for hpss status"+
-                " exception: (%s)\n"%ex)
+            #Push the excpetion up the chain to the response
+            raise HPSSClientError("Error using c extension for hpss status"+
+                                  " exception: (%s)\n"%ex)
 
         return status
 
@@ -188,33 +188,48 @@ class HPSSClient(object):
 class HPSSStatus(object):
     """Class for handling hpss status pieces
     needs mtime,ctime, bytes per level array
-    >>> status = HPSSStatus(None, None, None)
+    >>> status = HPSSStatus(42, 33, [33,36,22], 36)
     >>> type(status)
     <class '__main__.HPSSStatus'>
+    >>> status._file_storage_media
+    'tape'
     """
+    _disk = "disk"
+    _tape = "tape"
+    _error = "error"
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         self._mtime = mtime
         self._ctime = ctime
         self._bytes_per_level = bytes_per_level
         self._filesize = filesize
-        self._file_storage_media = self.findFileStorageMedia()
+        self._defined_levels = self.define_levels()
+        self._file_storage_media = self.find_file_storage_media()
 
-    def findFileStorageMedia(self):
+
+    def find_file_storage_media(self):
         """Set if file is on disk or tape"""
-        levelArray = ["disk", "disk", "disk", "tape", "tape"]
-        numLevels = len(self._bytes_per_level)
+        level_array = self._defined_levels
         level = 0
-        for bytes in self._bytes_per_level:
-            if bytes == self._filesize:
+        for num_bytes in self._bytes_per_level:
+            if num_bytes == self._filesize:
                 break
             level += 1
 
+        return level_array[level]
 
-        return levelArray[level]
+    def define_levels(self):
+        """Sets up what each level definition means"""
+        #This defines what hpss integer levels really mean
+        #handle error if on level 4 or 5 since those are suppose to be null
+        #UPDATE LEVEL NAMES AS NEEDED
+        type_per_level = [self._disk, self._tape, self._tape,
+                          self._error, self._error]
+        return type_per_level
 
 def ping_core():
     """Ping the Core server to see if its still active"""
     latency = _archiveinterface.hpss_ping_core()
+    #Define acceptable latency
     if latency > 5:
         raise HPSSClientError("The archive core server is not responding")
     return

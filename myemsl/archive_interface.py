@@ -8,6 +8,7 @@ from myemsl.hpss_ctypes import HPSSStatus
 from myemsl.id2filename import id2filename
 import myemsl.archive_interface_responses as archive_interface_responses
 from myemsl.extendedfile import ExtendedFile
+from myemsl.extendedfile import POSIXStatus
 
 BLOCK_SIZE = 1<<20
 
@@ -139,14 +140,16 @@ class ArchiveGenerator(object):
             return self.return_response()
         try:
             status = myfile.status()
-            if status == 'disk':
-                self._response = resp.file_disk_status(start_response, filename)
+            if isinstance(status, POSIXStatus) == True:
+                self._response = resp.file_status(start_response, filename, status._mtime,
+                                            status._ctime, status._bytes_per_level,
+                                            status._filesize, status._file_storage_media)
             elif isinstance(status, HPSSStatus) == True:
-                self._response = resp.file_hpss_status(start_response, filename, status._mtime,
+                self._response = resp.file_status(start_response, filename, status._mtime,
                                             status._ctime, status._bytes_per_level,
                                             status._filesize, status._file_storage_media)
             else:
-                self.response = resp.file_status_exception(start_response, type(status))
+                self.response = resp.file_unknown_status(start_response, filename)
 
 
         except Exception as ex:
