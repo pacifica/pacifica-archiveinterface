@@ -140,14 +140,9 @@ class ArchiveGenerator(object):
             return self.return_response()
         try:
             status = myfile.status()
-            if isinstance(status, POSIXStatus) == True:
-                self._response = resp.file_status(start_response, filename, status._mtime,
-                                            status._ctime, status._bytes_per_level,
-                                            status._filesize, status._file_storage_media)
-            elif isinstance(status, HPSSStatus) == True:
-                self._response = resp.file_status(start_response, filename, status._mtime,
-                                            status._ctime, status._bytes_per_level,
-                                            status._filesize, status._file_storage_media)
+            if (isinstance(status, POSIXStatus) == True or
+                isinstance(status, HPSSStatus) == True):
+                self._response = resp.file_status(start_response, filename, status)
             else:
                 self.response = resp.file_unknown_status(start_response, filename)
 
