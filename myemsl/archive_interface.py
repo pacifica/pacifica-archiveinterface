@@ -43,12 +43,10 @@ class ArchiveGenerator(object):
     >>> prefix_posix = ""
     >>> backend_posix = "posix"
     >>> archivePosix = ArchiveGenerator(backend_posix, prefix_posix, u_name, a_path)
-
     >>> type(archivePosix.backend_open('/tmp/1234', 'w'))
     <class 'myemsl.extendedfile.ExtendedFile'>
     >>> archivePosix.path_info_munge('1234')
     '1234'
-    >>> type(archivePosix.status())
     """
     def __init__(self, backend_type, prefix, user, auth):
         self._client = None

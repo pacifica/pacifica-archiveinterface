@@ -1,6 +1,7 @@
 #include <Python.h>
-#include "numpy/arrayobject.h"
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include "hpss_api.h"
 
 static PyObject *archiveInterfaceError;
@@ -129,21 +130,65 @@ myemsl_archiveinterface_status(PyObject *self, PyObject *args)
 static PyObject *
 myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
 {
-      
-    return Py_BuildValue("i", 1);
+    /*
+        latency[0] = time ping responds in seconds (epoch)
+        latency[1] = time ping responds mseconds
+        latency[2] = time when ping request was sent (epoch)
+        to get latency = latency[2] - latency[0]
+    */
+    PyObject * latency= PyTuple_New(4);
+    int ret;
+    hpss_uuid_t uuid;
+    unsigned32 secs,usecs;
+    struct timeval tv;
+
+    /*
+        The Hex values used here corresond to the MyEMSL CORE server
+        getting these values dynamically becomes difficult
+    */
+    uuid.time_low = 0xe52ea34e;
+    uuid.time_mid = 0xc9aa;
+    uuid.time_hi_and_version = 0x11de;
+    uuid.clock_seq_hi_and_reserved = 0xb4;
+    uuid.clock_seq_low = 0x08;
+    uuid.node[0] = 0x00;
+    uuid.node[1] = 0x21;
+    uuid.node[2] = 0x5e;
+    uuid.node[3] = 0xdc;
+    uuid.node[4] = 0x76;
+    uuid.node[5] = 0x4c;
+
+    /* Obtain current time as seconds elapsed since the Epoch. */
+    gettimeofday(&tv,NULL);
+
+    /* Attempt to ping the CORE server*/
+    ret = hpss_PingCore(&uuid,&secs,&usecs);
+    //throw exception if server doesnt respond
+    if(ret < 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        return NULL;
+    }
+
+
+    PyTuple_SetItem(latency, 0,  Py_BuildValue("i", secs)); 
+    PyTuple_SetItem(latency, 1,  Py_BuildValue("i", usecs)); 
+    PyTuple_SetItem(latency, 2,  Py_BuildValue("i", tv.tv_sec)); 
+    PyTuple_SetItem(latency, 3,  Py_BuildValue("i", tv.tv_usec));
+    return latency;
 }
 
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", myemsl_archiveinterface_status, METH_VARARGS,
-     "Get the status for a file in the archive."},
-     {"hpss_mtime", myemsl_archiveinterface_mtime, METH_VARARGS,
-     "Get the mtime for a file in the archive."},
-     {"hpss_ctime", myemsl_archiveinterface_ctime, METH_VARARGS,
-     "Get the ctime for a file in the archive."},
-     {"hpss_filesize", myemsl_archiveinterface_filesize, METH_VARARGS,
-     "Get the filesize for a file in the archive."},
-     {"hpss_ping_core", myemsl_archiveinterface_ping_core, METH_VARARGS,
-     "Check if the Core Server is actively responding."},
+        "Get the status for a file in the archive."},
+    {"hpss_mtime", myemsl_archiveinterface_mtime, METH_VARARGS,
+        "Get the mtime for a file in the archive."},
+    {"hpss_ctime", myemsl_archiveinterface_ctime, METH_VARARGS,
+        "Get the ctime for a file in the archive."},
+    {"hpss_filesize", myemsl_archiveinterface_filesize, METH_VARARGS,
+        "Get the filesize for a file in the archive."},
+    {"hpss_ping_core", myemsl_archiveinterface_ping_core, METH_VARARGS,
+        "Check if the Core Server is actively responding."},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

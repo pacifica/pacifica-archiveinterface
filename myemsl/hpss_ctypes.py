@@ -228,11 +228,30 @@ class HPSSStatus(object):
 
 def ping_core():
     """Ping the Core server to see if its still active"""
-    latency = _archiveinterface.hpss_ping_core()
-    #Define acceptable latency
-    if latency > 5:
-        raise HPSSClientError("The archive core server is not responding")
+
+    #Define acceptable latency in seconds
+    acceptableLatency = 5;
+    latencyTuple = _archiveinterface.hpss_ping_core()
+    # Get the latency
+    # LatencyTuple[0] = time the core server responded
+    # LatencyTuple[1] = microseconds relative to core server
+    # LatencyTuple[2] = time before pinging core server
+    # LatencyTuple[3] = microseconds relative before ping
+
+    latSeconds = float(latencyTuple[0]);
+    latMicroSeconds = (float(latencyTuple[1])/1000000)
+    responseTime = latSeconds + latMicroSeconds
+    beforePingSeconds = float(latencyTuple[2])
+    beforePingMicroSeconds = (float(latencyTuple[3])/1000000)
+    beforePingTime = beforePingSeconds + beforePingMicroSeconds
+    latency = responseTime - beforePingTime;
+
+
+    if latency > acceptableLatency:
+        raise HPSSClientError("The archive core server is slow to respond"+
+            " Latency is: "+`latency` + " second(s)")
     return
+
 
 
 if __name__ == "__main__":
