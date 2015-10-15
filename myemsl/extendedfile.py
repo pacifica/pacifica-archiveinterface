@@ -11,6 +11,7 @@ class ExtendedFile(file):
     def __init__(self, filepath, mode):
         file.__init__(self, filepath, mode)
         self._path = filepath
+        self._staged = True
 
     def status(self):
         """Returns status of file. Since POSIX, will always return disk"""
@@ -22,6 +23,9 @@ class ExtendedFile(file):
         status = POSIXStatus(mtime, ctime, bytes_per_level, filesize)
 
         return status
+    def stage(self):
+        """Stages a file. Since POSIX, essentially a no op"""
+        self._staged = True
 
 
 class POSIXStatus(object):
