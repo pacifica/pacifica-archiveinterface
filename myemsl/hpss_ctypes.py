@@ -56,9 +56,43 @@ class HPSSClientError(Exception):
     """
     pass
 
-class HPSSFile(object):
+class HPSSCommon(object):
+    """ Class for handling common hpss methods,
+    such as pinging the core server.
+    """
+    def __init__(self, accept_latency = 5):
+        self._accept_latency = accept_latency
+
+    def ping_core(self):
+        """Ping the Core server to see if its still active"""
+
+        return 
+        #Define acceptable latency in seconds
+        acceptableLatency = self._accept_latency
+        latencyTuple = _archiveinterface.hpss_ping_core()
+        # Get the latency
+        # LatencyTuple[0] = time the core server responded
+        # LatencyTuple[1] = microseconds relative to core server
+        # LatencyTuple[2] = time before pinging core server
+        # LatencyTuple[3] = microseconds relative before ping
+
+        latSeconds = float(latencyTuple[0])
+        latMicroSeconds = (float(latencyTuple[1])/1000000)
+        responseTime = latSeconds + latMicroSeconds
+        beforePingSeconds = float(latencyTuple[2])
+        beforePingMicroSeconds = (float(latencyTuple[3])/1000000)
+        beforePingTime = beforePingSeconds + beforePingMicroSeconds
+        latency = responseTime - beforePingTime
+
+
+        if latency > acceptableLatency:
+            raise HPSSClientError("The archive core server is slow to respond"+
+                " Latency is: "+`latency` + " second(s)")
+
+class HPSSFile(HPSSCommon):
     """class that represents the hpss file struct and its methods"""
     def __init__(self, filepath, mode, hpsslib):
+        HPSSCommon.__init__(self)
         self.closed = True
         self._hpsslib = hpsslib
         self._filepath = filepath
@@ -76,6 +110,8 @@ class HPSSFile(object):
         Found the documentation for this in the hpss programmers reference
         section 2.3.6.2.8 "Get Extanded Attributes"
         """
+        self.ping_core()
+
         mtime = ""
         ctime = ""
         bytes_per_level = ""
@@ -94,8 +130,24 @@ class HPSSFile(object):
 
         return status
 
+    def stage(self):
+        """
+        Stage an hpss file so that it moves to disk 
+        """
+        self.ping_core()
+
+        try:
+            stage = _archiveinterface.hpss_stage(self._filepath)
+
+        except Exception as ex:
+            #Push the excpetion up the chain to the response
+            raise HPSSClientError("Error using c extension for hpss stage"+
+                                  " exception: (%s)\n"%ex)
+
     def read(self, blksize):
         """Read a file with the the hpss Fread"""
+        self.ping_core()
+
         buf = create_string_buffer('\000'*blksize)
         rcode = self._hpsslib.hpss_Fread(buf, 1, blksize, self._hpssfile)
         if rcode < 0:
@@ -105,6 +157,7 @@ class HPSSFile(object):
 
     def write(self, blk):
         """Write a block to a hpss file"""
+        self.ping_core()
         blk_char_p = cast(blk, c_char_p)
         rcode = self._hpsslib.hpss_Fwrite(blk_char_p, 1,
                                           len(blk), self._hpssfile)
@@ -113,15 +166,22 @@ class HPSSFile(object):
 
     def close(self):
         """Close an hpss file"""
+        if self.closed == True:
+            return
+        self.ping_core()
+        self.flush()
         rcode = self._hpsslib.hpss_Fclose(self._hpssfile)
         if rcode < 0:
             raise HPSSClientError("Failed to close(%d)"%(rcode))
 
-        self._hpssfile = 0
+        self._hpssfile = None
         self.closed = True
 
     def flush(self):
         """Flush an hpss file"""
+        if self.closed:
+            return
+        self.ping_core()
         rcode = self._hpsslib.hpss_Fflush(self._hpssfile)
         if rcode < 0:
             raise HPSSClientError(
@@ -129,24 +189,23 @@ class HPSSFile(object):
 
     def seek(self, offset_in, whence):
         """Find a specific location in an hpss file"""
+        self.ping_core()
         rcode = self._hpsslib.hpss_Fseek(self._hpssfile, offset_in, whence)
         if rcode < 0:
             raise HPSSClientError("Failed to seek with error code(%d)"%(rcode))
 
     def tell(self):
         """Get the location of seek in a file"""
+        self.ping_core()
         rcode = self._hpsslib.hpss_Ftell()
         if rcode < 0:
             raise HPSSClientError("Failed fTell with error code(%d)"%(rcode))
         else:
             return rcode
 
-    def __del__(self):
-        """Close the hpss file"""
-        if not self.closed:
-            self.close()
+            
 
-class HPSSClient(object):
+class HPSSClient(HPSSCommon):
     """
     Write the block to the file
     Testing conencting to hpss client, writing, and reading a file
@@ -166,6 +225,7 @@ class HPSSClient(object):
     """
     def __init__(self, library="/opt/hpss/lib/libhpss.so",
                  user="hpss", auth="/var/hpss/etc/hpss.unix.keytab"):
+        HPSSCommon.__init__(self)
         self._hpsslib = cdll.LoadLibrary(library)
         rcode = self._hpsslib.hpss_SetLoginCred(user, HPSS_AUTHN_MECH_UNIX,
                                                 HPSS_RPC_CRED_CLIENT,
@@ -178,7 +238,7 @@ class HPSSClient(object):
 
     def open(self, filename, mode):
         """Open an hpss file"""
-        ping_core()
+        self.ping_core()
         return HPSSFile(filename, mode, self._hpsslib)
 
     def gethpsslib(self):
@@ -225,32 +285,6 @@ class HPSSStatus(object):
         type_per_level = [self._disk, self._tape, self._tape,
                           self._error, self._error]
         return type_per_level
-
-def ping_core():
-    """Ping the Core server to see if its still active"""
-
-    #Define acceptable latency in seconds
-    acceptableLatency = 5;
-    latencyTuple = _archiveinterface.hpss_ping_core()
-    # Get the latency
-    # LatencyTuple[0] = time the core server responded
-    # LatencyTuple[1] = microseconds relative to core server
-    # LatencyTuple[2] = time before pinging core server
-    # LatencyTuple[3] = microseconds relative before ping
-
-    latSeconds = float(latencyTuple[0]);
-    latMicroSeconds = (float(latencyTuple[1])/1000000)
-    responseTime = latSeconds + latMicroSeconds
-    beforePingSeconds = float(latencyTuple[2])
-    beforePingMicroSeconds = (float(latencyTuple[3])/1000000)
-    beforePingTime = beforePingSeconds + beforePingMicroSeconds
-    latency = responseTime - beforePingTime;
-
-
-    if latency > acceptableLatency:
-        raise HPSSClientError("The archive core server is slow to respond"+
-            " Latency is: "+`latency` + " second(s)")
-    return
 
 
 

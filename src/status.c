@@ -139,8 +139,8 @@ myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
     PyObject * latency= PyTuple_New(4);
     int ret;
     hpss_uuid_t uuid;
-    unsigned32 secs,usecs;
     struct timeval tv;
+    unsigned32 secs,usecs;
 
     /*
         The Hex values used here corresond to the MyEMSL CORE server
@@ -178,6 +178,41 @@ myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
     return latency;
 }
 
+static PyObject *
+myemsl_archiveinterface_stage(PyObject *self, PyObject *args)
+{
+    const char *filepath;
+    int rcode;
+    int i = 1;
+    int fd = 0;
+
+    /*
+        get the filepath passed in from the python code
+    */
+    if (!PyArg_ParseTuple(args, "s", &filepath))
+    {
+        PyErr_SetString(archiveInterfaceError, "Error parsing filepath argument");
+        return NULL;
+    }
+
+    fd = hpss_Open((char*)filepath, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
+    if(fd < 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        return NULL;
+    }
+
+    rcode = hpss_Stage(fd, 0, cast64m(0), 0, BFS_STAGE_ALL);
+    if(rcode != 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        hpss_Close(fd);
+        return NULL;
+    }
+    hpss_Close(fd);
+    return Py_BuildValue("i", i);
+}
+
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", myemsl_archiveinterface_status, METH_VARARGS,
         "Get the status for a file in the archive."},
@@ -189,6 +224,8 @@ static PyMethodDef StatusMethods[] = {
         "Get the filesize for a file in the archive."},
     {"hpss_ping_core", myemsl_archiveinterface_ping_core, METH_VARARGS,
         "Check if the Core Server is actively responding."},
+    {"hpss_stage", myemsl_archiveinterface_stage, METH_VARARGS,
+        "Stage a file to disk within hpss"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

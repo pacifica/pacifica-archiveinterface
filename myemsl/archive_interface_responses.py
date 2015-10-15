@@ -75,6 +75,15 @@ class Responses(object):
         }
         return self._response
 
+    def file_stage(self, start_response, filename):
+        """Response for when file is on the hpss system"""
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'File was staged',
+            'file': str(filename)
+        }
+        return self._response
+
     def file_tape_status(self, start_response, filename):
         """Response for when the file is found on tape"""
         start_response('200 OK', [('Content-Type', 'application/json')])
@@ -100,6 +109,18 @@ class Responses(object):
             [('Content-Type', 'application/json')])
         self._response = {
             'message': 'Error getting file status',
+            'file': str(filename),
+            'exception': str(ex)
+        }
+        return self._response
+
+    def file_stage_exception(self, start_response, filename, ex):
+        """Response when there is an error getting the status"""
+        start_response(
+            '500 Internal Server Error',
+            [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'Error with file stage',
             'file': str(filename),
             'exception': str(ex)
         }

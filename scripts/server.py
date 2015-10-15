@@ -35,4 +35,5 @@ ARGS = PARSER.parse_args()
 GENERATOR = ArchiveGenerator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth)
 SRV = make_server(ARGS.address, ARGS.port,
                   GENERATOR.myemsl_archiveinterface)
+
 SRV.serve_forever()

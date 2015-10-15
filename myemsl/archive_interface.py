@@ -114,6 +114,9 @@ class ArchiveGenerator(object):
 
         except Exception as ex:
             self._response = resp.error_opening_file_exception(start_response, filename)
+
+        myfile.close()
+        myfile = None
         return self.return_response()
 
     def status(self, env, start_response):
@@ -147,6 +150,39 @@ class ArchiveGenerator(object):
 
         except Exception as ex:
             self._response = resp.file_status_exception(start_response, filename, ex)
+
+        myfile.close()
+        myfile = None
+        return self.return_response()
+
+    def stage(self, env, start_response):
+        """Stage the file to disk"""
+        myfile = None
+        stage = None
+        backend_type = self._backend_type
+        prefix = self._prefix
+        path_info = un_abs_path(env['PATH_INFO'])
+        resp = archive_interface_responses.Responses()
+        stderr.flush()
+        try:
+            filename = path.join(prefix, self.path_info_munge(path_info))
+        except:
+            self._response = resp.munging_filepath_exception(start_response, backend_type,
+                                                  path_info)
+            return self.return_response()
+        try:
+            myfile = self.backend_open(filename, "r")
+        except Exception as ex:
+            self._response = resp.file_not_found_exception(start_response, filename, ex)
+            return self.return_response()
+        try:
+            stage = myfile.stage()
+            self._response = resp.file_stage(start_response, filename)
+
+        except Exception as ex:
+            self._response = resp.file_stage_exception(start_response, filename, ex)
+        myfile.close()
+        myfile = None
         return self.return_response()
 
 
@@ -182,6 +218,8 @@ class ArchiveGenerator(object):
             return self.put(env, start_response)
         elif env['REQUEST_METHOD'] == 'HEAD':
             return self.status(env, start_response)
+        elif env['REQUEST_METHOD'] == 'POST':
+            return self.stage(env, start_response)
         else:
             resp = archive_interface_responses.Responses()
             self._response = resp.unknown_request(start_response, env['REQUEST_METHOD'])
