@@ -7,8 +7,6 @@ This is the main program that starts the WSGI server.
 The core of the server code is in archive_interface.py.
 
 """
-import sys
-import os
 from argparse import ArgumentParser
 from myemsl.archive_interface import ArchiveGenerator
 from wsgiref.simple_server import make_server

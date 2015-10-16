@@ -136,7 +136,7 @@ class HPSSFile(HPSSCommon):
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
-            raise HPSSClientError("Error using c extension for hpss status"+
+            raise HPSSClientErrorlll("Error using c extension for hpss status"+
                                   " exception: (%s)\n"%ex)
 
         return status
@@ -220,12 +220,13 @@ class HPSSFile(HPSSCommon):
 class HPSSClient(HPSSCommon):
     """
     Write the block to the file
-    Testing conencting to hpss client, writing, and reading a filel
+    Testing conencting to hpss client, writing, and reading a file
 
     >>> user_name = "svc-myemsldev"
     >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
     >>> hpssclient = HPSSClient(user=user_name, auth=auth_path)
     >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "w")
+    >>> myfile.ping_core()
     >>> myfile.write('bar')
     >>> myfile.close()
     >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "r")
@@ -233,6 +234,7 @@ class HPSSClient(HPSSCommon):
     'bar'
     >>> type(myfile.status())
     <class '__main__.HPSSStatus'>
+    >>> myfile.stage()
     >>> myfile.close()
     """
     def __init__(self, library="/opt/hpss/lib/libhpss.so",
@@ -263,7 +265,7 @@ class HPSSStatus(object):
     >>> status = HPSSStatus(42, 33, [33,36,22], 36)
     >>> type(status)
     <class '__main__.HPSSStatus'>
-    >>> status._file_storage_media
+    >>> status.file_storage_media
     'tape'
     """
     _disk = "disk"

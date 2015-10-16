@@ -34,7 +34,7 @@ class POSIXStatus(object):
     >>> status = POSIXStatus(42, 33, [33,36,22], 36)
     >>> type(status)
     <class '__main__.POSIXStatus'>
-    >>> status._file_storage_media
+    >>> status.file_storage_media
     'disk'
     """
     _disk = "disk"
