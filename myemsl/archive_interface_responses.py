@@ -1,7 +1,8 @@
 """File for setting up Archive Interface server responses"""
 class Responses(object):
     """Method to support the archive interface exceptions"""
-    def munging_filepath_exception(self, start_response, backend_type, path):
+    def munging_filepath_exception(self, start_response,
+                                   backend_type, path, ex):
         """Response for when there is an error getting the filepath"""
         start_response(
             '500 Internal Server Error',
@@ -9,7 +10,8 @@ class Responses(object):
         self._response = {
             'message': 'Error with Munging filepath',
             'backend': backend_type,
-            'path': path
+            'path': path,
+            'exception': str(ex)
         }
         return self._response
 
@@ -44,11 +46,19 @@ class Responses(object):
         return self._response
 
     def unknown_request(self, start_response, request_method):
-        """Response for when unknow request type given"""
+        """Response for when unknown request type given"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
             'message': 'Unknown request method',
             'request_method': request_method
+        }
+        return self._response
+
+    def unknown_exception(self, start_response):
+        """Response when unknown exception occurs"""
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'Unknown Exception Occured'
         }
         return self._response
 
@@ -67,11 +77,11 @@ class Responses(object):
         self._response = {
             'message': 'File was found',
             'file': str(filename),
-            'filesize': str(status._filesize),
-            'mtime': str(status._mtime),
-            'ctime': str(status._ctime),
-            'bytes_per_level': str(status._bytes_per_level),
-            'file_storage_media': str(status._file_storage_media)
+            'filesize': str(status.filesize),
+            'mtime': str(status.mtime),
+            'ctime': str(status.ctime),
+            'bytes_per_level': str(status.bytes_per_level),
+            'file_storage_media': str(status.file_storage_media)
         }
         return self._response
 

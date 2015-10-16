@@ -13,6 +13,16 @@ from myemsl.extendedfile import POSIXStatus
 BLOCK_SIZE = 1<<20
 
 
+class ArchiveInterfaceError(Exception):
+    """
+    ArchiveInterfaceError - basic exception class for this module.
+    Will be used to throw exceptions up to the top level of the application
+    >>> ArchiveInterfaceError()
+    ArchiveInterfaceError()
+    """
+    pass
+
+
 def un_abs_path(path_name):
     """Removes absolute path piece"""
     if path.isabs(path_name):
@@ -28,8 +38,8 @@ class ArchiveGenerator(object):
     >>> user_name = "svc-myemsldev"
     >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
     >>> prefix = "/myemsl-dev/bundle"
-    >>> backend_type = "hpss"
-    >>> archiveHpss = ArchiveGenerator(backend_type, prefix, user_name, auth_path)
+    >>> b_type = "hpss"
+    >>> archiveHpss = ArchiveGenerator(b_type, prefix, user_name, auth_path)
     >>> type(archiveHpss.backend_open("/myemsl-dev/bundle/test.txt", 'w'))
     <class 'myemsl.hpss_ctypes.HPSSFile'>
     >>> archiveHpss.path_info_munge('1234')
@@ -41,8 +51,8 @@ class ArchiveGenerator(object):
     >>> u_name = None
     >>> a_path = None
     >>> prefix_posix = ""
-    >>> backend_posix = "posix"
-    >>> archivePosix = ArchiveGenerator(backend_posix, prefix_posix, u_name, a_path)
+    >>> b_posix = "posix"
+    >>> archivePosix = ArchiveGenerator(b_posix, prefix_posix, u_name, a_path)
     >>> type(archivePosix.backend_open('/tmp/1234', 'w'))
     <class 'myemsl.extendedfile.ExtendedFile'>
     >>> archivePosix.path_info_munge('1234')
@@ -68,10 +78,11 @@ class ArchiveGenerator(object):
 
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
-        except:
-            self._response = resp.munging_filepath_exception(start_response, backend_type,
-                                                  path_info)
-            return self.return_response()
+        except Exception as ex:
+            self._response = resp.munging_filepath_exception(start_response,
+                                                             backend_type,
+                                                             path_info, ex)
+            raise ArchiveInterfaceError()
         try:
             myfile = self.backend_open(filename, "r")
             start_response('200 OK', [('Content-Type',
@@ -79,9 +90,10 @@ class ArchiveGenerator(object):
             if 'wsgi.file_wrapper' in env:
                 return env['wsgi.file_wrapper'](myfile, BLOCK_SIZE)
             return iter(lambda: myfile.read(BLOCK_SIZE), '')
-        except:
-            self._response = resp.file_not_found_exception(start_response, filename)
-            return self.return_response()
+        except Exception as ex:
+            self._response = resp.file_not_found_exception(start_response,
+                                                           filename, ex)
+            raise ArchiveInterfaceError()
 
     def put(self, env, start_response):
         """Saves a file passed in the request"""
@@ -94,10 +106,11 @@ class ArchiveGenerator(object):
 
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
-        except:
-            self._response = resp.munging_filepath_exception(start_response, backend_type,
-                                                  path_info)
-            return self.return_response()
+        except Exception as ex:
+            self._response = resp.munging_filepath_exception(start_response,
+                                                             backend_type,
+                                                             path_info, ex)
+            raise ArchiveInterfaceError()
         try:
             myfile = self.backend_open(filename, "w")
             content_length = int(env['CONTENT_LENGTH'])
@@ -110,10 +123,12 @@ class ArchiveGenerator(object):
                 content_length -= len(buf)
 
             self._response = resp.successful_put_response(start_response,
-                                               env['CONTENT_LENGTH'])
+                                                          env['CONTENT_LENGTH'])
 
         except Exception as ex:
-            self._response = resp.error_opening_file_exception(start_response, filename)
+            self._response = resp.error_opening_file_exception(start_response,
+                                                               filename)
+            raise ArchiveInterfaceError()
 
         myfile.close()
         myfile = None
@@ -130,26 +145,32 @@ class ArchiveGenerator(object):
         stderr.flush()
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
-        except:
-            self._response = resp.munging_filepath_exception(start_response, backend_type,
-                                                  path_info)
-            return self.return_response()
+        except Exception as ex:
+            self._response = resp.munging_filepath_exception(start_response,
+                                                             backend_type,
+                                                             path_info, ex)
+            raise ArchiveInterfaceError()
         try:
             myfile = self.backend_open(filename, "r")
         except Exception as ex:
-            self._response = resp.file_not_found_exception(start_response, filename, ex)
-            return self.return_response()
+            self._response = resp.file_not_found_exception(start_response,
+                                                           filename, ex)
+            raise ArchiveInterfaceError()
         try:
             status = myfile.status()
             if (isinstance(status, POSIXStatus) == True or
-                isinstance(status, HPSSStatus) == True):
-                self._response = resp.file_status(start_response, filename, status)
+                    isinstance(status, HPSSStatus) == True):
+                self._response = resp.file_status(start_response, filename,
+                                                  status)
             else:
-                self.response = resp.file_unknown_status(start_response, filename)
+                self._response = resp.file_unknown_status(start_response,
+                                                          filename)
 
 
         except Exception as ex:
-            self._response = resp.file_status_exception(start_response, filename, ex)
+            self._response = resp.file_status_exception(start_response,
+                                                        filename, ex)
+            raise ArchiveInterfaceError()
 
         myfile.close()
         myfile = None
@@ -158,7 +179,6 @@ class ArchiveGenerator(object):
     def stage(self, env, start_response):
         """Stage the file to disk"""
         myfile = None
-        stage = None
         backend_type = self._backend_type
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
@@ -166,21 +186,25 @@ class ArchiveGenerator(object):
         stderr.flush()
         try:
             filename = path.join(prefix, self.path_info_munge(path_info))
-        except:
-            self._response = resp.munging_filepath_exception(start_response, backend_type,
-                                                  path_info)
-            return self.return_response()
+        except Exception as ex:
+            self._response = resp.munging_filepath_exception(start_response,
+                                                             backend_type,
+                                                             path_info, ex)
+            raise ArchiveInterfaceError()
         try:
             myfile = self.backend_open(filename, "r")
         except Exception as ex:
-            self._response = resp.file_not_found_exception(start_response, filename, ex)
-            return self.return_response()
+            self._response = resp.file_not_found_exception(start_response,
+                                                           filename, ex)
+            raise ArchiveInterfaceError()
         try:
-            stage = myfile.stage()
+            myfile.stage()
             self._response = resp.file_stage(start_response, filename)
 
         except Exception as ex:
-            self._response = resp.file_stage_exception(start_response, filename, ex)
+            self._response = resp.file_stage_exception(start_response,
+                                                       filename, ex)
+            raise ArchiveInterfaceError()
         myfile.close()
         myfile = None
         return self.return_response()
@@ -211,19 +235,29 @@ class ArchiveGenerator(object):
 
     def myemsl_archiveinterface(self, env, start_response):
         """Parses request method type"""
-        res = None
-        if env['REQUEST_METHOD'] == 'GET':
-            return self.get(env, start_response)
-        elif env['REQUEST_METHOD'] == 'PUT':
-            return self.put(env, start_response)
-        elif env['REQUEST_METHOD'] == 'HEAD':
-            return self.status(env, start_response)
-        elif env['REQUEST_METHOD'] == 'POST':
-            return self.stage(env, start_response)
-        else:
-            resp = archive_interface_responses.Responses()
-            self._response = resp.unknown_request(start_response, env['REQUEST_METHOD'])
-        return self.return_response()
+        try:
+            if env['REQUEST_METHOD'] == 'GET':
+                return self.get(env, start_response)
+            elif env['REQUEST_METHOD'] == 'PUT':
+                return self.put(env, start_response)
+            elif env['REQUEST_METHOD'] == 'HEAD':
+                return self.status(env, start_response)
+            elif env['REQUEST_METHOD'] == 'POST':
+                return self.stage(env, start_response)
+            else:
+                resp = archive_interface_responses.Responses()
+                self._response = resp.unknown_request(start_response,
+                                                      env['REQUEST_METHOD'])
+            return self.return_response()
+        except ArchiveInterfaceError:
+            #catching application errors
+            #all exceptions set the return response
+            #if the response is not set, set it as unknown
+            if self._response == None:
+                resp = archive_interface_responses.Responses()
+                self._response = resp.unknown_exception(start_response)
+            return self.return_response()
+
 
 if __name__ == "__main__":
     import doctest

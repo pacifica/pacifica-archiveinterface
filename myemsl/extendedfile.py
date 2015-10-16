@@ -39,16 +39,16 @@ class POSIXStatus(object):
     """
     _disk = "disk"
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
-        self._mtime = mtime
-        self._ctime = ctime
-        self._bytes_per_level = bytes_per_level
-        self._filesize = filesize
-        self._defined_levels = self.define_levels()
-        self._file_storage_media = self.find_file_storage_media()
+        self.mtime = mtime
+        self.ctime = ctime
+        self.bytes_per_level = bytes_per_level
+        self.filesize = filesize
+        self.defined_levels = self.define_levels()
+        self.file_storage_media = self.find_file_storage_media()
 
     def find_file_storage_media(self):
         """Get the file storage media.  Showed always be disk for posix"""
-        level_array = self._defined_levels
+        level_array = self.defined_levels
         disk_level = 0
         return level_array[disk_level]
 

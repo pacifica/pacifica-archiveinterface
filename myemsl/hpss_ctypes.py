@@ -60,34 +60,45 @@ class HPSSCommon(object):
     """ Class for handling common hpss methods,
     such as pinging the core server.
     """
-    def __init__(self, accept_latency = 5):
+    def __init__(self, accept_latency=5):
         self._accept_latency = accept_latency
+        self._latency = None
 
     def ping_core(self):
         """Ping the Core server to see if its still active"""
 
-        return 
         #Define acceptable latency in seconds
-        acceptableLatency = self._accept_latency
-        latencyTuple = _archiveinterface.hpss_ping_core()
+        acceptable_latency = self._accept_latency
+        latency_tuple = _archiveinterface.hpss_ping_core()
+        # Get the latency
+        latency = self.parse_latency(latency_tuple)
+
+
+        if latency > acceptable_latency:
+            raise HPSSClientError("The archive core server is slow to respond"+
+                                  " Latency is: "+ str(latency) + " second(s)")
+
+    def parse_latency(self, latency_tuple):
+        """
+        Parses the tuple returned by the c extension into
+        the correct latency
+        """
         # Get the latency
         # LatencyTuple[0] = time the core server responded
         # LatencyTuple[1] = microseconds relative to core server
         # LatencyTuple[2] = time before pinging core server
         # LatencyTuple[3] = microseconds relative before ping
 
-        latSeconds = float(latencyTuple[0])
-        latMicroSeconds = (float(latencyTuple[1])/1000000)
-        responseTime = latSeconds + latMicroSeconds
-        beforePingSeconds = float(latencyTuple[2])
-        beforePingMicroSeconds = (float(latencyTuple[3])/1000000)
-        beforePingTime = beforePingSeconds + beforePingMicroSeconds
-        latency = responseTime - beforePingTime
+        lat_seconds = float(latency_tuple[0])
+        lat_microseconds = (float(latency_tuple[1])/1000000)
+        response_time = lat_seconds + lat_microseconds
+        before_ping_seconds = float(latency_tuple[2])
+        before_ping_microseconds = (float(latency_tuple[3])/1000000)
+        before_ping_time = before_ping_seconds + before_ping_microseconds
+        latency = response_time - before_ping_time
+        self._latency = latency
+        return latency
 
-
-        if latency > acceptableLatency:
-            raise HPSSClientError("The archive core server is slow to respond"+
-                " Latency is: "+`latency` + " second(s)")
 
 class HPSSFile(HPSSCommon):
     """class that represents the hpss file struct and its methods"""
@@ -132,12 +143,14 @@ class HPSSFile(HPSSCommon):
 
     def stage(self):
         """
-        Stage an hpss file so that it moves to disk 
+        Stage an hpss file so that it moves to disk
+        doesnt need to return anything.  will throw
+        exception on error however
         """
         self.ping_core()
 
         try:
-            stage = _archiveinterface.hpss_stage(self._filepath)
+            _archiveinterface.hpss_stage(self._filepath)
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
@@ -203,12 +216,11 @@ class HPSSFile(HPSSCommon):
         else:
             return rcode
 
-            
 
 class HPSSClient(HPSSCommon):
     """
     Write the block to the file
-    Testing conencting to hpss client, writing, and reading a file
+    Testing conencting to hpss client, writing, and reading a filel
 
     >>> user_name = "svc-myemsldev"
     >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
@@ -258,20 +270,20 @@ class HPSSStatus(object):
     _tape = "tape"
     _error = "error"
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
-        self._mtime = mtime
-        self._ctime = ctime
-        self._bytes_per_level = bytes_per_level
-        self._filesize = filesize
+        self.mtime = mtime
+        self.ctime = ctime
+        self.bytes_per_level = bytes_per_level
+        self.filesize = filesize
         self._defined_levels = self.define_levels()
-        self._file_storage_media = self.find_file_storage_media()
+        self.file_storage_media = self.find_file_storage_media()
 
 
     def find_file_storage_media(self):
         """Set if file is on disk or tape"""
         level_array = self._defined_levels
         level = 0
-        for num_bytes in self._bytes_per_level:
-            if num_bytes == self._filesize:
+        for num_bytes in self.bytes_per_level:
+            if num_bytes == self.filesize:
                 break
             level += 1
 
