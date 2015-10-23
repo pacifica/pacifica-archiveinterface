@@ -9,9 +9,9 @@ pacifica_archiveinterface = Extension('pacifica._archiveinterface', ['src/status
       extra_compile_args = ['-DLINUX', '-DHPSS51', '-DLITTLEEND']
 )
 
-setup(name='MyEMSLArchiveInterface',
+setup(name='PacificaArchiveInterface',
       version='1.0',
-      description='MyEMSL Archive Interface',
+      description='Pacifica Archive Interface',
       author='David Brown',
       author_email='david.brown@pnnl.gov',
       packages=['pacifica'],

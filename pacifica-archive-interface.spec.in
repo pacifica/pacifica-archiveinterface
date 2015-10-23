@@ -1,7 +1,7 @@
 Name: @PACKAGE_NAME@
 Version: @VERSION@
 Release: 1%{?dist}
-Summary: MyEMSL Archive Interface
+Summary: Pacifica Archive Interface
 Group: System Environment/Base
 License: Private
 Source: %{name}-%{version}.tar.gz
@@ -10,7 +10,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 BuildRequires: hpss-client-devel
 
 %description
-MyEMSL Archive Interface provides the trusted API to MyEMSL internal 
+Pacifica Archive Interface provides the trusted API to Pacifica internal 
 services.
 
 %prep

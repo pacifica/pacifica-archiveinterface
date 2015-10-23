@@ -1,7 +1,7 @@
-# MyEMSL Archive Interface
+# Pacifica Archive Interface
 
 This code is to provide the archive interface for the rest of the
-MyEMSL code base. This code consists of some very specific algorithms
+Pacifica code base. This code consists of some very specific algorithms
 and APIs to support data that might exist on tape or spinning disk.
 
 # Building and Installing
