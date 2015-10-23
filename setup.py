@@ -2,7 +2,7 @@
 
 from distutils.core import setup, Extension
 
-myemsl_archiveinterface = Extension('myemsl._archiveinterface', ['src/status.c'],
+pacifica_archiveinterface = Extension('pacifica._archiveinterface', ['src/status.c'],
       include_dirs = ['/opt/hpss/include'],
       library_dirs=['/opt/hpss/lib'],
       libraries=['hpss'],
@@ -14,7 +14,7 @@ setup(name='MyEMSLArchiveInterface',
       description='MyEMSL Archive Interface',
       author='David Brown',
       author_email='david.brown@pnnl.gov',
-      packages=['myemsl'],
+      packages=['pacifica'],
       scripts=['scripts/server.py'],
-      ext_modules=[myemsl_archiveinterface]
+      ext_modules=[pacifica_archiveinterface]
      )

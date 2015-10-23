@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-MyEMSL Archive Interface
+Pacifica Archive Interface
 
 This is the main program that starts the WSGI server.
 
@@ -8,7 +8,7 @@ The core of the server code is in archive_interface.py.
 
 """
 from argparse import ArgumentParser
-from myemsl.archive_interface import ArchiveGenerator
+from pacifica.archive_interface import ArchiveGenerator
 from wsgiref.simple_server import make_server
 
 PARSER = ArgumentParser(description='Run the archive interface.')
@@ -32,6 +32,6 @@ PARSER.add_argument('--auth', metavar='AUTH', dest='auth', default=None,
 ARGS = PARSER.parse_args()
 GENERATOR = ArchiveGenerator(ARGS.type, ARGS.prefix, ARGS.user, ARGS.auth)
 SRV = make_server(ARGS.address, ARGS.port,
-                  GENERATOR.myemsl_archiveinterface)
+                  GENERATOR.pacifica_archiveinterface)
 
 SRV.serve_forever()

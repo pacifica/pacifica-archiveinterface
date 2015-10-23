@@ -27,7 +27,7 @@ enum hpss_rpc_auth_type_t {
 """
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
-import myemsl._archiveinterface as _archiveinterface
+import pacifica._archiveinterface as _archiveinterface
 
 
 HPSS_AUTHN_MECH_INVALID = 0

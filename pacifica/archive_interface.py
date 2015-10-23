@@ -3,12 +3,12 @@
 from json import dumps
 from os import path
 from sys import stderr
-from myemsl.hpss_ctypes import HPSSClient
-from myemsl.hpss_ctypes import HPSSStatus
-from myemsl.id2filename import id2filename
-import myemsl.archive_interface_responses as archive_interface_responses
-from myemsl.extendedfile import ExtendedFile
-from myemsl.extendedfile import POSIXStatus
+from pacifica.hpss_ctypes import HPSSClient
+from pacifica.hpss_ctypes import HPSSStatus
+from pacifica.id2filename import id2filename
+import pacifica.archive_interface_responses as archive_interface_responses
+from pacifica.extendedfile import ExtendedFile
+from pacifica.extendedfile import POSIXStatus
 
 BLOCK_SIZE = 1<<20
 
@@ -41,7 +41,7 @@ class ArchiveGenerator(object):
     >>> b_type = "hpss"
     >>> archiveHpss = ArchiveGenerator(b_type, prefix, user_name, auth_path)
     >>> type(archiveHpss.backend_open("/myemsl-dev/bundle/test.txt", 'w'))
-    <class 'myemsl.hpss_ctypes.HPSSFile'>
+    <class 'pacifia.hpss_ctypes.HPSSFile'>
     >>> archiveHpss.path_info_munge('1234')
     'd2/4d2'
 
@@ -54,7 +54,7 @@ class ArchiveGenerator(object):
     >>> b_posix = "posix"
     >>> archivePosix = ArchiveGenerator(b_posix, prefix_posix, u_name, a_path)
     >>> type(archivePosix.backend_open('/tmp/1234', 'w'))
-    <class 'myemsl.extendedfile.ExtendedFile'>
+    <class 'pacifica.extendedfile.ExtendedFile'>
     >>> archivePosix.path_info_munge('1234')
     '1234'
     """
@@ -233,7 +233,7 @@ class ArchiveGenerator(object):
         return dumps(self._response, sort_keys=True, indent=4)
 
 
-    def myemsl_archiveinterface(self, env, start_response):
+    def pacifica_archiveinterface(self, env, start_response):
         """Parses request method type"""
         try:
             if env['REQUEST_METHOD'] == 'GET':
