@@ -3,8 +3,13 @@
 from json import dumps
 from os import path
 from sys import stderr
-from pacifica.hpss_ctypes import HPSSClient
-from pacifica.hpss_ctypes import HPSSStatus
+HAVE_HPSS = False
+try:
+    from pacifica.hpss_ctypes import HPSSClient
+    from pacifica.hpss_ctypes import HPSSStatus
+    HAVE_HPSS = True
+except:
+    pass
 from pacifica.id2filename import id2filename
 import pacifica.archive_interface_responses as archive_interface_responses
 from pacifica.extendedfile import ExtendedFile
@@ -64,7 +69,9 @@ class ArchiveGenerator(object):
         self._prefix = prefix
         self._response = None
 
-        if backend_type == 'hpss':
+        if backend_type == 'hpss' and not HAVE_HPSS:
+            raise ArchiveInterfaceError("type is hpss but we don't have hpss loaded")
+        if backend_type == 'hpss' and HAVE_HPSS:
             self._client = HPSSClient(user=user, auth=auth)
 
     def get(self, env, start_response):

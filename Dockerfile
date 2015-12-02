@@ -8,7 +8,7 @@ RUN mkdir /app
 COPY . /app
 RUN chmod +x /app/runit.sh
 WORKDIR /app
-RUN python ./setup.py install
+RUN python ./setup-nohpss.py install
 ENV MYEMSL_AAPI_BACKEND_TYPE posix
 ENV MYEMSL_AAPI_ADDRESS localhost
 ENV MYEMSL_AAPI_PORT 8080
