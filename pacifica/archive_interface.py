@@ -3,6 +3,7 @@
 from json import dumps
 from os import path
 from sys import stderr
+import doctest
 try:
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
@@ -13,8 +14,6 @@ from pacifica.id2filename import id2filename
 import pacifica.archive_interface_responses as archive_interface_responses
 from pacifica.extendedfile import ExtendedFile
 from pacifica.extendedfile import POSIXStatus
-
-import doctest
 
 BLOCK_SIZE = 1<<20
 
