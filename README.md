@@ -19,7 +19,7 @@ This is a standard python distutils build process.
 `python ./setup.py build`
 `python ./setup.py install`
 
-################## Running It ##################
+# Running It
 
 There are two ways of running the archive interface; POSIX and HPSS.
 
@@ -27,9 +27,9 @@ There are two ways of running the archive interface; POSIX and HPSS.
 `python ./scripts/server.py -t hpss -u hpss.unix --auth /var/hpss/etc/hpss.unix.keytab -p 8080 -a 127.0.0.1 --prefix /path`
 
 
-################## API Examples ##################
+# API Examples
 
-################## Put a File ##################
+## Put a File
 
 The path in the URL should be only an integer specifying a unique 
 file in the archive. Sending a different file to the same URL will
@@ -44,7 +44,7 @@ Sample output:
 }
 
 
-################## Get a File ##################
+## Get a File
 The HTTP `GET` method is used to get the contents
 of the specified file.
 
@@ -53,7 +53,7 @@ of the specified file.
 Sample output (without -o option):
 "Document Contents"
 
-################## Status a File ##################
+## Status a File
 
 The HTTP `HEAD` method is used to get a JSON document describing the
 status of the file. The status includes, but is not limited to, the
@@ -74,7 +74,7 @@ Sample output:
 
 
 
-################## Stage a File ##################
+## Stage a File
 The HTTP `POST` method is used to stage a file for use.  In posix this
 equates to a no-op on hpss it stages the file to the disk drive.
 
