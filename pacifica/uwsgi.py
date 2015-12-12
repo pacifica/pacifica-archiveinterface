@@ -2,9 +2,9 @@
 """
 uWSGI server application generator.
 """
-from pacifica.archive_interface import ArchiveGenerator
 import ConfigParser
 import os.path
+from pacifica.archive_interface import ArchiveGenerator
 
 
 def application(env, start_response):

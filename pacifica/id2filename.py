@@ -1,4 +1,8 @@
+#!/usr/bin/python
 """Converts an integer id to a filepath for storage system"""
+
+import sys
+
 def id2dirandfilename(fileid):
     """Algorithm for getting filepath from an integer id"""
     hexfileid = "%x" %(fileid)
@@ -20,5 +24,4 @@ def id2filename(fileid):
     return id2dirandfilename(fileid)
 
 if __name__ == '__main__':
-    import sys
     print id2filename(int(sys.argv[1]))
