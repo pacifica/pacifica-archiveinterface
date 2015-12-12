@@ -8,7 +8,7 @@ try:
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
     HAVE_HPSS = True
-except:
+except ImportError:
     pass
 from pacifica.id2filename import id2filename
 import pacifica.archive_interface_responses as archive_interface_responses
@@ -70,7 +70,8 @@ class ArchiveGenerator(object):
         self._response = None
 
         if backend_type == 'hpss' and not HAVE_HPSS:
-            raise ArchiveInterfaceError("type is hpss but we don't have hpss loaded")
+            raise ArchiveInterfaceError("type is hpss but we don't"
+                                        +"have hpss loaded")
         if backend_type == 'hpss' and HAVE_HPSS:
             self._client = HPSSClient(user=user, auth=auth)
 

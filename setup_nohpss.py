@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+Setup archive interface without hpss.
+"""
 from distutils.core import setup
 
 setup(name='PacificaArchiveInterface',
