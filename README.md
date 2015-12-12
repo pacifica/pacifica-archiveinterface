@@ -1,5 +1,5 @@
 # Pacifica Archive Interface
-[![Build Status](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface?branch=master)](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface)
+[![Build Status](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface.svg?branch=master)](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface)
 
 This code is to provide the archive interface for the rest of the
 Pacifica code base. This code consists of some very specific algorithms
