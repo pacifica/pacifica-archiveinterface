@@ -8,8 +8,8 @@ The core of the server code is in archive_interface.py.
 
 """
 from argparse import ArgumentParser
-from pacifica.archive_interface import ArchiveGenerator
 from wsgiref.simple_server import make_server
+from pacifica.archive_interface import ArchiveGenerator
 
 PARSER = ArgumentParser(description='Run the archive interface.')
 
