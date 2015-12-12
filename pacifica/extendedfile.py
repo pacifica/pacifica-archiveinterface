@@ -5,6 +5,7 @@
 """
 
 from os import path
+import doctest
 
 class ExtendedFile(file):
     """Extending default file stuct to support additional methods"""
@@ -59,5 +60,4 @@ class POSIXStatus(object):
         return type_per_level
 
 if __name__ == "__main__":
-    import doctest
     doctest.testmod(verbose=True)

@@ -27,6 +27,7 @@ enum hpss_rpc_auth_type_t {
 """
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
+import doctest
 import pacifica._archiveinterface as _archiveinterface
 
 
@@ -303,5 +304,4 @@ class HPSSStatus(object):
 
 
 if __name__ == "__main__":
-    import doctest
     doctest.testmod(verbose=True)
