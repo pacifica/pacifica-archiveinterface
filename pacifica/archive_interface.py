@@ -1,8 +1,5 @@
 #!/usr/bin/python
 """Class for the archive interface.  ALlows API to file interactions"""
-from json import dumps
-from os import path
-from sys import stderr
 HAVE_HPSS = False
 try:
     from pacifica.hpss_ctypes import HPSSClient
@@ -10,10 +7,15 @@ try:
     HAVE_HPSS = True
 except ImportError:
     pass
+from json import dumps
+from os import path
+from sys import stderr
 from pacifica.id2filename import id2filename
 import pacifica.archive_interface_responses as archive_interface_responses
 from pacifica.extendedfile import ExtendedFile
 from pacifica.extendedfile import POSIXStatus
+
+import doctest
 
 BLOCK_SIZE = 1<<20
 
@@ -166,8 +168,8 @@ class ArchiveGenerator(object):
             raise ArchiveInterfaceError()
         try:
             status = myfile.status()
-            if (isinstance(status, POSIXStatus) == True or
-                    isinstance(status, HPSSStatus) == True):
+            if (isinstance(status, POSIXStatus) or
+                    isinstance(status, HPSSStatus)):
                 self._response = resp.file_status(start_response, filename,
                                                   status)
             else:
@@ -261,13 +263,12 @@ class ArchiveGenerator(object):
             #catching application errors
             #all exceptions set the return response
             #if the response is not set, set it as unknown
-            if self._response == None:
+            if self._response is None:
                 resp = archive_interface_responses.Responses()
                 self._response = resp.unknown_exception(start_response)
             return self.return_response()
 
 
 if __name__ == "__main__":
-    import doctest
     doctest.testmod(verbose=True)
 
