@@ -1,15 +1,14 @@
 #!/usr/bin/python
 """Class for the archive interface.  ALlows API to file interactions"""
-HAVE_HPSS = False
+from json import dumps
+from os import path
+from sys import stderr
 try:
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
     HAVE_HPSS = True
 except ImportError:
-    pass
-from json import dumps
-from os import path
-from sys import stderr
+    HAVE_HPSS = False
 from pacifica.id2filename import id2filename
 import pacifica.archive_interface_responses as archive_interface_responses
 from pacifica.extendedfile import ExtendedFile
