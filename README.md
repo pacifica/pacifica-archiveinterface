@@ -40,10 +40,12 @@ python ./scripts/server.py -t hpss -u hpss.unix --auth /var/hpss/etc/hpss.unix.k
 
 The path in the URL should be only an integer specifying a unique 
 file in the archive. Sending a different file to the same URL will
-over-write the contents of the previous file.
+over-write the contents of the previous file. Setting the Last-
+Modified header sets the mtime of the file in the archive and is
+required.
 
 ```
-curl -X PUT --upload-file /tmp/foo.txt http://127.0.0.1:8080/1
+curl -X PUT -H 'Last-Modified: Sun, 06 Nov 1994 08:49:37 GMT' --upload-file /tmp/foo.txt http://127.0.0.1:8080/1
 ```
 
 Sample output:
