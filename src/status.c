@@ -143,7 +143,7 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
     unsigned32 secs,usecs;
 
     /*
-        The Hex values used here corresond to the MyEMSL CORE server
+        The Hex values used here corresond to the EMSL HPSS CORE server
         getting these values dynamically becomes difficult
     */
     uuid.time_low = 0xe52ea34e;
