@@ -7,7 +7,7 @@
 static PyObject *archiveInterfaceError;
 
 static PyObject *
-myemsl_archiveinterface_mtime(PyObject *self, PyObject *args)
+pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
@@ -35,7 +35,7 @@ myemsl_archiveinterface_mtime(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-myemsl_archiveinterface_ctime(PyObject *self, PyObject *args)
+pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
@@ -63,7 +63,7 @@ myemsl_archiveinterface_ctime(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-myemsl_archiveinterface_filesize(PyObject *self, PyObject *args)
+pacifica_archiveinterface_filesize(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
@@ -91,7 +91,7 @@ myemsl_archiveinterface_filesize(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-myemsl_archiveinterface_status(PyObject *self, PyObject *args)
+pacifica_archiveinterface_status(PyObject *self, PyObject *args)
 {
     const char *filepath;
     PyObject * bytes_per_level= PyTuple_New(HPSS_MAX_STORAGE_LEVELS);
@@ -128,7 +128,7 @@ myemsl_archiveinterface_status(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
+pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
 {
     /*
         latency[0] = time ping responds in seconds (epoch)
@@ -179,7 +179,7 @@ myemsl_archiveinterface_ping_core(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-myemsl_archiveinterface_stage(PyObject *self, PyObject *args)
+pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
@@ -214,17 +214,17 @@ myemsl_archiveinterface_stage(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef StatusMethods[] = {
-    {"hpss_status", myemsl_archiveinterface_status, METH_VARARGS,
+    {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,
         "Get the status for a file in the archive."},
-    {"hpss_mtime", myemsl_archiveinterface_mtime, METH_VARARGS,
+    {"hpss_mtime", pacifica_archiveinterface_mtime, METH_VARARGS,
         "Get the mtime for a file in the archive."},
-    {"hpss_ctime", myemsl_archiveinterface_ctime, METH_VARARGS,
+    {"hpss_ctime", pacifica_archiveinterface_ctime, METH_VARARGS,
         "Get the ctime for a file in the archive."},
-    {"hpss_filesize", myemsl_archiveinterface_filesize, METH_VARARGS,
+    {"hpss_filesize", pacifica_archiveinterface_filesize, METH_VARARGS,
         "Get the filesize for a file in the archive."},
-    {"hpss_ping_core", myemsl_archiveinterface_ping_core, METH_VARARGS,
+    {"hpss_ping_core", pacifica_archiveinterface_ping_core, METH_VARARGS,
         "Check if the Core Server is actively responding."},
-    {"hpss_stage", myemsl_archiveinterface_stage, METH_VARARGS,
+    {"hpss_stage", pacifica_archiveinterface_stage, METH_VARARGS,
         "Stage a file to disk within hpss"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
