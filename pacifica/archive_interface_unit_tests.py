@@ -2,7 +2,6 @@
 File used to unit test the pacifica archive interface
 """
 import unittest
-import os
 from pacifica.archive_interface import un_abs_path, get_http_modified_time
 
 
