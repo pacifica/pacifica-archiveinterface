@@ -242,7 +242,6 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
     if(rcode != 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
-        hpss_Close(fd);
         return NULL;
     }
     return Py_BuildValue("i", i);
