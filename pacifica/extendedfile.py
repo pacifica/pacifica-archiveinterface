@@ -6,6 +6,7 @@
 
 from os import path
 import doctest
+import os
 
 class ExtendedFile(file):
     """Extending default file stuct to support additional methods"""
@@ -27,6 +28,10 @@ class ExtendedFile(file):
     def stage(self):
         """Stages a file. Since POSIX, essentially a no op"""
         self._staged = True
+
+    def set_mod_time(self, mod_time):
+        """sets the last modified time on the file"""
+        os.utime(self._path, (mod_time, mod_time))
 
 
 class POSIXStatus(object):

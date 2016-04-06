@@ -4,6 +4,9 @@ from json import dumps
 from os import path
 from sys import stderr
 import doctest
+import time
+import datetime
+import email.utils as eut
 try:
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
@@ -33,6 +36,19 @@ def un_abs_path(path_name):
     if path.isabs(path_name):
         path_name = path_name[1:]
     return path_name
+
+def get_http_modified_time(env):
+    """Gets the modified time from the request in unix timestamp.
+    Returns current time if no time was passed"""
+    mod_time = None
+    if 'HTTP_LAST_MODIFIED' in env:
+            http_time = env['HTTP_LAST_MODIFIED']
+            date_time_obj = datetime.datetime(*eut.parsedate(http_time)[:6])
+            mod_time = time.mktime(date_time_obj.timetuple())
+    else:
+        mod_time = time.time()
+
+    return mod_time
 
 
 class ArchiveGenerator(object):
@@ -110,6 +126,12 @@ class ArchiveGenerator(object):
         prefix = self._prefix
         path_info = un_abs_path(env['PATH_INFO'])
         resp = archive_interface_responses.Responses()
+        try:
+            mod_time = get_http_modified_time(env)
+        except TypeError as ex:
+            self._response = resp.http_modtime_exception(start_response)
+            raise ArchiveInterfaceError()
+
         stderr.flush()
 
         try:
@@ -129,7 +151,7 @@ class ArchiveGenerator(object):
                     buf = env['wsgi.input'].read(content_length)
                 myfile.write(buf)
                 content_length -= len(buf)
-
+         
             self._response = resp.successful_put_response(start_response,
                                                           env['CONTENT_LENGTH'])
 
@@ -139,6 +161,7 @@ class ArchiveGenerator(object):
             raise ArchiveInterfaceError()
 
         myfile.close()
+        myfile.set_mod_time(mod_time)
         myfile = None
         return self.return_response()
 

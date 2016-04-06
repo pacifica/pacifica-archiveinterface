@@ -136,5 +136,15 @@ class Responses(object):
         }
         return self._response
 
+    def http_modtime_exception(self, start_response):
+        """Response when there is an error getting mtime on passed file"""
+        start_response(
+            '500 Internal Server Error',
+            [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'Error with getting HTTP file mtime'
+        }
+        return self._response
+
     def __init__(self):
         self._response = None

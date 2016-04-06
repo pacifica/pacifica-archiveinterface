@@ -3,6 +3,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include "hpss_api.h"
+#include <sys/types.h>
+#include <utime.h>
 
 static PyObject *archiveInterfaceError;
 
@@ -213,6 +215,39 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     return Py_BuildValue("i", i);
 }
 
+static PyObject *
+pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
+{
+    const char *filepath;
+    float mtime;
+    struct utimbuf t;
+    int rcode;
+    int i = 1;
+
+    /*
+        get the filepath passed in from the python code
+    */
+    if (!PyArg_ParseTuple(args, "sf", &filepath, &mtime))
+    {
+        PyErr_SetString(archiveInterfaceError, "Error parsing arguments");
+        return NULL;
+    }
+
+
+    t.modtime = mtime;
+    t.actime = mtime;
+
+
+    rcode = hpss_Utime(filepath, t);
+    if(rcode != 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        hpss_Close(fd);
+        return NULL;
+    }
+    return Py_BuildValue("i", i);
+}
+
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,
         "Get the status for a file in the archive."},
@@ -226,6 +261,8 @@ static PyMethodDef StatusMethods[] = {
         "Check if the Core Server is actively responding."},
     {"hpss_stage", pacifica_archiveinterface_stage, METH_VARARGS,
         "Stage a file to disk within hpss"},
+    {"hpss_utime", pacifica_archiveinterface_utime, METH_VARARGS,
+        "Set the modified time on a file"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

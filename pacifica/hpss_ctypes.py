@@ -217,6 +217,18 @@ class HPSSFile(HPSSCommon):
         else:
             return rcode
 
+    def set_mod_time(self, mod_time):
+        """sets the last modified time on the file"""
+        self.ping_core()
+
+        try:
+            _archiveinterface.hpss_utime((self._filepath, mod_time))
+
+        except Exception as ex:
+            #Push the excpetion up the chain to the response
+            raise HPSSClientError("Error using c extension for hpss utime"+
+                                  " exception: (%s)\n"%ex)
+
 
 class HPSSClient(HPSSCommon):
     """
