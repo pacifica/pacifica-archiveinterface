@@ -28,9 +28,12 @@ enum hpss_rpc_auth_type_t {
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
 import doctest
+# c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
+# pylint: disable=no-name-in-module
 import pacifica._archiveinterface as _archiveinterface
 # pylint: enable=import-error
+# pylint: disable=no-name-in-module
 
 
 HPSS_AUTHN_MECH_INVALID = 0
@@ -140,7 +143,7 @@ class HPSSFile(HPSSCommon):
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss status"+
-                                     " exception: (%s)\n"%ex)
+                                  " exception: (%s)\n"%ex)
 
         return status
 
