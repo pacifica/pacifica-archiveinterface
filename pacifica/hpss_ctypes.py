@@ -28,7 +28,9 @@ enum hpss_rpc_auth_type_t {
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
 import doctest
+# pylint: disable=import-error
 import pacifica._archiveinterface as _archiveinterface
+# pylint: enable=import-error
 
 
 HPSS_AUTHN_MECH_INVALID = 0
@@ -137,8 +139,8 @@ class HPSSFile(HPSSCommon):
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
-            raise HPSSClientErrorlll("Error using c extension for hpss status"+
-                                  " exception: (%s)\n"%ex)
+            raise HPSSClientError("Error using c extension for hpss status"+
+                                     " exception: (%s)\n"%ex)
 
         return status
 
@@ -180,7 +182,7 @@ class HPSSFile(HPSSCommon):
 
     def close(self):
         """Close an hpss file"""
-        if self.closed == True:
+        if self.closed:
             return
         self.ping_core()
         self.flush()
