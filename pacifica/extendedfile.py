@@ -4,7 +4,6 @@
     to invoke: ExtendedFile(path, mode)
 """
 
-from os import path
 import doctest
 import os
 
@@ -18,10 +17,10 @@ class ExtendedFile(file):
     def status(self):
         """Returns status of file. Since POSIX, will always return disk"""
 
-        mtime = path.getmtime(self._path)
-        ctime = path.getctime(self._path)
-        bytes_per_level = (long(path.getsize(self._path)),)
-        filesize = path.getsize(self._path)
+        mtime = os.path.getmtime(self._path)
+        ctime = os.path.getctime(self._path)
+        bytes_per_level = (long(os.path.getsize(self._path)),)
+        filesize = os.path.getsize(self._path)
         status = POSIXStatus(mtime, ctime, bytes_per_level, filesize)
 
         return status
