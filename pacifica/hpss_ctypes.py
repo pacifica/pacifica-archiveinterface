@@ -1,4 +1,4 @@
-"""Provides interfrace for the HPSS client and file functionality
+"""Provides interface for the HPSS client and file functionality
 
 From hpss_types.h
 
