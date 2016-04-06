@@ -42,9 +42,9 @@ def get_http_modified_time(env):
     Returns current time if no time was passed"""
     mod_time = None
     if 'HTTP_LAST_MODIFIED' in env:
-            http_time = env['HTTP_LAST_MODIFIED']
-            date_time_obj = datetime.datetime(*eut.parsedate(http_time)[:6])
-            mod_time = time.mktime(date_time_obj.timetuple())
+        http_time = env['HTTP_LAST_MODIFIED']
+        date_time_obj = datetime.datetime(*eut.parsedate(http_time)[:6])
+        mod_time = time.mktime(date_time_obj.timetuple())
     else:
         mod_time = time.time()
 
@@ -151,7 +151,7 @@ class ArchiveGenerator(object):
                     buf = env['wsgi.input'].read(content_length)
                 myfile.write(buf)
                 content_length -= len(buf)
-         
+
             self._response = resp.successful_put_response(start_response,
                                                           env['CONTENT_LENGTH'])
 
