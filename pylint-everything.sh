@@ -10,3 +10,4 @@ pylint pacifica.extendedfile
 pylint pacifica.archive_interface_responses
 pylint pacifica.hpss_ctypes
 pylint pacifica.id2filename
+python -m pacifica.archive_interface_unit_tests -v
