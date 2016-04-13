@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""Class for the archive interface.  ALlows API to file interactions"""
+"""Class for the archive interface.  Allows API to file interactions"""
 from json import dumps
 from os import path
 from sys import stderr
@@ -25,8 +25,6 @@ class ArchiveInterfaceError(Exception):
     """
     ArchiveInterfaceError - basic exception class for this module.
     Will be used to throw exceptions up to the top level of the application
-    >>> ArchiveInterfaceError()
-    ArchiveInterfaceError()
     """
     pass
 
@@ -54,30 +52,6 @@ def get_http_modified_time(env):
 class ArchiveGenerator(object):
     """Defines the methods that can be used on files for request types
     doctest for the archive generator class
-
-    HPSS Doc Tests
-    >>> user_name = "svc-myemsldev"
-    >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
-    >>> prefix = "/myemsl-dev/bundle"
-    >>> b_type = "hpss"
-    >>> archiveHpss = ArchiveGenerator(b_type, prefix, user_name, auth_path)
-    >>> type(archiveHpss.backend_open("/myemsl-dev/bundle/test.txt", 'w'))
-    <class 'pacifia.hpss_ctypes.HPSSFile'>
-    >>> archiveHpss.path_info_munge('1234')
-    'd2/4d2'
-
-
-
-    Posix file tests
-    >>> u_name = None
-    >>> a_path = None
-    >>> prefix_posix = ""
-    >>> b_posix = "posix"
-    >>> archivePosix = ArchiveGenerator(b_posix, prefix_posix, u_name, a_path)
-    >>> type(archivePosix.backend_open('/tmp/1234', 'w'))
-    <class 'pacifica.extendedfile.ExtendedFile'>
-    >>> archivePosix.path_info_munge('1234')
-    '1234'
     """
     def __init__(self, backend_type, prefix, user, auth):
         self._client = None
