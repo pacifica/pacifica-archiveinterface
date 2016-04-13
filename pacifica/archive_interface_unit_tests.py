@@ -38,7 +38,7 @@ class TestArchiveInterface(unittest.TestCase):
         archiveposix = ArchiveGenerator(b_type, prefix, user_name, auth_path)
         self.assertTrue(isinstance(archiveposix.backend_open('/tmp/1234', 'w'),
                                    ExtendedFile))
-        self.assertEqual(archivePosix.path_info_munge('1234'), '1234')
+        self.assertEqual(archiveposix.path_info_munge('1234'), '1234')
 
     def test_archive_generator_hpss(self):
         """Test of trying to make a archive generator using HPSS backend"""
@@ -50,7 +50,7 @@ class TestArchiveInterface(unittest.TestCase):
             archive = ArchiveGenerator(b_type, prefix, user_name, auth_path)
             archive.backend_open('/myemsl-dev/bundle/test.txt', 'w')
             self.assertEqual(archive.path_info_munge('1234'), 'd2/4d2')
-        except ArchiveInterfaceError as ex:
+        except ArchiveInterfaceError:
             self.skipTest("HPSS Not Configured")
 
 class TestExtendedFile(unittest.TestCase):
