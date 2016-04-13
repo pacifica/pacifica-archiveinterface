@@ -35,12 +35,12 @@ class TestArchiveInterface(unittest.TestCase):
         auth_path = None
         prefix = ""
         b_type = "posix"
-        archivePosix = ArchiveGenerator(b_type, prefix, user_name, auth_path)
-        self.assertTrue(isinstance(archivePosix.backend_open('/tmp/1234', 'w'),
-                         ExtendedFile))
+        archiveposix = ArchiveGenerator(b_type, prefix, user_name, auth_path)
+        self.assertTrue(isinstance(archiveposix.backend_open('/tmp/1234', 'w'),
+                                   ExtendedFile))
         self.assertEqual(archivePosix.path_info_munge('1234'), '1234')
 
-    def test_archive_generator_posix(self):
+    def test_archive_generator_hpss(self):
         """Test of trying to make a archive generator using HPSS backend"""
         user_name = "svc-myemsldev"
         auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
@@ -148,7 +148,7 @@ class TestId2Filename(unittest.TestCase):
         filename = id2filename(1)
         self.assertEqual(filename, '/file.1')
 
-    def test_id2filename_under_shift_point(self):
+    def test_id2filename_u_shift_point(self):
         """test the correct creation of an under shift point filename """
 
         filename = id2filename((32*1024)-1)
@@ -160,7 +160,7 @@ class TestId2Filename(unittest.TestCase):
         filename = id2filename((32*1024))
         self.assertEqual(filename, '/00/8000')
 
-    def test_id2filename_over_shift_point(self):
+    def test_id2filename_o_shift_point(self):
         """test the correct creation of an over shift point filename """
 
         filename = id2filename((32*1024)+1)
