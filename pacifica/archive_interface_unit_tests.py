@@ -134,7 +134,7 @@ class TestId2Filename(unittest.TestCase):
         """test the correct creation of a negative filename """
 
         filename = id2filename(-1)
-        self.assertEqual(filename, 'file.-1')
+        self.assertEqual(filename, '/file.-1')
 
     def test_id2filename_zero(self):
         """test the correct creation of a zero filename """
