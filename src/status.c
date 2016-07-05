@@ -238,7 +238,7 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
     t.actime = mtime;
 
 
-    rcode = hpss_Utime(filepath, t);
+    rcode = hpss_Utime(filepath, &t);
     if(rcode != 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
