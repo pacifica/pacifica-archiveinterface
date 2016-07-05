@@ -8,7 +8,7 @@ from distutils.core import setup, Extension
 PAI = Extension('pacifica._archiveinterface', ['src/status.c'],
                 include_dirs=['/opt/hpss/include'],
                 library_dirs=['/opt/hpss/lib'],
-                libraries=['hpss'],
+                libraries=['hpss', 'tirpc'],
                 extra_compile_args=['-DLINUX', '-DHPSS51', '-DLITTLEEND']
                )
 

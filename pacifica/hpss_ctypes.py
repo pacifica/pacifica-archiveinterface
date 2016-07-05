@@ -241,7 +241,7 @@ class HPSSClient(HPSSCommon):
     Testing conencting to hpss client, writing, and reading a file
 
     >>> user_name = "svc-myemsldev"
-    >>> auth_path = "/var/hpss/etc/svc-myemsldev.keytab"
+    >>> auth_path = "/var/hpss/etc/hpss.unix.keytab"
     >>> hpssclient = HPSSClient(user=user_name, auth=auth_path)
     >>> myfile = hpssclient.open("/myemsl-dev/bundle/test.txt", "w")
     >>> myfile.ping_core()
