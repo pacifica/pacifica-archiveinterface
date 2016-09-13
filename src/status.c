@@ -5,6 +5,12 @@
 #include "hpss_api.h"
 #include <sys/types.h>
 #include <utime.h>
+#include <stdio.h>
+#include <errno.h>
+#include <hpss_errno.h>
+#include <hpss_api.h>
+#include <hpss_Getenv.h>
+#include <hpss_limits.h>
 
 static PyObject *archiveInterfaceError;
 
@@ -246,6 +252,7 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
     }
     return Py_BuildValue("i", i);
 }
+
 
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,
