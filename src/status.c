@@ -191,9 +191,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
-    int i = 1;
     int fd = 0;
-
     /*
         get the filepath passed in from the python code
     */
@@ -217,8 +215,8 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         hpss_Close(fd);
         return NULL;
     }
-    hpss_Close(fd);
-    return Py_BuildValue("i", i);
+    hpss_Close(fd); 
+    return Py_BuildValue("i", rcode);
 }
 
 static PyObject *

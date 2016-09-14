@@ -28,7 +28,7 @@ enum hpss_rpc_auth_type_t {
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
 import doctest
-
+import time
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -141,7 +141,7 @@ class HPSSFile(HPSSCommon):
             bytes_per_level = _archiveinterface.hpss_status(self._filepath)
             filesize = _archiveinterface.hpss_filesize(self._filepath)
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
-
+            time.sleep(1)
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss status"+
@@ -158,8 +158,11 @@ class HPSSFile(HPSSCommon):
         self.ping_core()
 
         try:
-            _archiveinterface.hpss_stage(self._filepath)
-
+            rc = _archiveinterface.hpss_stage(self._filepath)
+            time.sleep(1)
+            if rc != 0:
+                raise HPSSClientError("Failed During HPSS file stage,"+
+                                  "return value is (%d)"%(rcode))
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss stage"+
