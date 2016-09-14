@@ -192,6 +192,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     const char *filepath;
     int rcode;
     int fd = 0;
+
     /*
         get the filepath passed in from the python code
     */
@@ -216,17 +217,16 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
     hpss_Close(fd); 
-    return Py_BuildValue("i", rcode);
+    Py_RETURN_NONE;
 }
 
 static PyObject *
 pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     float mtime;
     struct utimbuf t;
     int rcode;
-    int i = 1;
 
     /*
         get the filepath passed in from the python code
@@ -248,7 +248,7 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     }
-    return Py_BuildValue("i", i);
+    Py_RETURN_NONE;
 }
 
 

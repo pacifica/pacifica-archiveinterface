@@ -140,8 +140,8 @@ class HPSSFile(HPSSCommon):
             ctime = _archiveinterface.hpss_ctime(self._filepath)
             bytes_per_level = _archiveinterface.hpss_status(self._filepath)
             filesize = _archiveinterface.hpss_filesize(self._filepath)
+            time.sleep(0.03)
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
-            time.sleep(1)
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss status"+
@@ -158,11 +158,9 @@ class HPSSFile(HPSSCommon):
         self.ping_core()
 
         try:
-            rc = _archiveinterface.hpss_stage(self._filepath)
-            time.sleep(1)
-            if rc != 0:
-                raise HPSSClientError("Failed During HPSS file stage,"+
-                                  "return value is (%d)"%(rcode))
+            _archiveinterface.hpss_stage(self._filepath)
+            time.sleep(0.03)
+            
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss stage"+
