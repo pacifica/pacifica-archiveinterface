@@ -10,12 +10,10 @@ import time
 import datetime
 import email.utils as eut
 try:
-    """
-    Due to an update in hpss version we need to lazy load the linked
-    c types.  Doing this dlopen flags. 8 is the UNIX flag Integer for
-    RTLD_DEEPBIND
-    """
-    RTLD_DEEPBIND = 8;
+    #Due to an update in hpss version we need to lazy load the linked
+    #c types.  Doing this dlopen flags. 8 is the UNIX flag Integer for
+    #RTLD_DEEPBIND
+    RTLD_DEEPBIND = 8
     sys.setdlopenflags(dl.RTLD_LAZY | RTLD_DEEPBIND)
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
