@@ -105,7 +105,7 @@ class HPSSCommon(object):
         latency = response_time - before_ping_time
         self._latency = latency
         return latency
-       
+
 
 
 class HPSSFile(HPSSCommon):
@@ -160,7 +160,7 @@ class HPSSFile(HPSSCommon):
         try:
             _archiveinterface.hpss_stage(self._filepath)
             time.sleep(0.03)
-            
+
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss stage"+
