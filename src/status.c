@@ -5,6 +5,12 @@
 #include "hpss_api.h"
 #include <sys/types.h>
 #include <utime.h>
+#include <stdio.h>
+#include <errno.h>
+#include <hpss_errno.h>
+#include <hpss_api.h>
+#include <hpss_Getenv.h>
+#include <hpss_limits.h>
 
 static PyObject *archiveInterfaceError;
 
@@ -185,7 +191,6 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
     const char *filepath;
     int rcode;
-    int i = 1;
     int fd = 0;
 
     /*
@@ -211,18 +216,17 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         hpss_Close(fd);
         return NULL;
     }
-    hpss_Close(fd);
-    return Py_BuildValue("i", i);
+    hpss_Close(fd); 
+    Py_RETURN_NONE;
 }
 
 static PyObject *
 pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     float mtime;
     struct utimbuf t;
     int rcode;
-    int i = 1;
 
     /*
         get the filepath passed in from the python code
@@ -244,8 +248,9 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     }
-    return Py_BuildValue("i", i);
+    Py_RETURN_NONE;
 }
+
 
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,

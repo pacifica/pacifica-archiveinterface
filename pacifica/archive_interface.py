@@ -3,11 +3,18 @@
 from json import dumps
 from os import path
 from sys import stderr
+import sys
 import doctest
 import time
 import datetime
 import email.utils as eut
 try:
+    #Due to an update in hpss version we need to lazy load the linked
+    #c types.  Doing this dlopen flags. 8 is the UNIX flag Integer for
+    #RTLD_DEEPBIND. RTLD_LAZY is defined as 1 in a Linux environment
+    RTLD_LAZY = 1
+    RTLD_DEEPBIND = 8
+    sys.setdlopenflags(RTLD_LAZY | RTLD_DEEPBIND)
     from pacifica.hpss_ctypes import HPSSClient
     from pacifica.hpss_ctypes import HPSSStatus
     HAVE_HPSS = True
@@ -266,4 +273,3 @@ class ArchiveGenerator(object):
 
 if __name__ == "__main__":
     doctest.testmod(verbose=True)
-

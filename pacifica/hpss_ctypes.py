@@ -28,6 +28,7 @@ enum hpss_rpc_auth_type_t {
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
 import doctest
+import time
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -106,6 +107,7 @@ class HPSSCommon(object):
         return latency
 
 
+
 class HPSSFile(HPSSCommon):
     """class that represents the hpss file struct and its methods"""
     def __init__(self, filepath, mode, hpsslib):
@@ -138,8 +140,8 @@ class HPSSFile(HPSSCommon):
             ctime = _archiveinterface.hpss_ctime(self._filepath)
             bytes_per_level = _archiveinterface.hpss_status(self._filepath)
             filesize = _archiveinterface.hpss_filesize(self._filepath)
+            time.sleep(0.03)
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
-
         except Exception as ex:
             #Push the excpetion up the chain to the response
             raise HPSSClientError("Error using c extension for hpss status"+
@@ -157,6 +159,7 @@ class HPSSFile(HPSSCommon):
 
         try:
             _archiveinterface.hpss_stage(self._filepath)
+            time.sleep(0.03)
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
@@ -225,9 +228,8 @@ class HPSSFile(HPSSCommon):
     def set_mod_time(self, mod_time):
         """sets the last modified time on the file"""
         self.ping_core()
-
         try:
-            _archiveinterface.hpss_utime((self._filepath, mod_time))
+            _archiveinterface.hpss_utime(self._filepath, float(mod_time))
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
@@ -262,11 +264,9 @@ class HPSSClient(HPSSCommon):
         rcode = self._hpsslib.hpss_SetLoginCred(user, HPSS_AUTHN_MECH_UNIX,
                                                 HPSS_RPC_CRED_CLIENT,
                                                 HPSS_RPC_AUTH_TYPE_KEYTAB, auth)
-        if rcode < 0:
+
+        if rcode != 0:
             raise HPSSClientError("Could Not Authenticate(%d)"%(rcode))
-        rcode = self._hpsslib.hpss_Chdir("/")
-        if rcode < 0:
-            raise HPSSClientError("Could not chdir(%d)"%(rcode))
 
     def open(self, filename, mode):
         """Open an hpss file"""
