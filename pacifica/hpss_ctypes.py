@@ -28,7 +28,6 @@ enum hpss_rpc_auth_type_t {
 
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
 import doctest
-import time
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -140,7 +139,6 @@ class HPSSFile(HPSSCommon):
             ctime = _archiveinterface.hpss_ctime(self._filepath)
             bytes_per_level = _archiveinterface.hpss_status(self._filepath)
             filesize = _archiveinterface.hpss_filesize(self._filepath)
-            time.sleep(0.03)
             status = HPSSStatus(mtime, ctime, bytes_per_level, filesize)
         except Exception as ex:
             #Push the excpetion up the chain to the response
@@ -159,7 +157,6 @@ class HPSSFile(HPSSCommon):
 
         try:
             _archiveinterface.hpss_stage(self._filepath)
-            time.sleep(0.03)
 
         except Exception as ex:
             #Push the excpetion up the chain to the response

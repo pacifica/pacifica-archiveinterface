@@ -5,6 +5,7 @@
 #include "hpss_api.h"
 #include <sys/types.h>
 #include <utime.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 #include <hpss_errno.h>
@@ -17,7 +18,7 @@ static PyObject *archiveInterfaceError;
 static PyObject *
 pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     int rcode;
     hpss_stat_t Buf;
     /*
@@ -32,7 +33,7 @@ pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
     /*
         Get file descriptor so we can call the hpss fStat on the file.
     */
-   rcode = hpss_Stat((char*)filepath, &Buf);
+   rcode = hpss_Stat(filepath, &Buf);
     if(rcode < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -45,7 +46,7 @@ pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
 static PyObject *
 pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     int rcode;
     hpss_stat_t Buf;
     /*
@@ -60,7 +61,7 @@ pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
     /*
         Get file descriptor so we can call the hpss fStat on the file.
     */
-   rcode = hpss_Stat((char*)filepath, &Buf);
+   rcode = hpss_Stat(filepath, &Buf);
     if(rcode < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -73,7 +74,7 @@ pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
 static PyObject *
 pacifica_archiveinterface_filesize(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     int rcode;
     hpss_stat_t Buf;
     /*
@@ -88,20 +89,22 @@ pacifica_archiveinterface_filesize(PyObject *self, PyObject *args)
     /*
         Get file descriptor so we can call the hpss fStat on the file.
     */
-   rcode = hpss_Stat((char*)filepath, &Buf);
+   rcode = hpss_Stat(filepath, &Buf);
     if(rcode < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     } 
-    
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    usleep(30000);
     return Py_BuildValue("i", (int)Buf.st_size);
 }
 
 static PyObject *
 pacifica_archiveinterface_status(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
     PyObject * bytes_per_level= PyTuple_New(HPSS_MAX_STORAGE_LEVELS);
     int rcode;
     int i;
@@ -118,7 +121,7 @@ pacifica_archiveinterface_status(PyObject *self, PyObject *args)
     }
 
     /* Store hpss file xattributes into attrs*/
-    rcode = hpss_FileGetXAttributes((char*)filepath, API_GET_STATS_FOR_ALL_LEVELS, 0, &attrs);
+    rcode = hpss_FileGetXAttributes(filepath, API_GET_STATS_FOR_ALL_LEVELS, 0, &attrs);
     if(rcode < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -189,10 +192,11 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
 static PyObject *
 pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
-    const char *filepath;
+    char *filepath;
+    char * filepathCopy;
     int rcode;
     int fd = 0;
-
+    
     /*
         get the filepath passed in from the python code
     */
@@ -201,8 +205,11 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, "Error parsing filepath argument");
         return NULL;
     }
+    
+    filepathCopy = strdup(filepath);
 
-    fd = hpss_Open((char*)filepath, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
+
+    fd = hpss_Open(filepathCopy, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -214,9 +221,14 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         hpss_Close(fd);
+        free(filepathCopy);
         return NULL;
     }
     hpss_Close(fd); 
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    free(filepathCopy);
+    usleep(30000);
     Py_RETURN_NONE;
 }
 
