@@ -5,4 +5,6 @@ before_script:
 python:
   - "2.7"
 install: "pip install -r requirements.txt"
-script: bash -xe pylint-everything.sh
+script:
+ - bash -xe pylint-unittests.sh
+ - codeclimate-test-reporter

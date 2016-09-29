@@ -39,7 +39,9 @@ pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     } 
-    
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    usleep(30000);
     return Py_BuildValue("i", (int)Buf.hpss_st_mtime);
 }
 
@@ -67,7 +69,9 @@ pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     } 
-    
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    usleep(30000);
     return Py_BuildValue("i", (int)Buf.hpss_st_ctime);
 }
 
@@ -134,7 +138,9 @@ pacifica_archiveinterface_status(PyObject *self, PyObject *args)
         bytes = attrs.SCAttrib[i].BytesAtLevel;
         PyTuple_SetItem(bytes_per_level, i,  Py_BuildValue("L", (long long)bytes));
     }
-
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    usleep(30000);
     return bytes_per_level;
 }
 
@@ -283,10 +289,10 @@ static PyMethodDef StatusMethods[] = {
 };
 
 PyMODINIT_FUNC
-init_archiveinterface(void)
+init_hpssExtensions(void)
 {
     PyObject * m;
-    m = Py_InitModule("_archiveinterface", StatusMethods);
+    m = Py_InitModule("_hpssExtensions", StatusMethods);
     if (m == NULL)
     {
         return;

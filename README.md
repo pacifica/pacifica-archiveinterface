@@ -1,5 +1,8 @@
 # Pacifica Archive Interface
 [![Build Status](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface.svg?branch=master)](https://travis-ci.org/EMSL-MSC/pacifica-archiveinterface)
+[![Code Climate](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/gpa.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface)
+[![Test Coverage](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/coverage.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/coverage)
+[![Issue Count](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/issue_count.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface)
 
 This code is to provide the archive interface for the rest of the
 Pacifica code base. This code consists of some very specific algorithms
@@ -27,11 +30,11 @@ There are two ways of running the archive interface; POSIX and HPSS.
 
 Posix File System Backend
 ```
-python ./scripts/server.py -t posix -p 8080 -a 127.0.0.1 --prefix /path
+python ./scripts/archiveinterfaceserver.py -t posix -p 8080 -a 127.0.0.1 --prefix /path
 ```
 HPSS Archive Backend
 ```
-python ./scripts/server.py -t hpss -u hpss.unix --auth /var/hpss/etc/hpss.unix.keytab -p 8080 -a 127.0.0.1 --prefix /path
+python ./archiveinterfaceserver.py -t hpss -u hpss.unix --auth /var/hpss/etc/hpss.unix.keytab -p 8080 -a 127.0.0.1 --prefix /path
 ```
 
 # API Examples

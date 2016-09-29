@@ -1,0 +1,20 @@
+#!/bin/bash -xe
+
+pylint scripts/archiveinterfaceserver.py
+pylint archiveinterface.archive_interface
+pylint archiveinterface.archive_interface_responses
+pylint archiveinterface.archive_interface_error
+pylint archiveinterface.archive_utils
+pylint archiveinterface.archivebackends.archive_backend_factory
+pylint archiveinterface.archivebackends.abstract.abstract_backend_archive
+pylint archiveinterface.archivebackends.abstract.abstract_status
+pylint archiveinterface.archivebackends.posix.posix_backend_archive
+pylint archiveinterface.archivebackends.posix.posix_status
+pylint archiveinterface.archivebackends.posix.extendedfile
+pylint archiveinterface.archivebackends.hpss.hpss_backend_archive
+pylint archiveinterface.archivebackends.hpss.hpss_extended
+pylint archiveinterface.archivebackends.hpss.hpss_status
+pylint archiveinterface.archivebackends.hpss.id2filename
+export PYTHONPATH=$PWD
+coverage run --include='archiveinterface/*' archiveinterface/archive_interface_unit_tests.py -v
+coverage report -m
