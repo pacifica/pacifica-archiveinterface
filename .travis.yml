@@ -1,3 +1,6 @@
+sudo: required
+services:
+  - docker
 language: python
 before_script:
  - echo 'US/Pacific' | sudo tee /etc/timezone
@@ -5,6 +8,4 @@ before_script:
 python:
   - "2.7"
 install: "pip install -r requirements.txt"
-script:
- - bash -xe pylint-unittests.sh
- - codeclimate-test-reporter
+script: bash -xe ./travis/static-analysis.sh && bash -xe ./travis/unit-tests.sh && bash -xe ./travis/test-deploy.sh

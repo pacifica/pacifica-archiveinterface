@@ -15,6 +15,3 @@ pylint archiveinterface.archivebackends.hpss.hpss_backend_archive
 pylint archiveinterface.archivebackends.hpss.hpss_extended
 pylint archiveinterface.archivebackends.hpss.hpss_status
 pylint archiveinterface.archivebackends.hpss.id2filename
-export PYTHONPATH=$PWD
-coverage run --include='archiveinterface/*' archiveinterface/archive_interface_unit_tests.py -v
-coverage report -m

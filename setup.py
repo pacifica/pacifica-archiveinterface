@@ -2,7 +2,7 @@
 """
 Setup and install the archive interface with hpss.
 """
-
+import sys
 from distutils.core import setup, Extension
 
 HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
@@ -11,6 +11,11 @@ HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
                  library_dirs=['/opt/hpss/lib'],
                  libraries=['hpss', 'tirpc'],
                  extra_compile_args=['-DLINUX', '-DHPSS51', '-DLITTLEEND'])
+
+EXT_MODULES = []
+if "--hpss" in sys.argv:
+    EXT_MODULES.append(HPSS)
+    sys.argv.remove("--hpss")
 
 setup(name='PacificaArchiveInterface',
       version='1.0',
@@ -22,4 +27,4 @@ setup(name='PacificaArchiveInterface',
                 'archiveinterface.archivebackends.posix',
                 'archiveinterface.archivebackends.hpss'],
       scripts=['scripts/archiveinterfaceserver.py'],
-      ext_modules=[HPSS])
+      ext_modules=EXT_MODULES)

@@ -6,12 +6,11 @@ RUN yum -y update && \
     yum -y clean all
 RUN mkdir /app
 COPY . /app
-RUN chmod +x /app/runit.sh
 WORKDIR /app
-RUN python ./setup_nohpss.py install
+RUN python ./setup.py install
 ENV PACIFICA_AAPI_BACKEND_TYPE posix
 ENV PACIFICA_AAPI_ADDRESS 0.0.0.0
 ENV PACIFICA_AAPI_PORT 8080
 ENV PACIFICA_AAPI_PREFIX /srv
 EXPOSE 8080
-CMD '/app/runit.sh'
+ENTRYPOINT [ "/bin/bash", "/app/entrypoint.sh" ]

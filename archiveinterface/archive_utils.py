@@ -3,7 +3,6 @@
 archive interface """
 import email.utils as eut
 import time
-import datetime
 from os import path
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
@@ -22,9 +21,7 @@ def get_http_modified_time(env):
     try:
         mod_time = None
         if 'HTTP_LAST_MODIFIED' in env:
-            http_time = env['HTTP_LAST_MODIFIED']
-            date_time_obj = datetime.datetime(*eut.parsedate(http_time)[:6])
-            mod_time = time.mktime(date_time_obj.timetuple())
+            mod_time = eut.mktime_tz(eut.parsedate_tz(env['HTTP_LAST_MODIFIED']))
         else:
             mod_time = time.time()
         return mod_time

@@ -29,7 +29,7 @@ class TestArchiveUtils(unittest.TestCase):
         env = dict()
         env['HTTP_LAST_MODIFIED'] = 'SUN, 06 NOV 1994 08:49:37 GMT'
         mod_time = get_http_modified_time(env)
-        self.assertEqual(mod_time, 784140577.0)
+        self.assertEqual(mod_time, 784111777)
 
 class TestId2Filename(unittest.TestCase):
     """

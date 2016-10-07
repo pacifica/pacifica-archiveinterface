@@ -72,21 +72,25 @@ Sample output (without -o option):
 
 The HTTP ```HEAD``` method is used to get a JSON document describing the
 status of the file. The status includes, but is not limited to, the
-size, mtime, ctime, whether its on disk or tape.
+size, mtime, ctime, whether its on disk or tape. The values can be found
+within the headers.
 ```
-curl -X HEAD http://127.0.0.1:8080/1
+curl -I -X HEAD http://127.0.0.1:8080/1
 ```
 Sample output:
 ```
-{
-    "bytes_per_level": "(24L, 0L, 0L, 0L, 0L)", 
-    "ctime": "1444938166", 
-    "file": "/myemsl-dev/bundle/file.1", 
-    "file_storage_media": "disk", 
-    "filesize": "24", 
-    "message": "File was found", 
-    "mtime": "1444938166"
-}
+HTTP/1.0 200 OK
+Date: Fri, 07 Oct 2016 19:51:37 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+X-Pacifica-Messsage: File was found
+X-Pacifica-File: /tmp/foo.txt
+Content-Length: 18
+Last-Modified: 1473806059.29
+X-Pacifica-Ctime: 1473806059.29
+X-Pacifica-Bytes-Per-Level: (18L,)
+X-Pacifica-File-Storage-Media: disk
+Content-Type: application/json
+
 ```
 
 ## Stage a File
@@ -104,3 +108,27 @@ Sample Output:
     "message": "File was staged"
 }
 ```
+
+# Extending Supported Backends
+##Create a backend directory
+Under pacifica-archiveinterface->archiveinterface->archivebackends add a 
+directory for the new backend type
+
+##Create Classes that Implement the Abstract Backend Class methods
+Abstract backend classses can ge found under:
+pacifica-archiveinterface->archiveinterface->archivebackends->abstract
+Descriptions of all the methods that need to be abstracted exists in the
+comments above the class.
+
+##Update Backend Factory
+Update the archive backend factory found here:
+pacifica-archiveinterface->archiveinterface->archivebackends->archive_backend_factory.py
+In this file is a load_backend_archive method.  This method needs to have
+its logic extended to support the new backend type.  This also entails loading the appropriate files for this backend using import
+
+##Update Interface Server
+Update the archiveinterfaceserver.py file to support the new backend choice.
+File located: pacifica-archiveinterface->scripts->archiveinterfaceserver.py
+In this file the type argument is defined with its supported types.  Need to
+extend that array to include the new backend type
+
