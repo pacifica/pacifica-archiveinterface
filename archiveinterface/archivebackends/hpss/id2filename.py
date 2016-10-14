@@ -23,5 +23,5 @@ def id2filename(fileid):
     """will return the filepath associated to passed fileid"""
     return id2dirandfilename(fileid)
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     print id2filename(int(sys.argv[1]))

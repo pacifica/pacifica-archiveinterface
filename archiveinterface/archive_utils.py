@@ -12,7 +12,7 @@ def un_abs_path(path_name):
         if path.isabs(path_name):
             path_name = path_name[1:]
         return path_name
-    except Exception as ex:
+    except AttributeError as ex:
         raise ArchiveInterfaceError("Cant remove absolute path: " + str(ex))
 
 def get_http_modified_time(env):
@@ -25,5 +25,5 @@ def get_http_modified_time(env):
         else:
             mod_time = time.time()
         return mod_time
-    except Exception as ex:
+    except (TypeError, IndexError, AttributeError) as ex:
         raise ArchiveInterfaceError("Cant parse the files modtime: " + str(ex))

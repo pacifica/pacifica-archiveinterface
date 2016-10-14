@@ -3,6 +3,10 @@
 [![Code Climate](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/gpa.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface)
 [![Test Coverage](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/coverage.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/coverage)
 [![Issue Count](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface/badges/issue_count.svg)](https://codeclimate.com/github/EMSL-MSC/pacifica-archiveinterface)
+[![Docker Stars](https://img.shields.io/docker/stars/pacifica/archiveinterface.svg?maxAge=2592000)](https://hub.docker.com/r/pacifica/archiveinterface)
+[![Docker Pulls](https://img.shields.io/docker/pulls/pacifica/archiveinterface.svg?maxAge=2592000)](https://hub.docker.com/r/pacifica/archiveinterface)
+[![Docker Automated build](https://img.shields.io/docker/automated/pacifica/archiveinterface.svg?maxAge=2592000)](https://hub.docker.com/r/pacifica/archiveinterface)
+
 
 This code is to provide the archive interface for the rest of the
 Pacifica code base. This code consists of some very specific algorithms

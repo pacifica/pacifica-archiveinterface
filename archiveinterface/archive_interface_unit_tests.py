@@ -2,11 +2,13 @@
 File used to unit test the pacifica archive interface
 """
 import unittest
+import time
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
 from archiveinterface.archivebackends.hpss.id2filename import id2filename
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
+from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 class TestArchiveUtils(unittest.TestCase):
     """
@@ -23,6 +25,12 @@ class TestArchiveUtils(unittest.TestCase):
         self.assertEqual(return_two, "tmp/foo.text")
         self.assertNotEqual(return_three, "/tmp/foo.text")
         self.assertEqual(return_four, "foo.text")
+        hit_exception = False
+        try:
+            un_abs_path(47)
+        except ArchiveInterfaceError, ex:
+            hit_exception = True
+        self.assertTrue(hit_exception)
 
     def test_get_http_modified_time(self):
         """test to see if the path size of a directory is returned"""
@@ -30,6 +38,17 @@ class TestArchiveUtils(unittest.TestCase):
         env['HTTP_LAST_MODIFIED'] = 'SUN, 06 NOV 1994 08:49:37 GMT'
         mod_time = get_http_modified_time(env)
         self.assertEqual(mod_time, 784111777)
+        env = dict()
+        mod_time = get_http_modified_time(env)
+        self.assertEqual(int(mod_time), int(time.time()))
+        for thing in (None, [], 46):
+            hit_exception = False
+            try:
+                env['HTTP_LAST_MODIFIED'] = thing
+                get_http_modified_time(env)
+            except ArchiveInterfaceError, ex:
+                hit_exception = True
+            self.assertTrue(hit_exception)
 
 class TestId2Filename(unittest.TestCase):
     """
@@ -174,6 +193,28 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
         my_file.close()
+        # opening twice in a row is okay
+        my_file = backend.open(filepath, mode)
+        my_file = backend.open(filepath, mode)
+        # force a close to throw an error
+        def close_error():
+            raise ArchiveInterfaceError("this is an error")
+        orig_close = backend._file.close
+        backend._file.close = close_error
+        hit_exception = False
+        try:
+            my_file = backend.open(filepath, mode)
+        except ArchiveInterfaceError, ex:
+            hit_exception = True
+        self.assertTrue(hit_exception)
+        backend._file.close = orig_close
+        hit_exception = False
+        try:
+            my_file = backend.open(47, mode)
+        except ArchiveInterfaceError, ex:
+            self.assertTrue("Cant remove absolute path" in str(ex))
+            hit_exception = True
+        self.assertTrue(hit_exception)
 
     def test_posix_backend_close(self):
         """test closing a file from posix backend"""
@@ -197,6 +238,24 @@ class TestPosixBackendArchive(unittest.TestCase):
         error = my_file.write("i am a test string")
         self.assertEqual(error, None)
         my_file.close()
+
+    def test_posix_backend_failed_write(self):
+        """test writing to a failed file"""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp/', None, None)
+        # test failed write
+        my_file = backend.open(filepath, mode)
+        def write_error():
+            raise IOError("Unable to Write!")
+        backend._file.write = write_error
+        hit_exception = False
+        try:
+            backend.write('write stuff')
+        except ArchiveInterfaceError, ex:
+            hit_exception = True
+            self.assertTrue("Can't write posix file with error" in str(ex))
+        self.assertTrue(hit_exception)
 
     def test_posix_backend_read(self):
         """test reading a file from posix backend"""
