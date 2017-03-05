@@ -6,4 +6,4 @@ coverage run \
     --omit='archiveinterface/archivebackends/abstract/*' \
     archiveinterface/archive_interface_unit_tests.py -v
 coverage report -m --fail-under 90
-#codeclimate-test-reporter
+codeclimate-test-reporter
