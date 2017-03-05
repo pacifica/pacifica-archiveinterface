@@ -6,4 +6,6 @@ coverage run \
     --omit='archiveinterface/archivebackends/abstract/*' \
     archiveinterface/archive_interface_unit_tests.py -v
 coverage report -m --fail-under 90
-codeclimate-test-reporter
+if [[ $CODECLIMATE_REPO_TOKEN ]] ; then
+  codeclimate-test-reporter
+fi
