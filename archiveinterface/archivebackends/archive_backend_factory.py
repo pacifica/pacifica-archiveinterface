@@ -12,13 +12,13 @@ class ArchiveBackendFactory(object):
     """Factory Class for Archive Backends """
     share_classes = {}
 
-    def get_backend_archive(self, name, prefix, user, auth):
+    def get_backend_archive(self, name, prefix):
         """Method for creating an instance of the backend archive. """
         self.load_backend_archive(name)
         backend_class = self.share_classes.get(name.lower(), None)
 
         if backend_class:
-            return backend_class(prefix, user, auth)
+            return backend_class(prefix)
         raise NotImplementedError("The requested Archive Backend has not "\
             "been implemented")
 
@@ -33,3 +33,7 @@ class ArchiveBackendFactory(object):
             from archiveinterface.archivebackends.posix.posix_backend_archive \
                 import PosixBackendArchive
             self.share_classes = {"posix": PosixBackendArchive}
+        elif name == "hmssideband":
+            from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_backend_archive \
+                import HmsSidebandBackendArchive
+            self.share_classes = {"hmssideband": HmsSidebandBackendArchive}

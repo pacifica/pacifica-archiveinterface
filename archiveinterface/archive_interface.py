@@ -15,11 +15,17 @@ class ArchiveInterfaceGenerator(object):
     def __init__(self, archive):
         self._archive = archive
         self._response = None
+        print "Pacifica Archive Interface Up and Running"
 
     def get(self, env, start_response):
         """Gets a file specified in the request and writes back the data"""
         archivefile = None
         path_info = env['PATH_INFO']
+        #if asking for / then return a message that the archive is working
+        if path_info == '/':
+            resp = interface_responses.Responses()
+            self._response = resp.archive_working_response(start_response)
+            return self.return_response()
         stderr.flush()
         archivefile = self._archive.open(path_info, "r")
 
@@ -106,7 +112,7 @@ class ArchiveInterfaceGenerator(object):
             #catching application errors
             #set the error reponse
             resp = interface_responses.Responses()
-            self._response = resp.archive_exception(start_response, ex)
+            self._response = resp.archive_exception(start_response, ex, env['REQUEST_METHOD'])
             return self.return_response()
 
 

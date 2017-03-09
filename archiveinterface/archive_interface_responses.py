@@ -32,10 +32,18 @@ class Responses(object):
 
     def successful_put_response(self, start_response, total_bytes):
         """Response on a successful put"""
+        start_response('201 Created', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'File added to archive',
+            'total_bytes': total_bytes
+        }
+        return self._response
+
+    def archive_working_response(self, start_response):
+        """Response when doing a get on /"""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
-            'message': 'Thanks for the data',
-            'total_bytes': total_bytes
+            'message': 'Pacifica Archive Interface Up and Running'
         }
         return self._response
 
@@ -52,26 +60,52 @@ class Responses(object):
         """Response for when file is on the hpss system"""
 
         self._response = ''
-        response_headers = [
-            ('X-Pacifica-Messsage', 'File was found'),
-            ('X-Pacifica-File', str(status.filepath)),
-            ('Content-Length', str(status.filesize)),
-            ('Last-Modified', str(status.mtime)),
-            ('X-Pacifica-Ctime', str(status.ctime)),
-            ('X-Pacifica-Bytes-Per-Level', str(status.bytes_per_level)),
-            ('X-Pacifica-File-Storage-Media', str(status.file_storage_media)),
-            ('Content-Type', 'application/json')
-        ]
-        start_response('200 OK', response_headers)
+        if status:
+            response_headers = [
+                ('X-Pacifica-Messsage', 'File was found'),
+                ('X-Pacifica-File', str(status.filepath)),
+                ('Content-Length', str(status.filesize)),
+                ('Last-Modified', str(status.mtime)),
+                ('X-Pacifica-Ctime', str(status.ctime)),
+                ('X-Pacifica-Bytes-Per-Level', str(status.bytes_per_level)),
+                ('X-Pacifica-File-Storage-Media', str(status.file_storage_media)),
+                ('Content-Type', 'application/json')
+            ]
+            start_response('204 No Content', response_headers)
+        else:
+            response_headers = [
+                ('X-Pacifica-Messsage', 'File Not found'),
+                ('X-Pacifica-File', 'File Not Found'),
+                ('Content-Length', 'File Not Found'),
+                ('Last-Modified', 'File Not Found'),
+                ('X-Pacifica-Ctime', 'File Not Found'),
+                ('X-Pacifica-Bytes-Per-Level', 'File Not Found'),
+                ('X-Pacifica-File-Storage-Media', 'File Not Found'),
+                ('Content-Type', 'application/json')
+            ]
+            start_response('404 Not Found', response_headers)
         return self._response
 
-    def archive_exception(self, start_response, ex):
+    def archive_exception(self, start_response, ex, request_method=None):
         """Response when unknown exception occurs"""
-        start_response(
-            '500 Internal Server Error',
-            [('Content-Type', 'application/json')]
-        )
-        self._response = {
-            'message': str(ex)
-        }
+        if request_method == 'HEAD':
+            response_headers = [
+                ('X-Pacifica-Messsage', 'Error: ' + str(ex)),
+                ('X-Pacifica-File', 'Error'),
+                ('Content-Length', 'Error'),
+                ('Last-Modified', 'Error'),
+                ('X-Pacifica-Ctime', 'Error'),
+                ('X-Pacifica-Bytes-Per-Level', 'Error'),
+                ('X-Pacifica-File-Storage-Media', 'Error'),
+                ('Content-Type', 'application/json')
+            ]
+            start_response('500 Internal Server Error', response_headers)
+        else:
+            start_response(
+                '500 Internal Server Error',
+                [('Content-Type', 'application/json')]
+            )
+            self._response = {
+                'message': str(ex)
+            }
         return self._response

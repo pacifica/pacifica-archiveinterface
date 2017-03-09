@@ -30,7 +30,7 @@ python ./setup.py install
 
 # Running It
 
-There are two ways of running the archive interface; POSIX and HPSS.
+There are three ways of running the archive interface; POSIX, ORACLE_HMS_SIDEBAND and HPSS.
 
 Posix File System Backend
 ```
@@ -38,10 +38,53 @@ python ./scripts/archiveinterfaceserver.py -t posix -p 8080 -a 127.0.0.1 --prefi
 ```
 HPSS Archive Backend
 ```
-python ./archiveinterfaceserver.py -t hpss -u hpss.unix --auth /var/hpss/etc/hpss.unix.keytab -p 8080 -a 127.0.0.1 --prefix /path
+python ./archiveinterfaceserver.py -t hpss  -p 8080 -a 127.0.0.1 --prefix /path
 ```
 
+ORACLE_HMS_SIDEBAND
+```
+python ./archiveinterfaceserver.py -t hmssideband  -p 8080 -a 127.0.0.1 --prefix /path
+```
+
+# Config file
+You can also pass a config file via the --config option.  This is the first option and has highest priority.
+Second highest priority is the environment variable ARCHIVEI_CONFIG. This will be looked at if the --config 
+option was not used.
+The final option is the application will default to config.cfg if neither of the first two options occured.
+
+# Config File Example:
+Note here that the different backends use different config options.  These are required for their respected
+archive types.
+```
+[hpss]
+user = hpss.unix
+auth = /var/hpss/etc/hpss.unix.keytab
+
+[hms_sideband]
+sam_qfs_prefix = /tmp/path
+schema = schema_name
+host = host
+user = user
+password = pass
+port = 3306
+```
+
+
 # API Examples
+
+## Verify working
+
+To verify the system is working do a GET against the system with no id specified.
+```
+curl -X GET http://127.0.0.1:8080
+```
+
+Sample output:
+```
+{
+    "message": "Pacifica Archive Interface Up and Running"
+}
+```
 
 ## Put a File
 
@@ -58,7 +101,7 @@ curl -X PUT -H 'Last-Modified: Sun, 06 Nov 1994 08:49:37 GMT' --upload-file /tmp
 Sample output:
 ```
 {
-    "message": "Thanks for the data", 
+    "message": "File added to archive", 
     "total_bytes": "24"
 }
 ```
@@ -83,7 +126,7 @@ curl -I -X HEAD http://127.0.0.1:8080/1
 ```
 Sample output:
 ```
-HTTP/1.0 200 OK
+HTTP/1.0 204 No Content
 Date: Fri, 07 Oct 2016 19:51:37 GMT
 Server: WSGIServer/0.1 Python/2.7.5
 X-Pacifica-Messsage: File was found

@@ -12,11 +12,9 @@ from archiveinterface.archivebackends.abstract.abstract_backend_archive \
 class PosixBackendArchive(AbstractBackendArchive):
     """Class that implements the abstract base class for the posix
     archive interface backend"""
-    def __init__(self, prefix, user, auth):
-        super(PosixBackendArchive, self).__init__(prefix, user, auth)
+    def __init__(self, prefix):
+        super(PosixBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._user = user
-        self._auth = auth
         self._file = None
 
     def open(self, filepath, mode):

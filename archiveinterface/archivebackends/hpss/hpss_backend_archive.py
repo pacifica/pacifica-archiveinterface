@@ -3,14 +3,14 @@
 import os
 import sys
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
-from archiveinterface.archive_utils import un_abs_path
+from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.abstract.abstract_backend_archive import (
     AbstractBackendArchive)
-from archiveinterface.archivebackends.hpss.id2filename import id2filename
+from archiveinterface.id2filename import id2filename
 
 #Due to an update in hpss version we need to lazy load the linked
-#c types.  Doing this dlopen flags. 8 is the UNIX flag Integer for
+#c types.  Doing this with dlopen flags. 8 is the UNIX flag Integer for
 # RTLD_DEEPBIND.
 # RTLD_LAZY is defined as 1 in a Unix environment
 
@@ -51,11 +51,11 @@ def path_info_munge(filepath):
 
 class HpssBackendArchive(AbstractBackendArchive):
     """Hpss implementation of the backend archive """
-    def __init__(self, prefix, user, auth):
-        super(HpssBackendArchive, self).__init__(prefix, user, auth)
+    def __init__(self, prefix):
+        super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._user = user
-        self._auth = auth
+        self._user = read_config_value('hpss', 'user')
+        self._auth = read_config_value('hpss', 'auth')
         self._file = None
         self._filepath = None
         self._hpsslib = None

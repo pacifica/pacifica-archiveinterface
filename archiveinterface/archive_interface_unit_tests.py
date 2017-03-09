@@ -3,8 +3,8 @@ File used to unit test the pacifica archive interface
 """
 import unittest
 import time
-from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
-from archiveinterface.archivebackends.hpss.id2filename import id2filename
+from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value
+from archiveinterface.id2filename import id2filename
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
@@ -171,21 +171,18 @@ class TestPosixBackendArchive(unittest.TestCase):
     """
     def test_posix_backend_create(self):
         """test creating a posix backend """
-        backend = PosixBackendArchive('/tmp', None, None)
+        backend = PosixBackendArchive('/tmp')
         self.assertTrue(isinstance(backend, PosixBackendArchive))
         #easiest way to unit test is look at class variable
         # pylint: disable=protected-access
         self.assertEqual(backend._prefix, '/tmp')
-        self.assertEqual(backend._user, None)
-        self.assertEqual(backend._auth, None)
-        self.assertEqual(backend._file, None)
         # pylint: enable=protected-access
 
     def test_posix_backend_open(self):
         """test opening a file from posix backend"""
         filepath = '1234'
         mode = 'w'
-        backend = PosixBackendArchive('/tmp', None, None)
+        backend = PosixBackendArchive('/tmp')
         my_file = backend.open(filepath, mode)
         self.assertTrue(isinstance(my_file, PosixBackendArchive))
         #easiest way to unit test is look at class variable
@@ -220,7 +217,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         """test closing a file from posix backend"""
         filepath = '1234'
         mode = 'w'
-        backend = PosixBackendArchive('/tmp/', None, None)
+        backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         #easiest way to unit test is look at class variable
         # pylint: disable=protected-access
@@ -233,7 +230,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         """test writing a file from posix backend"""
         filepath = '1234'
         mode = 'w'
-        backend = PosixBackendArchive('/tmp/', None, None)
+        backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         error = my_file.write("i am a test string")
         self.assertEqual(error, None)
@@ -243,7 +240,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         """test writing to a failed file"""
         filepath = '1234'
         mode = 'w'
-        backend = PosixBackendArchive('/tmp/', None, None)
+        backend = PosixBackendArchive('/tmp/')
         # test failed write
         my_file = backend.open(filepath, mode)
         def write_error():
@@ -262,11 +259,29 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.test_posix_backend_write()
         filepath = '1234'
         mode = 'r'
-        backend = PosixBackendArchive('/tmp/', None, None)
+        backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         buf = my_file.read(-1)
         self.assertEqual(buf, "i am a test string")
         my_file.close()
+
+    def test_read_config_file(self):
+        """test reading from config file"""
+        port = read_config_value('hms_sideband', 'port')
+        self.assertEqual(port, '3306')
+
+    def test_read_config_bad_section(self):
+        """test reading from config file with bad section"""
+        with self.assertRaises(ArchiveInterfaceError) as context:
+            read_config_value('bad_section', 'port')
+        self.assertTrue('Error reading config file, no section: bad_section', context.exception)
+
+    def test_read_config_bad_field(self):
+        """test reading from config file with bad section"""
+        with self.assertRaises(ArchiveInterfaceError) as context:
+            read_config_value('hms_sideband', 'bad_field')
+        self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
+                        context.exception)
         
 
 

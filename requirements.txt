@@ -1,4 +1,6 @@
 pylint
 setuptools
+peewee
 coverage
 codeclimate-test-reporter
+
