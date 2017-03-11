@@ -11,7 +11,7 @@ class AbstractBackendArchive(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def __init__(self, prefix, user, auth):
+    def __init__(self, prefix):
         pass
 
     @abc.abstractmethod

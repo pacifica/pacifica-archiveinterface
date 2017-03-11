@@ -2,6 +2,7 @@ from centos:centos6
 
 RUN yum -y update && \
     yum -y install http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
+    yum -y install MySQL-python && \
     yum -y install python-wsgi python-pip wget curl unzip gcc glibc-devel python-devel python-argparse && \
     yum -y clean all
 RUN mkdir /app
