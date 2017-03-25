@@ -13,6 +13,7 @@ to support the new Backend Archie type
 from os import getenv
 from argparse import ArgumentParser
 from wsgiref.simple_server import make_server
+from archiveinterface.archive_utils import set_config_name
 from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archivebackends.archive_backend_factory import \
      ArchiveBackendFactory
