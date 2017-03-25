@@ -1,7 +1,6 @@
+codeclimate-test-reporter
+coverage
+peewee
 pre-commit
 pylint
 setuptools
-peewee
-coverage
-codeclimate-test-reporter
-

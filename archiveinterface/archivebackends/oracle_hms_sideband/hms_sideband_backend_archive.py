@@ -35,7 +35,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
                 self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous HMS Sideband file before opening new "\
-                      "one with error: " + str(ex)
+                      'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
             self._fpath = un_abs_path(filepath)

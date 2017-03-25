@@ -8,7 +8,7 @@ class PosixStatus(AbstractStatus):
     """Class for handling posix status pieces
     needs mtime,ctime, bytes per level array
     """
-    _disk = "disk"
+    _disk = 'disk'
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         super(PosixStatus, self).__init__(
             mtime,

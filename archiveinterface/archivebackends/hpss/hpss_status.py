@@ -8,9 +8,9 @@ class HpssStatus(AbstractStatus):
     """Class for handling posix status pieces
     needs mtime,ctime, bytes per level array
     """
-    _disk = "disk"
-    _tape = "tape"
-    _error = "error"
+    _disk = 'disk'
+    _tape = 'tape'
+    _error = 'error'
 
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         super(HpssStatus, self).__init__(

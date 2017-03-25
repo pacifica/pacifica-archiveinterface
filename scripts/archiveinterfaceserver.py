@@ -22,10 +22,10 @@ PARSER = ArgumentParser(description='Run the archive interface.')
 
 PARSER.add_argument('-p', '--port', metavar='PORT', type=int,
                     default=8080, dest='port',
-                    help="port to listen on")
+                    help='port to listen on')
 PARSER.add_argument('-a', '--address', metavar='ADDRESS',
                     default='localhost', dest='address',
-                    help="address to listen on")
+                    help='address to listen on')
 PARSER.add_argument('-t', '--type', dest='type', default='posix',
                     choices=['hpss', 'posix', 'hmssideband'],
                     help='use the typed backend')

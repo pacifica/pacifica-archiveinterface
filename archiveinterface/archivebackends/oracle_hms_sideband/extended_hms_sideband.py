@@ -22,14 +22,14 @@ class ExtendedHmsSideband(file):
         directory = os.path.dirname(self._sam_qfs_path) + '/'
         stat_record = self._stat_ino_sql(filename, directory)
         if stat_record:
-            mtime = stat_record["mtime"]
-            ctime = stat_record["ctime"]
+            mtime = stat_record['mtime']
+            ctime = stat_record['ctime']
             #if the record is online then on disk, else say not on disk but on tape
-            if stat_record["online"] == 1:
-                bytes_per_level = (long(stat_record["size"]),)
+            if stat_record['online'] == 1:
+                bytes_per_level = (long(stat_record['size']),)
             else:
-                bytes_per_level = (long(0), long(stat_record["size"]))
-            filesize = stat_record["size"]
+                bytes_per_level = (long(0), long(stat_record['size']))
+            filesize = stat_record['size']
             status = HmsSidebandStatus(mtime, ctime, bytes_per_level, filesize)
             status.set_filepath(self._path)
             return status
@@ -61,6 +61,6 @@ class ExtendedHmsSideband(file):
     @staticmethod
     def _make_status_dictionary(result):
         """Break the query results into a dictionary"""
-        status = {"ino" : result.ino, "size" : result.size, "ctime" : result.create_time,
-                  "mtime" : result.modify_time, "online" : result.online}
+        status = {'ino' : result.ino, 'size' : result.size, 'ctime' : result.create_time,
+                  'mtime' : result.modify_time, 'online' : result.online}
         return status

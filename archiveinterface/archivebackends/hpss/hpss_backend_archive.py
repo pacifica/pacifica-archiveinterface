@@ -81,7 +81,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                 self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous hpss file before "\
-                      "opening new one with error: " + str(ex)
+                      'opening new one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
 
         #try to open file
@@ -95,7 +95,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_fopen.restype = c_void_p
             self._file = hpss_fopen(filename, mode)
             if self._file < 0:
-                err_str = "Failed opening Hpss File, code: " + str(self._file)
+                err_str = 'Failed opening Hpss File, code: ' + str(self._file)
                 raise ArchiveInterfaceError(err_str)
             return self
         except Exception as ex:
@@ -110,7 +110,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss.ping_core()
                 rcode = self._hpsslib.hpss_Fclose(self._file)
                 if rcode < 0:
-                    err_str = "Failed to close hpss file with code: "+str(rcode)
+                    err_str = 'Failed to close hpss file with code: '+str(rcode)
                     raise ArchiveInterfaceError(err_str)
                 self._file = None
         except Exception as ex:
@@ -126,8 +126,8 @@ class HpssBackendArchive(AbstractBackendArchive):
                 buf = create_string_buffer('\000'*blocksize)
                 rcode = self._hpsslib.hpss_Fread(buf, 1, blocksize, self._file)
                 if rcode < 0:
-                    err_str = "Failed During HPSS Fread,"\
-                              "return value is: " + str(rcode)
+                    err_str = 'Failed During HPSS Fread,'\
+                              'return value is: ' + str(rcode)
                     raise ArchiveInterfaceError(err_str)
                 return buf.value
         except Exception as ex:
@@ -145,7 +145,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                     buf_char_p, 1, len(buf), self._file
                 )
                 if rcode != len(buf):
-                    raise ArchiveInterfaceError("Short write for hpss file")
+                    raise ArchiveInterfaceError('Short write for hpss file')
         except Exception as ex:
             err_str = "Can't write hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -190,5 +190,5 @@ class HpssBackendArchive(AbstractBackendArchive):
             HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, self._auth
         )
         if rcode != 0:
-            err_str = "Could Not Authenticate, error code is:" + str(rcode)
+            err_str = 'Could Not Authenticate, error code is:' + str(rcode)
             raise ArchiveInterfaceError(err_str)

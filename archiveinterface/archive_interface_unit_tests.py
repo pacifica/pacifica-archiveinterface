@@ -17,14 +17,14 @@ class TestArchiveUtils(unittest.TestCase):
 
     def test_utils_absolute_path(self):
         """test the return of un_abs_path"""
-        return_one = un_abs_path("tmp/foo.text")
-        return_two = un_abs_path("/tmp/foo.text")
-        return_three = un_abs_path("/tmp/foo.text")
-        return_four = un_abs_path("foo.text")
-        self.assertEqual(return_one, "tmp/foo.text")
-        self.assertEqual(return_two, "tmp/foo.text")
-        self.assertNotEqual(return_three, "/tmp/foo.text")
-        self.assertEqual(return_four, "foo.text")
+        return_one = un_abs_path('tmp/foo.text')
+        return_two = un_abs_path('/tmp/foo.text')
+        return_three = un_abs_path('/tmp/foo.text')
+        return_four = un_abs_path('foo.text')
+        self.assertEqual(return_one, 'tmp/foo.text')
+        self.assertEqual(return_two, 'tmp/foo.text')
+        self.assertNotEqual(return_three, '/tmp/foo.text')
+        self.assertEqual(return_four, 'foo.text')
         hit_exception = False
         try:
             un_abs_path(47)
@@ -195,7 +195,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file = backend.open(filepath, mode)
         # force a close to throw an error
         def close_error():
-            raise ArchiveInterfaceError("this is an error")
+            raise ArchiveInterfaceError('this is an error')
         orig_close = backend._file.close
         backend._file.close = close_error
         hit_exception = False
@@ -209,7 +209,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         try:
             my_file = backend.open(47, mode)
         except ArchiveInterfaceError, ex:
-            self.assertTrue("Cant remove absolute path" in str(ex))
+            self.assertTrue('Cant remove absolute path' in str(ex))
             hit_exception = True
         self.assertTrue(hit_exception)
 
@@ -232,7 +232,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
-        error = my_file.write("i am a test string")
+        error = my_file.write('i am a test string')
         self.assertEqual(error, None)
         my_file.close()
 
@@ -244,7 +244,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         # test failed write
         my_file = backend.open(filepath, mode)
         def write_error():
-            raise IOError("Unable to Write!")
+            raise IOError('Unable to Write!')
         backend._file.write = write_error
         hit_exception = False
         try:
@@ -262,7 +262,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         buf = my_file.read(-1)
-        self.assertEqual(buf, "i am a test string")
+        self.assertEqual(buf, 'i am a test string')
         my_file.close()
 
     def test_read_config_file(self):
@@ -282,7 +282,7 @@ class TestPosixBackendArchive(unittest.TestCase):
             read_config_value('hms_sideband', 'bad_field')
         self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
                         context.exception)
-        
+
 
 
 if __name__ == '__main__':

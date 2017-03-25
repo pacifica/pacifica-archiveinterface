@@ -15,7 +15,7 @@ class ArchiveInterfaceGenerator(object):
     def __init__(self, archive):
         self._archive = archive
         self._response = None
-        print "Pacifica Archive Interface Up and Running"
+        print 'Pacifica Archive Interface Up and Running'
 
     def get(self, env, start_response):
         """Gets a file specified in the request and writes back the data"""
@@ -27,7 +27,7 @@ class ArchiveInterfaceGenerator(object):
             self._response = resp.archive_working_response(start_response)
             return self.return_response()
         stderr.flush()
-        archivefile = self._archive.open(path_info, "r")
+        archivefile = self._archive.open(path_info, 'r')
 
         start_response('200 OK', [('Content-Type',
                                    'application/octet-stream')])
@@ -43,12 +43,12 @@ class ArchiveInterfaceGenerator(object):
         path_info = env['PATH_INFO']
         mod_time = get_http_modified_time(env)
         stderr.flush()
-        archivefile = self._archive.open(path_info, "w")
+        archivefile = self._archive.open(path_info, 'w')
         try:
             content_length = int(env['CONTENT_LENGTH'])
         except Exception as ex:
             raise ArchiveInterfaceError("Can't get file content length with "\
-                "error: " + str(ex))
+                'error: ' + str(ex))
         while content_length > 0:
             if content_length > BLOCK_SIZE:
                 buf = env['wsgi.input'].read(BLOCK_SIZE)
@@ -69,7 +69,7 @@ class ArchiveInterfaceGenerator(object):
         path_info = env['PATH_INFO']
         resp = interface_responses.Responses()
         stderr.flush()
-        archivefile = self._archive.open(path_info, "r")
+        archivefile = self._archive.open(path_info, 'r')
         status = archivefile.status()
         self._response = resp.file_status(start_response, status)
         archivefile.close()
@@ -81,7 +81,7 @@ class ArchiveInterfaceGenerator(object):
         path_info = env['PATH_INFO']
         resp = interface_responses.Responses()
         stderr.flush()
-        archivefile = self._archive.open(path_info, "r")
+        archivefile = self._archive.open(path_info, 'r')
         archivefile.stage()
         self._response = resp.file_stage(start_response, path_info)
         archivefile.close()
@@ -116,5 +116,5 @@ class ArchiveInterfaceGenerator(object):
             return self.return_response()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass

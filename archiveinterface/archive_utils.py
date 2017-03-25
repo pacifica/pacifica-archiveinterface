@@ -18,7 +18,7 @@ def un_abs_path(path_name):
             path_name = path_name[1:]
         return path_name
     except AttributeError as ex:
-        raise ArchiveInterfaceError("Cant remove absolute path: " + str(ex))
+        raise ArchiveInterfaceError('Cant remove absolute path: ' + str(ex))
 
 def get_http_modified_time(env):
     """Gets the modified time from the request in unix timestamp.
@@ -31,7 +31,7 @@ def get_http_modified_time(env):
             mod_time = time.time()
         return mod_time
     except (TypeError, IndexError, AttributeError) as ex:
-        raise ArchiveInterfaceError("Cant parse the files modtime: " + str(ex))
+        raise ArchiveInterfaceError('Cant parse the files modtime: ' + str(ex))
 
 def set_config_name(name):
     """set the global config name"""
@@ -46,11 +46,11 @@ def read_config_value(section, field):
         config = ConfigParser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
         if not len(dataset):
-            raise ValueError, "Failed to open config file with name: " + str(CONFIG_FILE)
+            raise ValueError, 'Failed to open config file with name: ' + str(CONFIG_FILE)
         value = config.get(section, field)
         return value
     except ConfigParser.NoSectionError:
-        raise ArchiveInterfaceError("Error reading config file, no section: " + section)
+        raise ArchiveInterfaceError('Error reading config file, no section: ' + section)
     except ConfigParser.NoOptionError:
-        raise ArchiveInterfaceError("Error reading config file, no field: " + field +
-                                    " in section: " + section)
+        raise ArchiveInterfaceError('Error reading config file, no field: ' + field +
+                                    ' in section: ' + section)

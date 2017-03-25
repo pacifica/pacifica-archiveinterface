@@ -8,8 +8,8 @@ class HmsSidebandStatus(AbstractStatus):
     """Class for handling hmsSideband status pieces
     needs mtime,ctime, bytes per level array
     """
-    _disk = "disk"
-    _tape = "tape"
+    _disk = 'disk'
+    _tape = 'tape'
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         super(HmsSidebandStatus, self).__init__(
             mtime,
