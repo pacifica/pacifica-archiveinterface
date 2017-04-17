@@ -215,7 +215,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     filepathCopy = strdup(filepath);
 
 
-    fd = hpss_Open(filepathCopy, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
+    fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
