@@ -242,14 +242,14 @@ static PyObject *
 pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 {
     char *filepath;
-    float mtime;
+    time_t mtime;
     struct utimbuf t;
     int rcode;
 
     /*
         get the filepath passed in from the python code
     */
-    if (!PyArg_ParseTuple(args, "sf", &filepath, &mtime))
+    if (!PyArg_ParseTuple(args, "sI", &filepath, &mtime))
     {
         PyErr_SetString(archiveInterfaceError, "Error parsing arguments");
         return NULL;
