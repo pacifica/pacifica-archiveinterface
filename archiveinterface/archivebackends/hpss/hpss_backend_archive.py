@@ -129,7 +129,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                     err_str = "Failed During HPSS Fread,"\
                               "return value is: " + str(rcode)
                     raise ArchiveInterfaceError(err_str)
-                return buf.value
+                return buf.raw[:rcode]
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
