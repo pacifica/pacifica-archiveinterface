@@ -215,7 +215,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     filepathCopy = strdup(filepath);
 
 
-    fd = hpss_Open(filepathCopy, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
+    fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -242,14 +242,14 @@ static PyObject *
 pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 {
     char *filepath;
-    float mtime;
+    time_t mtime;
     struct utimbuf t;
     int rcode;
 
     /*
         get the filepath passed in from the python code
     */
-    if (!PyArg_ParseTuple(args, "sf", &filepath, &mtime))
+    if (!PyArg_ParseTuple(args, "sI", &filepath, &mtime))
     {
         PyErr_SetString(archiveInterfaceError, "Error parsing arguments");
         return NULL;

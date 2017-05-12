@@ -120,7 +120,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def read(self, blocksize):
         """Read a file from the hpss archive"""
         try:
-            if self._file:
+            if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
                 buf = create_string_buffer('\000'*blocksize)
@@ -129,7 +129,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                     err_str = 'Failed During HPSS Fread,'\
                               'return value is: ' + str(rcode)
                     raise ArchiveInterfaceError(err_str)
-                return buf.value
+                return buf.raw[:rcode]
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -137,7 +137,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def write(self, buf):
         """Write a file to the hpss archive"""
         try:
-            if self._file:
+            if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
                 buf_char_p = cast(buf, c_char_p)
@@ -153,7 +153,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def stage(self):
         """Stage an hpss file to the top level drive """
         try:
-            if self._file:
+            if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
                 hpss.stage()
@@ -164,7 +164,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def status(self):
         """Get the status of a file in the hpss archive """
         try:
-            if self._file:
+            if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
                 return hpss.status()
@@ -175,7 +175,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def set_mod_time(self, mod_time):
         """Set the mod time for an hpss archive file """
         try:
-            if self._file:
+            if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
                 hpss.set_mod_time(mod_time)

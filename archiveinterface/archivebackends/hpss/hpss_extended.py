@@ -95,7 +95,7 @@ class HpssExtended(object):
     def set_mod_time(self, mod_time):
         """Use extensions to set the mod time on an hpss file"""
         try:
-            _hpssExtensions.hpss_utime(self._filepath, float(mod_time))
+            _hpssExtensions.hpss_utime(self._filepath, int(mod_time))
 
         except Exception as ex:
             #Push the excpetion up the chain to the response
