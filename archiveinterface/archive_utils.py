@@ -1,6 +1,8 @@
 #!/usr/bin/python
-"""Group of utility functions that are used in various parts of the
-archive interface """
+"""Group of utility functions.
+
+Used in various parts of the archive interface.
+"""
 import email.utils as eut
 import time
 import ConfigParser
@@ -13,7 +15,7 @@ CONFIG_FILE = 'config.cfg'
 
 
 def un_abs_path(path_name):
-    """Removes absolute path piece"""
+    """Remove absolute path piece."""
     try:
         if path.isabs(path_name):
             path_name = path_name[1:]
@@ -23,8 +25,10 @@ def un_abs_path(path_name):
 
 
 def get_http_modified_time(env):
-    """Gets the modified time from the request in unix timestamp.
-    Returns current time if no time was passed"""
+    """Get the modified time from the request in unix timestamp.
+
+    Returns current time if no time was passed.
+    """
     try:
         mod_time = None
         if 'HTTP_LAST_MODIFIED' in env:
@@ -37,7 +41,7 @@ def get_http_modified_time(env):
 
 
 def set_config_name(name):
-    """set the global config name"""
+    """Set the global config name."""
     # pylint: disable=global-statement
     global CONFIG_FILE
     # pylint: enable=global-statement
@@ -45,7 +49,7 @@ def set_config_name(name):
 
 
 def read_config_value(section, field):
-    """reads the value from the config file if exists"""
+    """Read the value from the config file if exists."""
     try:
         config = ConfigParser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
