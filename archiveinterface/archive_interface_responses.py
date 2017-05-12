@@ -1,11 +1,12 @@
 #!/usr/bin/python
 """File for setting up Archive Interface server responses"""
+
+
 class Responses(object):
     """Class to support the archive interface exceptions"""
 
     def __init__(self):
         self._response = None
-
 
     def unknown_request(self, start_response, request_method):
         """Response for when unknown request type given"""

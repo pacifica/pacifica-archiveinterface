@@ -7,7 +7,7 @@ from archiveinterface.archive_utils import get_http_modified_time
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 import archiveinterface.archive_interface_responses as interface_responses
 
-BLOCK_SIZE = 1<<20
+BLOCK_SIZE = 1 << 20
 
 
 class ArchiveInterfaceGenerator(object):
@@ -21,7 +21,7 @@ class ArchiveInterfaceGenerator(object):
         """Gets a file specified in the request and writes back the data"""
         archivefile = None
         path_info = env['PATH_INFO']
-        #if asking for / then return a message that the archive is working
+        # if asking for / then return a message that the archive is working
         if path_info == '/':
             resp = interface_responses.Responses()
             self._response = resp.archive_working_response(start_response)
@@ -35,7 +35,6 @@ class ArchiveInterfaceGenerator(object):
             return env['wsgi.file_wrapper'](archivefile, BLOCK_SIZE)
         return iter(lambda: archivefile.read(BLOCK_SIZE), '')
 
-
     def put(self, env, start_response):
         """Writes a file passed in the request to the archive"""
         archivefile = None
@@ -47,8 +46,9 @@ class ArchiveInterfaceGenerator(object):
         try:
             content_length = int(env['CONTENT_LENGTH'])
         except Exception as ex:
-            raise ArchiveInterfaceError("Can't get file content length with "\
-                'error: ' + str(ex))
+            raise ArchiveInterfaceError(
+                "Can't get file content length with error: {}".format(str(ex))
+            )
         while content_length > 0:
             if content_length > BLOCK_SIZE:
                 buf = env['wsgi.input'].read(BLOCK_SIZE)
@@ -91,7 +91,6 @@ class ArchiveInterfaceGenerator(object):
         """Prints all responses in a nice fashion"""
         return dumps(self._response, sort_keys=True, indent=4)
 
-
     def pacifica_archiveinterface(self, env, start_response):
         """Parses request method type"""
         try:
@@ -109,8 +108,8 @@ class ArchiveInterfaceGenerator(object):
                                                       env['REQUEST_METHOD'])
                 return self.return_response()
         except ArchiveInterfaceError as ex:
-            #catching application errors
-            #set the error reponse
+            # catching application errors
+            # set the error reponse
             resp = interface_responses.Responses()
             self._response = resp.archive_exception(start_response, ex, env['REQUEST_METHOD'])
             return self.return_response()

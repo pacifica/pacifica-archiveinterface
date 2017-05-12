@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """Class for passing along Archive Interface Error """
 
+
 class ArchiveInterfaceError(Exception):
     """
     ArchiveInterfaceError - basic exception class for this module.
