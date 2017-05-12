@@ -9,6 +9,7 @@ import archiveinterface.archivebackends.hpss._hpssExtensions as _hpssExtensions
 from archiveinterface.archivebackends.hpss.hpss_status import HpssStatus
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
+
 class HpssExtended(object):
     """Class that provides the interface for the hpss ctypes"""
     def __init__(self, filepath, accept_latency=5):
@@ -19,12 +20,11 @@ class HpssExtended(object):
     def ping_core(self):
         """Ping the Core server to see if its still active"""
 
-        #Define acceptable latency in seconds
+        # Define acceptable latency in seconds
         acceptable_latency = self._accept_latency
         latency_tuple = _hpssExtensions.hpss_ping_core()
         # Get the latency
         latency = self.parse_latency(latency_tuple)
-
 
         if latency > acceptable_latency:
             err_str = 'The archive core server is slow to respond'\
@@ -70,7 +70,7 @@ class HpssExtended(object):
             status = HpssStatus(mtime, ctime, bytes_per_level, filesize)
             status.set_filepath(self._filepath)
         except Exception as ex:
-            #Push the excpetion up the chain to the response
+            # Push the excpetion up the chain to the response
             err_str = 'Error using c extensions for hpss status'\
                       ' exception: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -87,7 +87,7 @@ class HpssExtended(object):
             _hpssExtensions.hpss_stage(self._filepath)
 
         except Exception as ex:
-            #Push the excpetion up the chain to the response
+            # Push the excpetion up the chain to the response
             err_str = 'Error using c extension for hpss stage'\
                       ' exception: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -98,7 +98,7 @@ class HpssExtended(object):
             _hpssExtensions.hpss_utime(self._filepath, int(mod_time))
 
         except Exception as ex:
-            #Push the excpetion up the chain to the response
+            # Push the excpetion up the chain to the response
             err_str = 'Error using c extension for hpss utime'\
                       ' exception: ' + str(ex)
             raise ArchiveInterfaceError(err_str)

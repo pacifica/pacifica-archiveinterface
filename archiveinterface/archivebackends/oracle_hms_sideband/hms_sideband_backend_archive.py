@@ -11,10 +11,12 @@ from archiveinterface.archivebackends.abstract.abstract_backend_archive \
     import AbstractBackendArchive
 from archiveinterface.id2filename import id2filename
 
+
 def path_info_munge(filepath):
     """Munge the path for this filetype"""
     return_path = un_abs_path(id2filename(int(filepath)))
     return return_path
+
 
 class HmsSidebandBackendArchive(AbstractBackendArchive):
     """Class that implements the abstract base class for the hms sideband
@@ -24,12 +26,12 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         self._prefix = prefix
         self._file = None
         self._fpath = None
-        #since the database prefix may be different then the system the file is mounted on
+        # since the database prefix may be different then the system the file is mounted on
         self._sam_qfs_prefix = read_config_value('hms_sideband', 'sam_qfs_prefix')
 
     def open(self, filepath, mode):
         """Open a hms sideband file"""
-        #want to close any open files first
+        # want to close any open files first
         try:
             if self._file:
                 self.close()
@@ -40,7 +42,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         try:
             self._fpath = un_abs_path(filepath)
             filename = os.path.join(self._prefix, path_info_munge(self._fpath))
-            #path database refers to, rather then just the file system mount path
+            # path database refers to, rather then just the file system mount path
             sam_qfs_path = os.path.join(self._sam_qfs_prefix, path_info_munge(self._fpath))
             self._file = ExtendedHmsSideband(filename, mode, sam_qfs_path)
             return self

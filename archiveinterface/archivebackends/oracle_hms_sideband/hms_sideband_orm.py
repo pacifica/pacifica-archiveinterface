@@ -1,6 +1,6 @@
 """ORM for the sideband database """
-#disabling some pylint checks due to this being a database model
-#things like too few methods and invalid class attributes like id
+# disabling some pylint checks due to this being a database model
+# things like too few methods and invalid class attributes like id
 # pylint: disable=too-few-public-methods
 # pylint: disable=invalid-name
 
@@ -52,6 +52,7 @@ class BaseModel(Model):
             setattr(self, field_name, val)
         self._dirty.clear()
 
+
 class SamArchive(BaseModel):
     """Model for sam_archive table in the sideband database"""
     copy = IntegerField()
@@ -75,6 +76,7 @@ class SamArchive(BaseModel):
         )
         primary_key = CompositeKey('copy', 'gen', 'ino', 'seq')
 
+
 class SamFile(BaseModel):
     """Model for sam_file table in the sideband database"""
     gen = IntegerField()
@@ -92,6 +94,7 @@ class SamFile(BaseModel):
             (('p_ino', 'p_gen', 'name_hash', 'name'), True),
         )
         primary_key = CompositeKey('name', 'name_hash', 'p_gen', 'p_ino')
+
 
 class SamInode(BaseModel):
     """Model for sam_inode table in the sideband database"""
@@ -114,6 +117,7 @@ class SamInode(BaseModel):
         )
         primary_key = CompositeKey('gen', 'ino')
 
+
 class SamPath(BaseModel):
     """Model for sam_path table in the sideband database"""
     gen = IntegerField()
@@ -127,6 +131,7 @@ class SamPath(BaseModel):
             (('ino', 'gen'), True),
         )
         primary_key = CompositeKey('gen', 'ino')
+
 
 class SamVersion(BaseModel):
     """Model for sam_version table in the sideband database"""

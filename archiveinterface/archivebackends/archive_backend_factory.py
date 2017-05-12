@@ -19,8 +19,9 @@ class ArchiveBackendFactory(object):
 
         if backend_class:
             return backend_class(prefix)
-        raise NotImplementedError('The requested Archive Backend has not '\
-            'been implemented')
+        raise NotImplementedError(
+            'The requested Archive Backend has not been implemented'
+        )
 
     def load_backend_archive(self, name):
         """Method for loading in the correct backend type. Only want to

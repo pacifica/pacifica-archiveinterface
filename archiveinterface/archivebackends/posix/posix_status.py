@@ -4,11 +4,13 @@ archive backend type"""
 
 from ..abstract.abstract_status import AbstractStatus
 
+
 class PosixStatus(AbstractStatus):
     """Class for handling posix status pieces
     needs mtime,ctime, bytes per level array
     """
     _disk = 'disk'
+
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         super(PosixStatus, self).__init__(
             mtime,
@@ -32,7 +34,7 @@ class PosixStatus(AbstractStatus):
 
     def define_levels(self):
         """Sets up what each level definition means"""
-        #This defines posix integer levels.  Always disk
+        # This defines posix integer levels.  Always disk
         type_per_level = [self._disk]
         return type_per_level
 

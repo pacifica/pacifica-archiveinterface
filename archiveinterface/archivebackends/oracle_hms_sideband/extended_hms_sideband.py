@@ -6,10 +6,11 @@ from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status im
     HmsSidebandStatus)
 from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_orm import (
     SamInode, SamFile, SamPath)
-#from archiveinterface.archive_interface_error import ArchiveInterfaceError
+
 
 class ExtendedHmsSideband(file):
     """Extending default file stuct to support additional methods"""
+
     def __init__(self, filepath, mode, sam_qfs_path):
         file.__init__(self, filepath, mode)
         self._path = filepath
@@ -18,13 +19,13 @@ class ExtendedHmsSideband(file):
     def status(self):
         """Returns status of file"""
         filename = os.path.basename(self._sam_qfs_path)
-        #need to add a slash for sideband db
+        # need to add a slash for sideband db
         directory = os.path.dirname(self._sam_qfs_path) + '/'
         stat_record = self._stat_ino_sql(filename, directory)
         if stat_record:
             mtime = stat_record['mtime']
             ctime = stat_record['ctime']
-            #if the record is online then on disk, else say not on disk but on tape
+            # if the record is online then on disk, else say not on disk but on tape
             if stat_record['online'] == 1:
                 bytes_per_level = (long(stat_record['size']),)
             else:
@@ -46,12 +47,13 @@ class ExtendedHmsSideband(file):
     def _stat_ino_sql(self, fname, directory):
         """returns the record for specified file and directory"""
         SamInode.database_connect()
-        result = (SamInode.select()
-                  .join(SamFile, on=(SamFile.ino == SamInode.ino))
-                  .join(SamPath, on=(SamPath.ino == SamFile.p_ino))
-                  .where(SamPath.path == str(directory), SamFile.name == str(fname))
-                  .get()
-                 )
+        result = (
+            SamInode.select()
+            .join(SamFile, on=(SamFile.ino == SamInode.ino))
+            .join(SamPath, on=(SamPath.ino == SamFile.p_ino))
+            .where(SamPath.path == str(directory), SamFile.name == str(fname))
+            .get()
+        )
         SamInode.database_close()
 
         if result:
@@ -61,6 +63,6 @@ class ExtendedHmsSideband(file):
     @staticmethod
     def _make_status_dictionary(result):
         """Break the query results into a dictionary"""
-        status = {'ino' : result.ino, 'size' : result.size, 'ctime' : result.create_time,
-                  'mtime' : result.modify_time, 'online' : result.online}
+        status = {'ino': result.ino, 'size': result.size, 'ctime': result.create_time,
+                  'mtime': result.modify_time, 'online': result.online}
         return status

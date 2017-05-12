@@ -1,6 +1,7 @@
 """Module that has the abstract class for a file's status """
 import abc
 
+
 class AbstractStatus(object):
     """Abstract Base Class that needs to be implemented for a file's
     status method. A implemented instance of this class class should

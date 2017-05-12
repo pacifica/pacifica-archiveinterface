@@ -7,6 +7,7 @@
 import os
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 
+
 class ExtendedFile(file):
     """Extending default file stuct to support additional methods"""
     def __init__(self, filepath, mode):

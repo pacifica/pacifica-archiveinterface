@@ -4,6 +4,7 @@ archive backend type"""
 
 from ..abstract.abstract_status import AbstractStatus
 
+
 class HpssStatus(AbstractStatus):
     """Class for handling posix status pieces
     needs mtime,ctime, bytes per level array
@@ -37,9 +38,9 @@ class HpssStatus(AbstractStatus):
 
     def define_levels(self):
         """Sets up what each level definition means"""
-        #This defines what hpss integer levels really mean
-        #handle error if on level 4 or 5 since those are suppose to be null
-        #UPDATE LEVEL NAMES AS NEEDED
+        # This defines what hpss integer levels really mean
+        # handle error if on level 4 or 5 since those are suppose to be null
+        # UPDATE LEVEL NAMES AS NEEDED
         type_per_level = [self._disk, self._tape, self._tape,
                           self._error, self._error]
         return type_per_level

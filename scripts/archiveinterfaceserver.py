@@ -36,20 +36,20 @@ PARSER.add_argument('--config', metavar='CONFIG', dest='config',
 
 ARGS = PARSER.parse_args()
 
-#set the config file global
+# set the config file global
 if ARGS.config:
     set_config_name(ARGS.config)
 else:
     ARCHIVEI_CONFIG = os.getenv('ARCHIVEI_CONFIG')
     if ARCHIVEI_CONFIG:
         set_config_name(ARCHIVEI_CONFIG)
-#Get the specified Backend Archive
+# Get the specified Backend Archive
 FACTORY = ArchiveBackendFactory()
 BACKEND = FACTORY.get_backend_archive(
     ARGS.type,
     ARGS.prefix
 )
-#Create the archive interface
+# Create the archive interface
 GENERATOR = ArchiveInterfaceGenerator(BACKEND)
 SRV = make_server(ARGS.address, ARGS.port,
                   GENERATOR.pacifica_archiveinterface)

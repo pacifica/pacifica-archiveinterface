@@ -9,8 +9,8 @@ from archiveinterface.archivebackends.abstract.abstract_backend_archive import (
     AbstractBackendArchive)
 from archiveinterface.id2filename import id2filename
 
-#Due to an update in hpss version we need to lazy load the linked
-#c types.  Doing this with dlopen flags. 8 is the UNIX flag Integer for
+# Due to an update in hpss version we need to lazy load the linked
+# c types.  Doing this with dlopen flags. 8 is the UNIX flag Integer for
 # RTLD_DEEPBIND.
 # RTLD_LAZY is defined as 1 in a Unix environment
 
@@ -19,12 +19,12 @@ RTLD_DEEPBIND = 8
 sys.setdlopenflags(RTLD_LAZY | RTLD_DEEPBIND)
 # import cant be at top due to lazy load
 # pylint: disable=wrong-import-position
-from archiveinterface.archivebackends.hpss.hpss_extended import HpssExtended
+from archiveinterface.archivebackends.hpss.hpss_extended import HpssExtended  # noqa: E402
 # pylint: enable=wrong-import-position
 
-#place where hpss lib is installed on a unix machine
+# place where hpss lib is installed on a unix machine
 HPSS_LIBRARY_PATH = '/opt/hpss/lib/libhpss.so'
-#HPSS Values from their documentation
+# HPSS Values from their documentation
 HPSS_AUTHN_MECH_INVALID = 0
 HPSS_AUTHN_MECH_KRB5 = 1
 HPSS_AUTHN_MECH_UNIX = 2
@@ -42,12 +42,14 @@ HPSS_RPC_AUTH_TYPE_KEYFILE = 3
 HPSS_RPC_AUTH_TYPE_KEY = 4
 HPSS_RPC_AUTH_TYPE_PASSWD = 5
 
+
 def path_info_munge(filepath):
     """
     Munge the path for this filetype
     """
     return_path = un_abs_path(id2filename(int(filepath)))
     return return_path
+
 
 class HpssBackendArchive(AbstractBackendArchive):
     """Hpss implementation of the backend archive """
@@ -59,14 +61,14 @@ class HpssBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._hpsslib = None
-        self._latency = 5 #number not significant
-        #need to load  the hpss libraries/ extensions
+        self._latency = 5  # number not significant
+        # need to load  the hpss libraries/ extensions
         try:
             self._hpsslib = cdll.LoadLibrary(HPSS_LIBRARY_PATH)
         except Exception as ex:
             err_str = "Can't load hpss libraries with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        #need to authenticate with hpss
+        # need to authenticate with hpss
         try:
             self.authenticate()
         except Exception as ex:
@@ -75,7 +77,7 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def open(self, filepath, mode):
         """Opens an hpss file"""
-        #want to close any open files first
+        # want to close any open files first
         try:
             if self._file:
                 self.close()
@@ -84,7 +86,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                       'opening new one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
 
-        #try to open file
+        # try to open file
         try:
             fpath = un_abs_path(filepath)
             filename = os.path.join(self._prefix, path_info_munge(fpath))

@@ -9,6 +9,7 @@ from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.abstract.abstract_backend_archive \
     import AbstractBackendArchive
 
+
 class PosixBackendArchive(AbstractBackendArchive):
     """Class that implements the abstract base class for the posix
     archive interface backend"""
@@ -19,7 +20,7 @@ class PosixBackendArchive(AbstractBackendArchive):
 
     def open(self, filepath, mode):
         """Open a posix file"""
-        #want to close any open files first
+        # want to close any open files first
         try:
             if self._file:
                 self.close()

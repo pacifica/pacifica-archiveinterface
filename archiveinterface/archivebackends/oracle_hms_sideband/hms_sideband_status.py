@@ -4,12 +4,14 @@ archive backend type"""
 
 from ..abstract.abstract_status import AbstractStatus
 
+
 class HmsSidebandStatus(AbstractStatus):
     """Class for handling hmsSideband status pieces
     needs mtime,ctime, bytes per level array
     """
     _disk = 'disk'
     _tape = 'tape'
+
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         super(HmsSidebandStatus, self).__init__(
             mtime,
@@ -37,7 +39,7 @@ class HmsSidebandStatus(AbstractStatus):
 
     def define_levels(self):
         """Sets up what each level definition means"""
-        #This defines hmsSideband integer levels.  First level disk, second is tape
+        # This defines hmsSideband integer levels.  First level disk, second is tape
         type_per_level = [self._disk, self._tape]
         return type_per_level
 
