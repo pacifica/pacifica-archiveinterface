@@ -121,11 +121,10 @@ class ArchiveInterfaceGenerator(object):
                 return self.status(env, start_response)
             elif env['REQUEST_METHOD'] == 'POST':
                 return self.stage(env, start_response)
-            else:
-                resp = interface_responses.Responses()
-                self._response = resp.unknown_request(start_response,
-                                                      env['REQUEST_METHOD'])
-                return self.return_response()
+            resp = interface_responses.Responses()
+            self._response = resp.unknown_request(start_response,
+                                                  env['REQUEST_METHOD'])
+            return self.return_response()
         except ArchiveInterfaceError as ex:
             # catching application errors
             # set the error reponse
