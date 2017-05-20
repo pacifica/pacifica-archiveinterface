@@ -1,7 +1,5 @@
 #!/usr/bin/python
-"""
-Setup and install the archive interface with hpss.
-"""
+"""Setup and install the archive interface with hpss."""
 import sys
 from distutils.core import setup, Extension
 
@@ -13,9 +11,9 @@ HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
                  extra_compile_args=['-DLINUX', '-DHPSS51', '-DLITTLEEND'])
 
 EXT_MODULES = []
-if "--hpss" in sys.argv:
+if '--hpss' in sys.argv:
     EXT_MODULES.append(HPSS)
-    sys.argv.remove("--hpss")
+    sys.argv.remove('--hpss')
 
 setup(name='PacificaArchiveInterface',
       version='1.0',

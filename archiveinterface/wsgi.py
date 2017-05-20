@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Pacifica Archive Interface
+Pacifica Archive Interface.
 
 This is the main program that starts the WSGI server.
 
@@ -11,8 +11,6 @@ to support the new Backend Archie type
 
 """
 from os import getenv
-from argparse import ArgumentParser
-from wsgiref.simple_server import make_server
 from archiveinterface.archive_utils import set_config_name
 from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archivebackends.archive_backend_factory import \
@@ -25,12 +23,12 @@ ARCHIVEI_CONFIG = getenv('ARCHIVEI_CONFIG')
 if ARCHIVEI_CONFIG:
     set_config_name(ARCHIVEI_CONFIG)
 
-#Get the specified Backend Archive
+# Get the specified Backend Archive
 FACTORY = ArchiveBackendFactory()
 BACKEND = FACTORY.get_backend_archive(
     BACKEND_TYPE,
     PREFIX
 )
-#Create the archive interface
+# Create the archive interface
 GENERATOR = ArchiveInterfaceGenerator(BACKEND)
 application = GENERATOR.pacifica_archiveinterface
