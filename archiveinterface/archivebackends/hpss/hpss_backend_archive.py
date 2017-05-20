@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""Module that implements the Abstract backend archive for an hpss backend """
+"""Module that implements the Abstract backend archive for an hpss backend."""
 import os
 import sys
 from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
@@ -44,16 +44,16 @@ HPSS_RPC_AUTH_TYPE_PASSWD = 5
 
 
 def path_info_munge(filepath):
-    """
-    Munge the path for this filetype
-    """
+    """Munge the path for this filetype."""
     return_path = un_abs_path(id2filename(int(filepath)))
     return return_path
 
 
 class HpssBackendArchive(AbstractBackendArchive):
-    """Hpss implementation of the backend archive """
+    """The HPSS implementation of the backend archive."""
+
     def __init__(self, prefix):
+        """Constructor for the HPSS Backend Archive."""
         super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
         self._user = read_config_value('hpss', 'user')
@@ -76,7 +76,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def open(self, filepath, mode):
-        """Opens an hpss file"""
+        """Open an hpss file."""
         # want to close any open files first
         try:
             if self._file:
@@ -105,7 +105,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def close(self):
-        """Close an HPSS File"""
+        """Close an HPSS File."""
         try:
             if self._file:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -120,7 +120,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def read(self, blocksize):
-        """Read a file from the hpss archive"""
+        """Read a file from the hpss archive."""
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -137,7 +137,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
-        """Write a file to the hpss archive"""
+        """Write a file to the hpss archive."""
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -153,7 +153,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):
-        """Stage an hpss file to the top level drive """
+        """Stage an hpss file to the top level drive."""
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -164,7 +164,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def status(self):
-        """Get the status of a file in the hpss archive """
+        """Get the status of a file in the hpss archive."""
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -175,7 +175,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
-        """Set the mod time for an hpss archive file """
+        """Set the mod time for an hpss archive file."""
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
@@ -186,7 +186,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def authenticate(self):
-        """Authenticates the user with the hpss system """
+        """Authenticate the user with the hpss system."""
         rcode = self._hpsslib.hpss_SetLoginCred(
             self._user, HPSS_AUTHN_MECH_UNIX,
             HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, self._auth

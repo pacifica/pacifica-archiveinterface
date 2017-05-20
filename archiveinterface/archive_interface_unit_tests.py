@@ -1,6 +1,5 @@
-"""
-File used to unit test the pacifica archive interface
-"""
+#!/usr/bin/python
+"""File used to unit test the pacifica archive interface."""
 import unittest
 import time
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value
@@ -12,12 +11,10 @@ from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
 class TestArchiveUtils(unittest.TestCase):
-    """
-    Contains all the tests for the Archive utils class
-    """
+    """Test the Archive utils class."""
 
     def test_utils_absolute_path(self):
-        """test the return of un_abs_path"""
+        """Test the return of un_abs_path."""
         return_one = un_abs_path('tmp/foo.text')
         return_two = un_abs_path('/tmp/foo.text')
         return_three = un_abs_path('/tmp/foo.text')
@@ -34,7 +31,7 @@ class TestArchiveUtils(unittest.TestCase):
         self.assertTrue(hit_exception)
 
     def test_get_http_modified_time(self):
-        """test to see if the path size of a directory is returned"""
+        """Test to see if the path size of a directory is returned."""
         env = dict()
         env['HTTP_LAST_MODIFIED'] = 'SUN, 06 NOV 1994 08:49:37 GMT'
         mod_time = get_http_modified_time(env)
@@ -53,60 +50,49 @@ class TestArchiveUtils(unittest.TestCase):
 
 
 class TestId2Filename(unittest.TestCase):
-    """
-    Contains all the tests for the id2filename method
-    """
+    """Test the id2filename method."""
 
     def test_id2filename_basic(self):
-        """test the correct creation of a basicfilename """
-
+        """Test the correct creation of a basicfilename."""
         filename = id2filename(1234)
         self.assertEqual(filename, '/d2/4d2')
 
     def test_id2filename_negative(self):
-        """test the correct creation of a negative filename """
-
+        """Test the correct creation of a negative filename."""
         filename = id2filename(-1)
         self.assertEqual(filename, '/file.-1')
 
     def test_id2filename_zero(self):
-        """test the correct creation of a zero filename """
-
+        """Test the correct creation of a zero filename."""
         filename = id2filename(0)
         self.assertEqual(filename, '/file.0')
 
     def test_id2filename_simple(self):
-        """test the correct creation of a simple filename """
-
+        """Test the correct creation of a simple filename."""
         filename = id2filename(1)
         self.assertEqual(filename, '/file.1')
 
     def test_id2filename_u_shift_point(self):
-        """test the correct creation of an under shift point filename """
-
+        """Test the correct creation of an under shift point filename."""
         filename = id2filename((32*1024)-1)
         self.assertEqual(filename, '/ff/7fff')
 
     def test_id2filename_shift_point(self):
-        """test the correct creation of the shift point filename """
-
+        """Test the correct creation of the shift point filename."""
         filename = id2filename((32*1024))
         self.assertEqual(filename, '/00/8000')
 
     def test_id2filename_o_shift_point(self):
-        """test the correct creation of an over shift point filename """
-
+        """Test the correct creation of an over shift point filename."""
         filename = id2filename((32*1024)+1)
         self.assertEqual(filename, '/01/8001')
 
 
 class TestExtendedFile(unittest.TestCase):
-    """
-    Contains all the tests for the ExtendedFile Class
-    """
+    """Test the ExtendedFile Class."""
 
     def test_posix_file_status(self):
-        """test the correct values of a files status"""
+        """Test the correct values of a files status."""
         filepath = '/tmp/1234'
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
@@ -117,7 +103,7 @@ class TestExtendedFile(unittest.TestCase):
         my_file.close()
 
     def test_posix_file_stage(self):
-        """test the correct staging of a posix file"""
+        """Test the correct staging of a posix file."""
         filepath = '/tmp/1234'
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
@@ -129,7 +115,7 @@ class TestExtendedFile(unittest.TestCase):
         my_file.close()
 
     def test_posix_file_mod_time(self):
-        """test the correct setting of a file mod time"""
+        """Test the correct setting of a file mod time."""
         filepath = '/tmp/1234'
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
@@ -140,13 +126,10 @@ class TestExtendedFile(unittest.TestCase):
 
 
 class TestPosixStatus(unittest.TestCase):
-    """
-    Contains all the tests for the POSIXStatus Class
-    """
+    """Test the POSIXStatus Class."""
 
     def test_posix_status_object(self):
-        """test the correct creation of posix status object"""
-
+        """Test the correct creation of posix status object."""
         status = PosixStatus(036, 035, 15, 15)
         self.assertEqual(status.mtime, 036)
         self.assertEqual(status.ctime, 035)
@@ -156,26 +139,23 @@ class TestPosixStatus(unittest.TestCase):
         self.assertEqual(status.file_storage_media, 'disk')
 
     def test_posix_status_storage_media(self):
-        """test the correct finding of posix storage media"""
-
+        """Test the correct finding of posix storage media."""
         status = PosixStatus(036, 035, 15, 15)
         value = status.find_file_storage_media()
         self.assertEqual(value, 'disk')
 
     def test_posix_status_levels(self):
-        """test the correct setting of file storage levels"""
-
+        """Test the correct setting of file storage levels."""
         status = PosixStatus(036, 035, 15, 15)
         value = status.define_levels()
         self.assertEqual(value, ['disk'])
 
 
 class TestPosixBackendArchive(unittest.TestCase):
-    """
-    Contains all the tests for the Posix backend archive
-    """
+    """Test the Posix backend archive."""
+
     def test_posix_backend_create(self):
-        """test creating a posix backend """
+        """Test creating a posix backend."""
         backend = PosixBackendArchive('/tmp')
         self.assertTrue(isinstance(backend, PosixBackendArchive))
         # easiest way to unit test is look at class variable
@@ -184,7 +164,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
 
     def test_posix_backend_open(self):
-        """test opening a file from posix backend"""
+        """Test opening a file from posix backend."""
         filepath = '1234'
         mode = 'w'
         backend = PosixBackendArchive('/tmp')
@@ -220,7 +200,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(hit_exception)
 
     def test_posix_backend_close(self):
-        """test closing a file from posix backend"""
+        """Test closing a file from posix backend."""
         filepath = '1234'
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
@@ -233,7 +213,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
 
     def test_posix_backend_write(self):
-        """test writing a file from posix backend"""
+        """Test writing a file from posix backend."""
         filepath = '1234'
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
@@ -243,7 +223,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file.close()
 
     def test_posix_backend_failed_write(self):
-        """test writing to a failed file"""
+        """Test writing to a failed file."""
         filepath = '1234'
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
@@ -262,7 +242,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(hit_exception)
 
     def test_posix_backend_read(self):
-        """test reading a file from posix backend"""
+        """Test reading a file from posix backend."""
         self.test_posix_backend_write()
         filepath = '1234'
         mode = 'r'
@@ -273,18 +253,18 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file.close()
 
     def test_read_config_file(self):
-        """test reading from config file"""
+        """Test reading from config file."""
         port = read_config_value('hms_sideband', 'port')
         self.assertEqual(port, '3306')
 
     def test_read_config_bad_section(self):
-        """test reading from config file with bad section"""
+        """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('bad_section', 'port')
         self.assertTrue('Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
-        """test reading from config file with bad section"""
+        """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('hms_sideband', 'bad_field')
         self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',

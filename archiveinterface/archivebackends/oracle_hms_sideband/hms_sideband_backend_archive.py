@@ -1,7 +1,9 @@
 #!/usr/bin/python
-"""Module that implements the abstract_backend_archive class for a HMS Sideband
-backend"""
+"""HMS Sideband Backend Archive Module.
 
+Module that implements the abstract_backend_archive class for a HMS Sideband
+backend.
+"""
 import os
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
@@ -13,15 +15,20 @@ from archiveinterface.id2filename import id2filename
 
 
 def path_info_munge(filepath):
-    """Munge the path for this filetype"""
+    """Munge the path for this filetype."""
     return_path = un_abs_path(id2filename(int(filepath)))
     return return_path
 
 
 class HmsSidebandBackendArchive(AbstractBackendArchive):
-    """Class that implements the abstract base class for the hms sideband
-    archive interface backend"""
+    """HMS Sideband Backend Archive Class.
+
+    Class that implements the abstract base class for the hms sideband
+    archive interface backend.
+    """
+
     def __init__(self, prefix):
+        """Constructor for HMS Sideband Backend Archive."""
         super(HmsSidebandBackendArchive, self).__init__(prefix)
         self._prefix = prefix
         self._file = None
@@ -30,7 +37,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         self._sam_qfs_prefix = read_config_value('hms_sideband', 'sam_qfs_prefix')
 
     def open(self, filepath, mode):
-        """Open a hms sideband file"""
+        """Open a hms sideband file."""
         # want to close any open files first
         try:
             if self._file:
@@ -51,7 +58,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def close(self):
-        """Close a HMS Sideband file"""
+        """Close a HMS Sideband file."""
         try:
             if self._file:
                 self._file.close()
@@ -61,7 +68,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def read(self, blocksize):
-        """Read a HMS Sideband file"""
+        """Read a HMS Sideband file."""
         try:
             if self._file:
                 return self._file.read(blocksize)
@@ -70,7 +77,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
-        """Write a HMS Sideband file to the archive"""
+        """Write a HMS Sideband file to the archive."""
         try:
             if self._file:
                 return self._file.write(buf)
@@ -79,7 +86,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
-        """Set the mod time on a HMS file"""
+        """Set the mod time on a HMS file."""
         try:
             if self._file:
                 self._file.set_mod_time(mod_time)
@@ -88,7 +95,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):
-        """Stage a HMS Sideband file"""
+        """Stage a HMS Sideband file."""
         try:
             if self._file:
                 return self._file.stage()
@@ -97,7 +104,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def status(self):
-        """Get the status of a HMS Sideband file"""
+        """Get the status of a HMS Sideband file."""
         try:
             if self._file:
                 return self._file.status()

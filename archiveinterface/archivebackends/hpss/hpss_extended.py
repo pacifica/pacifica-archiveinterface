@@ -1,5 +1,8 @@
 #!/usr/bin/python
-"""Module that holds the class to the interface for the hpss c extensions"""
+"""HPSS Extended File Module.
+
+Module that holds the class to the interface for the hpss c extensions.
+"""
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -11,15 +14,16 @@ from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
 class HpssExtended(object):
-    """Class that provides the interface for the hpss ctypes"""
+    """Provide the interface for the hpss ctypes."""
+
     def __init__(self, filepath, accept_latency=5):
+        """Constructor for the HPSS Extended File type."""
         self._accept_latency = accept_latency
         self._latency = None
         self._filepath = filepath
 
     def ping_core(self):
-        """Ping the Core server to see if its still active"""
-
+        """Ping the Core server to see if its still active."""
         # Define acceptable latency in seconds
         acceptable_latency = self._accept_latency
         latency_tuple = _hpssExtensions.hpss_ping_core()
@@ -32,9 +36,10 @@ class HpssExtended(object):
             raise ArchiveInterfaceError(err_str)
 
     def parse_latency(self, latency_tuple):
-        """
-        Parses the tuple returned by the c extension into
-        the correct latency
+        """Parse the latency tuple.
+
+        Parse the tuple returned by the c extension into
+        the correct latency.
         """
         # Get the latency
         # LatencyTuple[0] = time the core server responded
@@ -53,10 +58,11 @@ class HpssExtended(object):
         return latency
 
     def status(self):
-        """
-        Get the status of a file if it is on tape or disk
+        """Get the status of a file.
+
+        If it is on tape or disk
         Found the documentation for this in the hpss programmers reference
-        section 2.3.6.2.8 "Get Extanded Attributes"
+        section 2.3.6.2.8 "Get Extanded Attributes".
         """
         mtime = ''
         ctime = ''
@@ -77,12 +83,12 @@ class HpssExtended(object):
         return status
 
     def stage(self):
-        """
-        Stage an hpss file so that it moves to disk
-        doesnt need to return anything.  will throw
-        exception on error however
-        """
+        """Stage an hpss file.
 
+        Do this to move the file to disk
+        doesnt need to return anything.  will throw
+        exception on error however.
+        """
         try:
             _hpssExtensions.hpss_stage(self._filepath)
 
@@ -93,7 +99,7 @@ class HpssExtended(object):
             raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
-        """Use extensions to set the mod time on an hpss file"""
+        """Use extensions to set the mod time on an hpss file."""
         try:
             _hpssExtensions.hpss_utime(self._filepath, int(mod_time))
 

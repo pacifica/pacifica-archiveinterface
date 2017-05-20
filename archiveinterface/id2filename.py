@@ -1,10 +1,10 @@
 #!/usr/bin/python
-"""Converts an integer id to a filepath for storage system"""
+"""Module to Convert an integer id to a filepath for storage system."""
 import sys
 
 
 def id2dirandfilename(fileid):
-    """Algorithm for getting filepath from an integer id"""
+    """Algorithm for getting filepath from an integer id."""
     hexfileid = '{0:x}'.format(fileid)
     directories = ''
     while len(hexfileid) > 2:
@@ -21,7 +21,7 @@ def id2dirandfilename(fileid):
 
 
 def id2filename(fileid):
-    """will return the filepath associated to passed fileid"""
+    """Will return the filepath associated to passed fileid."""
     return id2dirandfilename(fileid)
 
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python
-"""Module that allows for the extension of the hms sideband archive
-"""
+"""Module that allows for the extension of the hms sideband archive."""
 import os
 from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status import (
     HmsSidebandStatus)
@@ -9,15 +8,16 @@ from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_orm impor
 
 
 class ExtendedHmsSideband(file):
-    """Extending default file stuct to support additional methods"""
+    """Extending default file stuct to support additional methods."""
 
     def __init__(self, filepath, mode, sam_qfs_path):
+        """Extended HSM Sideband Constructor."""
         file.__init__(self, filepath, mode)
         self._path = filepath
         self._sam_qfs_path = sam_qfs_path
 
     def status(self):
-        """Returns status of file"""
+        """Return status of file."""
         filename = os.path.basename(self._sam_qfs_path)
         # need to add a slash for sideband db
         directory = os.path.dirname(self._sam_qfs_path) + '/'
@@ -37,15 +37,15 @@ class ExtendedHmsSideband(file):
         return None
 
     def stage(self):
-        """Stages a file. HMS stages a file when a read call is made"""
+        """Stage a file. HMS stages a file when a read call is made."""
         self.read()
 
     def set_mod_time(self, mod_time):
-        """sets the last modified time on the file"""
+        """Set the last modified time on the file."""
         os.utime(self._path, (mod_time, mod_time))
 
     def _stat_ino_sql(self, fname, directory):
-        """returns the record for specified file and directory"""
+        """Return the record for specified file and directory."""
         SamInode.database_connect()
         result = (
             SamInode.select()
@@ -62,7 +62,7 @@ class ExtendedHmsSideband(file):
 
     @staticmethod
     def _make_status_dictionary(result):
-        """Break the query results into a dictionary"""
+        """Break the query results into a dictionary."""
         status = {'ino': result.ino, 'size': result.size, 'ctime': result.create_time,
                   'mtime': result.modify_time, 'online': result.online}
         return status

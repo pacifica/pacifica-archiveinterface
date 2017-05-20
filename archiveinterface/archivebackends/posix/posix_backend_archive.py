@@ -1,6 +1,9 @@
 #!/usr/bin/python
-"""Module that implements the abstract_backend_archive class for a posix
-backend"""
+"""Posix Backend Archive Module.
+
+Module that implements the abstract_backend_archive class for a posix
+backend.
+"""
 
 import os
 from archiveinterface.archive_utils import un_abs_path
@@ -11,15 +14,20 @@ from archiveinterface.archivebackends.abstract.abstract_backend_archive \
 
 
 class PosixBackendArchive(AbstractBackendArchive):
-    """Class that implements the abstract base class for the posix
-    archive interface backend"""
+    """Posix Backend Archive Class.
+
+    Class that implements the abstract base class for the posix
+    archive interface backend.
+    """
+
     def __init__(self, prefix):
+        """Constructor for Posix Backend Archive."""
         super(PosixBackendArchive, self).__init__(prefix)
         self._prefix = prefix
         self._file = None
 
     def open(self, filepath, mode):
-        """Open a posix file"""
+        """Open a posix file."""
         # want to close any open files first
         try:
             if self._file:
@@ -38,7 +46,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def close(self):
-        """Close a posix file"""
+        """Close a posix file."""
         try:
             if self._file:
                 self._file.close()
@@ -48,7 +56,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def read(self, blocksize):
-        """Read a posix file"""
+        """Read a posix file."""
         try:
             if self._file:
                 return self._file.read(blocksize)
@@ -57,7 +65,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
-        """Write a posix file to the archive"""
+        """Write a posix file to the archive."""
         try:
             if self._file:
                 return self._file.write(buf)
@@ -66,7 +74,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
-        """Set the mod time on a posix file"""
+        """Set the mod time on a posix file."""
         try:
             if self._file:
                 self._file.set_mod_time(mod_time)
@@ -75,7 +83,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):
-        """Stage a posix file (no-opt essentially)"""
+        """Stage a posix file (no-opt essentially)."""
         try:
             if self._file:
                 return self._file.stage()
@@ -84,7 +92,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             raise ArchiveInterfaceError(err_str)
 
     def status(self):
-        """Get the status of a posix file"""
+        """Get the status of a posix file."""
         try:
             if self._file:
                 return self._file.status()

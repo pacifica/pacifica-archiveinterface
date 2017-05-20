@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Pacifica Archive Interface
+Pacifica Archive Interface.
 
 This is the main program that starts the WSGI server.
 
