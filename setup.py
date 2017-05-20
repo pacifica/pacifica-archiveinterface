@@ -1,7 +1,5 @@
 #!/usr/bin/python
-"""
-Setup and install the archive interface with hpss.
-"""
+"""Setup and install the archive interface with hpss."""
 import sys
 from distutils.core import setup, Extension
 
