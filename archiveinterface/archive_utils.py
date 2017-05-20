@@ -53,7 +53,7 @@ def read_config_value(section, field):
     try:
         config = ConfigParser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
-        if dataset:
+        if not dataset:
             raise ValueError('Failed to open config file with name: {}'.format(str(CONFIG_FILE)))
         value = config.get(section, field)
         return value
