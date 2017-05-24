@@ -48,7 +48,7 @@ python ./archiveinterfaceserver.py -t hmssideband  -p 8080 -a 127.0.0.1 --prefix
 
 # Config file
 You can also pass a config file via the --config option.  This is the first option and has highest priority.
-Second highest priority is the environment variable ARCHIVEI_CONFIG. This will be looked at if the --config 
+Second highest priority is the environment variable ARCHIVEI_CONFIG. This will be looked at if the --config
 option was not used.
 The final option is the application will default to config.cfg if neither of the first two options occured.
 
@@ -88,7 +88,7 @@ Sample output:
 
 ## Put a File
 
-The path in the URL should be only an integer specifying a unique 
+The path in the URL should be only an integer specifying a unique
 file in the archive. Sending a different file to the same URL will
 over-write the contents of the previous file. Setting the Last-
 Modified header sets the mtime of the file in the archive and is
@@ -101,7 +101,7 @@ curl -X PUT -H 'Last-Modified: Sun, 06 Nov 1994 08:49:37 GMT' --upload-file /tmp
 Sample output:
 ```
 {
-    "message": "File added to archive", 
+    "message": "File added to archive",
     "total_bytes": "24"
 }
 ```
@@ -151,14 +151,14 @@ curl -X POST http://127.0.0.1:8080/1
 Sample Output:
 ```
 {
-    "file": "/myemsl-dev/bundle/file.1", 
+    "file": "/myemsl-dev/bundle/file.1",
     "message": "File was staged"
 }
 ```
 
 # Extending Supported Backends
 ##Create a backend directory
-Under pacifica-archiveinterface->archiveinterface->archivebackends add a 
+Under pacifica-archiveinterface->archiveinterface->archivebackends add a
 directory for the new backend type
 
 ##Create Classes that Implement the Abstract Backend Class methods
@@ -178,4 +178,3 @@ Update the archiveinterfaceserver.py file to support the new backend choice.
 File located: pacifica-archiveinterface->scripts->archiveinterfaceserver.py
 In this file the type argument is defined with its supported types.  Need to
 extend that array to include the new backend type
-

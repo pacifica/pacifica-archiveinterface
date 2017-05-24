@@ -1,6 +1,3 @@
-pylint
-setuptools
 peewee
-coverage
-codeclimate-test-reporter
-
+pylint==1.6.3
+setuptools

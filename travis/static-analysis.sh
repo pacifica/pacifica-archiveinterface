@@ -1,5 +1,6 @@
 #!/bin/bash -xe
 
+pre-commit run -a
 pylint scripts/archiveinterfaceserver.py
 pylint archiveinterface.archive_interface
 pylint archiveinterface.archive_interface_responses

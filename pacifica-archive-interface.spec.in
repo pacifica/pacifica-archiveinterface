@@ -10,7 +10,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 BuildRequires: hpss-client-devel
 
 %description
-Pacifica Archive Interface provides the trusted API to Pacifica internal 
+Pacifica Archive Interface provides the trusted API to Pacifica internal
 services.
 
 %prep

@@ -38,7 +38,7 @@ pacifica_archiveinterface_mtime(PyObject *self, PyObject *args)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
-    } 
+    }
     /* Sleep is a hack to get around other hpss thread not finished yet
     */
     usleep(30000);
@@ -68,7 +68,7 @@ pacifica_archiveinterface_ctime(PyObject *self, PyObject *args)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
-    } 
+    }
     /* Sleep is a hack to get around other hpss thread not finished yet
     */
     usleep(30000);
@@ -98,7 +98,7 @@ pacifica_archiveinterface_filesize(PyObject *self, PyObject *args)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
-    } 
+    }
     /* Sleep is a hack to get around other hpss thread not finished yet
     */
     usleep(30000);
@@ -188,9 +188,9 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
     }
 
 
-    PyTuple_SetItem(latency, 0,  Py_BuildValue("i", secs)); 
-    PyTuple_SetItem(latency, 1,  Py_BuildValue("i", usecs)); 
-    PyTuple_SetItem(latency, 2,  Py_BuildValue("i", tv.tv_sec)); 
+    PyTuple_SetItem(latency, 0,  Py_BuildValue("i", secs));
+    PyTuple_SetItem(latency, 1,  Py_BuildValue("i", usecs));
+    PyTuple_SetItem(latency, 2,  Py_BuildValue("i", tv.tv_sec));
     PyTuple_SetItem(latency, 3,  Py_BuildValue("i", tv.tv_usec));
     return latency;
 }
@@ -202,7 +202,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     char * filepathCopy;
     int rcode;
     int fd = 0;
-    
+
     /*
         get the filepath passed in from the python code
     */
@@ -211,11 +211,11 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         PyErr_SetString(archiveInterfaceError, "Error parsing filepath argument");
         return NULL;
     }
-    
+
     filepathCopy = strdup(filepath);
 
 
-    fd = hpss_Open(filepathCopy, O_RDWR | O_NONBLOCK, 000, NULL, NULL, NULL);
+    fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
@@ -230,7 +230,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         free(filepathCopy);
         return NULL;
     }
-    hpss_Close(fd); 
+    hpss_Close(fd);
     /* Sleep is a hack to get around other hpss thread not finished yet
     */
     free(filepathCopy);
@@ -242,14 +242,14 @@ static PyObject *
 pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 {
     char *filepath;
-    float mtime;
+    time_t mtime;
     struct utimbuf t;
     int rcode;
 
     /*
         get the filepath passed in from the python code
     */
-    if (!PyArg_ParseTuple(args, "sf", &filepath, &mtime))
+    if (!PyArg_ParseTuple(args, "sI", &filepath, &mtime))
     {
         PyErr_SetString(archiveInterfaceError, "Error parsing arguments");
         return NULL;
