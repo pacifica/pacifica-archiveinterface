@@ -40,14 +40,6 @@ class ExtendedHmsSideband(file):
         """Stage a file. HMS stages a file when a read call is made."""
         self.read()
 
-    def set_mod_time(self, mod_time):
-        """Set the last modified time on the file."""
-        os.utime(self._path, (mod_time, mod_time))
-
-    def set_file_permissions(self):
-        """Set the last modified time on the file."""
-        os.chmod(self._path, 0444)
-
     def _stat_ino_sql(self, fname, directory):
         """Return the record for specified file and directory."""
         SamInode.database_connect()

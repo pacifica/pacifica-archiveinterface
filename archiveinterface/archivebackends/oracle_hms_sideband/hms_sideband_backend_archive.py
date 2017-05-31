@@ -33,6 +33,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         self._prefix = prefix
         self._file = None
         self._fpath = None
+        self._filepath = None
         # since the database prefix may be different then the system the file is mounted on
         self._sam_qfs_prefix = read_config_value('hms_sideband', 'sam_qfs_prefix')
 
@@ -49,9 +50,10 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         try:
             self._fpath = un_abs_path(filepath)
             filename = os.path.join(self._prefix, path_info_munge(self._fpath))
+            self._filepath = filename
             # path database refers to, rather then just the file system mount path
             sam_qfs_path = os.path.join(self._sam_qfs_prefix, path_info_munge(self._fpath))
-            self._file = ExtendedHmsSideband(filename, mode, sam_qfs_path)
+            self._file = ExtendedHmsSideband(self._filepath, mode, sam_qfs_path)
             return self
         except Exception as ex:
             err_str = "Can't open HMS Sideband file with error: " + str(ex)
@@ -88,8 +90,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
     def set_mod_time(self, mod_time):
         """Set the mod time on a HMS file."""
         try:
-            if self._file:
-                self._file.set_mod_time(mod_time)
+            if self._filepath:
+                os.utime(self._filepath, (mod_time, mod_time))
         except Exception as ex:
             err_str = "Can't set HMS Sideband file mod time with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -97,8 +99,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
     def set_file_permissions(self):
         """Set the file permissions for a posix file."""
         try:
-            if self._file:
-                self._file.set_file_permissions()
+            if self._filepath:
+                os.chmod(self._filepath, 0444)
         except Exception as ex:
             err_str = "Can't set HMS Sideband file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
