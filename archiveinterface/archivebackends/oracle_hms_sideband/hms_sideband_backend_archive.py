@@ -94,6 +94,15 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             err_str = "Can't set HMS Sideband file mod time with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
+    def set_file_permissions(self):
+        """Set the file permissions for a posix file."""
+        try:
+            if self._file:
+                self._file.set_file_permissions()
+        except Exception as ex:
+            err_str = "Can't set HMS Sideband file permissions with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
     def stage(self):
         """Stage a HMS Sideband file."""
         try:

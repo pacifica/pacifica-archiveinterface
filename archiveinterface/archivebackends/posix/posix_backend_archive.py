@@ -82,6 +82,15 @@ class PosixBackendArchive(AbstractBackendArchive):
             err_str = "Can't set posix file mod time with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
+    def set_file_permissions(self):
+        """Set the file permissions for a posix file."""
+        try:
+            if self._file:
+                self._file.set_file_permissions()
+        except Exception as ex:
+            err_str = "Can't set posix file permissions with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
     def stage(self):
         """Stage a posix file (no-opt essentially)."""
         try:

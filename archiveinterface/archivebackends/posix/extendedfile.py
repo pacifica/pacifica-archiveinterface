@@ -40,3 +40,7 @@ class ExtendedFile(file):
     def set_mod_time(self, mod_time):
         """Set the last modified time on the file."""
         os.utime(self._path, (mod_time, mod_time))
+
+    def set_file_permissions(self):
+        """Set the last modified time on the file."""
+        os.chmod(self._path, 0444)
