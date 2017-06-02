@@ -3,7 +3,7 @@
 import unittest
 import time
 import os
-from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value
+from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value, set_config_name
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
@@ -258,24 +258,21 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_read_config_file(self):
         """Test reading from config file."""
-        filepath = os.path.dirname(__file__)
-        os.chdir(filepath + '/../')
+        set_config_name('/../config.cfg')
         port = read_config_value('hms_sideband', 'port')
         self.assertEqual(port, '3306')
 
     def test_read_config_bad_section(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
-            filepath = os.path.dirname(__file__)
-            os.chdir(filepath + '/../')
+            set_config_name('/../config.cfg')
             read_config_value('bad_section', 'port')
         self.assertTrue('Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
-            filepath = os.path.dirname(__file__)
-            os.chdir(filepath + '/../')
+            set_config_name('/../config.cfg')
             read_config_value('hms_sideband', 'bad_field')
         self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
                         context.exception)
