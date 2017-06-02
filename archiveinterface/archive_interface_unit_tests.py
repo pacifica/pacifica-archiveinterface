@@ -219,15 +219,23 @@ class TestPosixBackendArchive(unittest.TestCase):
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
-        print "filepath is: " + backend._filepath
-
         my_file.close()
-        print "filepath after close is: " + backend._filepath
         my_file.set_mod_time(1000000)
         my_file = backend.open(filepath, 'r')
         status = my_file.status()
         my_file.close()
         self.assertEqual(status.mtime, 1000000)
+
+    def test_posix_file_permissions(self):
+        """Test the correct setting of a file mod time."""
+        filepath = '12345'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp/')
+        my_file = backend.open(filepath, mode)
+        my_file.close()
+        my_file.set_file_permissions()
+        statinfo = oct(os.stat("/tmp/12345")[ST_MODE])[-3:]
+        self.assertEqual(statinfo, 444)
 
     def test_posix_backend_failed_write(self):
         """Test writing to a failed file."""
