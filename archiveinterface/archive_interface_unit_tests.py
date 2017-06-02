@@ -223,7 +223,7 @@ class TestPosixBackendArchive(unittest.TestCase):
 
         my_file.close()
         print "filepath after close is: " + backend._filepath
-        #my_file.set_mod_time(1000000)
+        my_file.set_mod_time(1000000)
         my_file = backend.open(filepath, 'r')
         status = my_file.status()
         my_file.close()
