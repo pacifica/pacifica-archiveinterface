@@ -236,7 +236,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file.close()
         my_file.set_file_permissions()
         statinfo = oct(os.stat("/tmp/12345")[ST_MODE])[-3:]
-        self.assertEqual(statinfo, 444)
+        self.assertEqual(statinfo, '444')
 
     def test_posix_backend_failed_write(self):
         """Test writing to a failed file."""
