@@ -215,7 +215,7 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_posix_file_mod_time(self):
         """Test the correct setting of a file mod time."""
-        filepath = '/tmp/1234'
+        filepath = '1234'
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
@@ -258,7 +258,7 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_read_config_file(self):
         """Test reading from config file."""
-        filepath = os.path.realpath(__file__)
+        filepath = os.path.dirname(__file__)
         os.chdir(filepath + '/../')
         port = read_config_value('hms_sideband', 'port')
         self.assertEqual(port, '3306')
