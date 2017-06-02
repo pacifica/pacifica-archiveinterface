@@ -270,21 +270,18 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_read_config_file(self):
         """Test reading from config file."""
-        set_config_name('./../config.cfg')
         port = read_config_value('hms_sideband', 'port')
         self.assertEqual(port, '3306')
 
     def test_read_config_bad_section(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
-            set_config_name('./../config.cfg')
             read_config_value('bad_section', 'port')
         self.assertTrue('Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
-            set_config_name('./../config.cfg')
             read_config_value('hms_sideband', 'bad_field')
         self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
                         context.exception)
