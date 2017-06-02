@@ -51,7 +51,6 @@ def set_config_name(name):
 def read_config_value(section, field):
     """Read the value from the config file if exists."""
     try:
-        print path.dirname(__FILE__)
         config = ConfigParser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
         if not dataset:
