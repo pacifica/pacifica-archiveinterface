@@ -3,6 +3,7 @@
 import unittest
 import time
 import os
+from stat import ST_MODE
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value, set_config_name
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
