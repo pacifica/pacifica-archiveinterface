@@ -219,7 +219,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         mode = 'w'
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
-        print backend._filepath
+        print "filepath is: " + backend._filepath
 
         my_file.close()
         my_file.set_mod_time(1000000)
