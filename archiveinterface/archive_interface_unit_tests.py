@@ -220,11 +220,11 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         my_file.close()
-        my_file.set_mod_time(036)
+        my_file.set_mod_time(1000000)
         my_file = backend.open(filepath, mode)
         status = my_file.status()
         my_file.close()
-        self.assertEqual(status.mtime, 036)
+        self.assertEqual(status.mtime, 1000000)
 
     def test_posix_backend_failed_write(self):
         """Test writing to a failed file."""
@@ -266,12 +266,16 @@ class TestPosixBackendArchive(unittest.TestCase):
     def test_read_config_bad_section(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
+            filepath = os.path.dirname(__file__)
+            os.chdir(filepath + '/../')
             read_config_value('bad_section', 'port')
         self.assertTrue('Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
+            filepath = os.path.dirname(__file__)
+            os.chdir(filepath + '/../')
             read_config_value('hms_sideband', 'bad_field')
         self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
                         context.exception)
