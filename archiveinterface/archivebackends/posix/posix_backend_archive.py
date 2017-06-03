@@ -6,7 +6,7 @@ backend.
 """
 
 import os
-from archiveinterface.archive_utils import un_abs_path
+from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.abstract.abstract_backend_archive \
@@ -37,7 +37,10 @@ class PosixBackendArchive(AbstractBackendArchive):
                       'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
-            fpath = un_abs_path(filepath)
+            if read_config_value('posix', 'use_id2filename'):
+                fpath = un_abs_path(id2filename(int(filepath)))
+            else:
+                fpath = un_abs_path(str(filepath))
             filename = os.path.join(self._prefix, fpath)
             self._file = ExtendedFile(filename, mode)
             return self
