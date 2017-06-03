@@ -56,6 +56,9 @@ The final option is the application will default to config.cfg if neither of the
 Note here that the different backends use different config options.  These are required for their respected
 archive types.
 ```
+[posix]
+use_id2filename = false
+
 [hpss]
 user = hpss.unix
 auth = /var/hpss/etc/hpss.unix.keytab
