@@ -198,8 +198,10 @@ class TestPosixBackendArchive(unittest.TestCase):
             self.assertTrue('Cant remove absolute path' in str(ex))
             hit_exception = True
         self.assertTrue(hit_exception)
+
+        my_file = backend.open('/a/b/d', mode)
         set_config_name('test_configs/posix-id2filename.cfg')
-        my_file = backend.open(47, mode)
+        my_file = backend.open(12345, mode)
         set_config_name('config.cfg')
 
     def test_posix_backend_close(self):
