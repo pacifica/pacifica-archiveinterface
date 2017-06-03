@@ -38,10 +38,10 @@ class PosixBackendArchive(AbstractBackendArchive):
                       'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
-            if read_config_value('posix', 'use_id2filename'):
+            if read_config_value('posix', 'use_id2filename') == 'true':
                 fpath = un_abs_path(id2filename(int(filepath)))
             else:
-                fpath = un_abs_path(str(filepath))
+                fpath = un_abs_path(filepath)
             filename = os.path.join(self._prefix, fpath)
             self._file = ExtendedFile(filename, mode)
             return self
