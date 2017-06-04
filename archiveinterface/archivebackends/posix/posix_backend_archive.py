@@ -43,6 +43,9 @@ class PosixBackendArchive(AbstractBackendArchive):
             else:
                 fpath = un_abs_path(filepath)
             filename = os.path.join(self._prefix, fpath)
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname, 0755)
             self._file = ExtendedFile(filename, mode)
             return self
         except Exception as ex:
