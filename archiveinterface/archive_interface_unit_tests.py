@@ -201,6 +201,7 @@ class TestPosixBackendArchive(unittest.TestCase):
 
         my_file = backend.open('/a/b/d', mode)
         set_config_name('test_configs/posix-id2filename.cfg')
+        backend = PosixBackendArchive('/tmp')
         my_file = backend.open(12345, mode)
         set_config_name('config.cfg')
 
