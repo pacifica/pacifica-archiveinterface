@@ -93,6 +93,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             self._filepath = filename
             hpss = HpssExtended(self._filepath, self._latency)
             hpss.ping_core()
+            hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_void_p
             self._file = hpss_fopen(filename, mode)
