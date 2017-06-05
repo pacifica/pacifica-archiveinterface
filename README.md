@@ -72,6 +72,16 @@ password = pass
 port = 3306
 ```
 
+# ID Mapping to File Names
+
+The Pacifica software depends on a flat ID space for indexing files. This needs
+to map to filenames on the backend storage in a nice way. To limit the number of
+files in a single directory (or number of directories in a directory) we use the
+algorithm in `archiveinterface.id2filename`. This takes a number and breaks it
+into bytes. Each byte is then represented in hex and used to build the directory
+tree.
+
+For example `id2filename(12345)` becomes `/39/3039` on the backend file system.
 
 # API Examples
 
