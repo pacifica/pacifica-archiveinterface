@@ -2,6 +2,8 @@
 """File used to unit test the pacifica archive interface."""
 import unittest
 import time
+import os
+from stat import ST_MODE
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value, set_config_name
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
@@ -114,16 +116,6 @@ class TestExtendedFile(unittest.TestCase):
         # pylint: enable=protected-access
         my_file.close()
 
-    def test_posix_file_mod_time(self):
-        """Test the correct setting of a file mod time."""
-        filepath = '/tmp/1234'
-        mode = 'w'
-        my_file = ExtendedFile(filepath, mode)
-        my_file.close()
-        my_file.set_mod_time(036)
-        status = my_file.status()
-        self.assertEqual(status.mtime, 036)
-
 
 class TestPosixStatus(unittest.TestCase):
     """Test the POSIXStatus Class."""
@@ -227,6 +219,30 @@ class TestPosixBackendArchive(unittest.TestCase):
         error = my_file.write('i am a test string')
         self.assertEqual(error, None)
         my_file.close()
+
+    def test_posix_file_mod_time(self):
+        """Test the correct setting of a file mod time."""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp/')
+        my_file = backend.open(filepath, mode)
+        my_file.close()
+        my_file.set_mod_time(1000000)
+        my_file = backend.open(filepath, 'r')
+        status = my_file.status()
+        my_file.close()
+        self.assertEqual(status.mtime, 1000000)
+
+    def test_posix_file_permissions(self):
+        """Test the correct setting of a file mod time."""
+        filepath = '12345'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp/')
+        my_file = backend.open(filepath, mode)
+        my_file.close()
+        my_file.set_file_permissions()
+        statinfo = oct(os.stat('/tmp/12345')[ST_MODE])[-3:]
+        self.assertEqual(statinfo, '444')
 
     def test_posix_backend_failed_write(self):
         """Test writing to a failed file."""

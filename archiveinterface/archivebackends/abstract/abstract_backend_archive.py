@@ -85,3 +85,12 @@ class AbstractBackendArchive(object):
         implements this class.
         """
         pass
+
+    @abc.abstractmethod
+    def set_file_permissions(self):
+        """Set permissions for File.
+
+        Method that sets a files permissions for the backend archive that
+        implements this class.
+        """
+        pass

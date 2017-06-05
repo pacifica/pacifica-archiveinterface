@@ -26,6 +26,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         super(PosixBackendArchive, self).__init__(prefix)
         self._prefix = prefix
         self._file = None
+        self._filepath = None
         self._id2filename = lambda x: x
         if read_config_value('posix', 'use_id2filename') == 'true':
             self._id2filename = lambda x: id2filename(int(x))
@@ -45,7 +46,8 @@ class PosixBackendArchive(AbstractBackendArchive):
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0755)
-            self._file = ExtendedFile(filename, mode)
+            self._filepath = filename
+            self._file = ExtendedFile(self._filepath, mode)
             return self
         except Exception as ex:
             err_str = "Can't open posix file with error: " + str(ex)
@@ -82,10 +84,19 @@ class PosixBackendArchive(AbstractBackendArchive):
     def set_mod_time(self, mod_time):
         """Set the mod time on a posix file."""
         try:
-            if self._file:
-                self._file.set_mod_time(mod_time)
+            if self._filepath:
+                os.utime(self._filepath, (mod_time, mod_time))
         except Exception as ex:
             err_str = "Can't set posix file mod time with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
+    def set_file_permissions(self):
+        """Set the file permissions for a posix file."""
+        try:
+            if self._filepath:
+                os.chmod(self._filepath, 0444)
+        except Exception as ex:
+            err_str = "Can't set posix file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):

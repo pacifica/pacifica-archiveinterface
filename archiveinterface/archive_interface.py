@@ -74,6 +74,7 @@ class ArchiveInterfaceGenerator(object):
                                                       env['CONTENT_LENGTH'])
         archivefile.close()
         archivefile.set_mod_time(mod_time)
+        archivefile.set_file_permissions()
         return self.return_response()
 
     def status(self, env, start_response):
