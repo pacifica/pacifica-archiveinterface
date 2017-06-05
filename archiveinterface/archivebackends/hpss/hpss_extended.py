@@ -3,6 +3,7 @@
 
 Module that holds the class to the interface for the hpss c extensions.
 """
+from os.path import dirname
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -106,5 +107,15 @@ class HpssExtended(object):
         except Exception as ex:
             # Push the excpetion up the chain to the response
             err_str = 'Error using c extension for hpss utime'\
+                      ' exception: ' + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
+    def makedirs(self):
+        """Recursively make the directories for the filepath."""
+        try:
+            _hpssExtensions.hpss_makedirs(dirname(self._filepath))
+        except Exception as ex:
+            # Push the excpetion up the chain to the response
+            err_str = 'Error using c extension for hpss makedirs'\
                       ' exception: ' + str(ex)
             raise ArchiveInterfaceError(err_str)

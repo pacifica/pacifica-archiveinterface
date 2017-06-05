@@ -2,6 +2,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <libgen.h>
 #include "hpss_api.h"
 #include <sys/types.h>
 #include <utime.h>
@@ -270,6 +271,54 @@ pacifica_archiveinterface_utime(PyObject *self, PyObject *args)
 }
 
 
+static PyObject *
+rec_makedirs(char *filepath)
+{
+    char *dirname_str;
+    char *filep_copy;
+    hpss_stat_t hpss_fstat;
+    PyObject *err;
+    int hpss_err;
+    hpss_err = hpss_Stat(filepath, &hpss_fstat);
+    if(hpss_err == 0) {
+        if(S_ISDIR(hpss_fstat.st_mode)) {
+            Py_RETURN_NONE;
+        } else {
+            PyErr_SetString(archiveInterfaceError, "File is not a directory.");
+            return NULL;
+        }
+    } else {
+        filep_copy = strdup(filepath);
+        dirname_str = dirname(filep_copy);
+        err = rec_makedirs(dirname_str);
+        if(err == NULL) {
+            free(filep_copy);
+            return NULL;
+        }
+        hpss_err = hpss_Mkdir(filepath, 0755);
+        if(hpss_err != 0) {
+            perror("mkdir");
+            free(filep_copy);
+            PyErr_SetString(archiveInterfaceError, "Unable to mkdir.");
+            return NULL;
+        }
+        free(filep_copy);
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+pacifica_archiveinterface_makedirs(PyObject *self, PyObject *args)
+{
+    char *filepath;
+    if (!PyArg_ParseTuple(args, "s", &filepath))
+    {
+        PyErr_SetString(archiveInterfaceError, "Error parsing arguments");
+        return NULL;
+    }
+    return rec_makedirs(filepath);
+}
+
 static PyMethodDef StatusMethods[] = {
     {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,
         "Get the status for a file in the archive."},
@@ -285,6 +334,8 @@ static PyMethodDef StatusMethods[] = {
         "Stage a file to disk within hpss"},
     {"hpss_utime", pacifica_archiveinterface_utime, METH_VARARGS,
         "Set the modified time on a file"},
+    {"hpss_makedirs", pacifica_archiveinterface_makedirs, METH_VARARGS,
+        "Make a recursive directory tree"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

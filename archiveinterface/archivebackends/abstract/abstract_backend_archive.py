@@ -25,6 +25,8 @@ class AbstractBackendArchive(object):
 
         Method that opens a file for the backend archive that implements
         this class Should return a file like object, most likely self.
+        This method is also responsible for making sure the dirname of
+        the filepath exists before trying to open.
         """
         pass
 

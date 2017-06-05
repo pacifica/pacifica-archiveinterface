@@ -27,23 +27,25 @@ class PosixBackendArchive(AbstractBackendArchive):
         self._prefix = prefix
         self._file = None
         self._filepath = None
+        self._id2filename = lambda x: x
+        if read_config_value('posix', 'use_id2filename') == 'true':
+            self._id2filename = lambda x: id2filename(int(x))
 
     def open(self, filepath, mode):
         """Open a posix file."""
         # want to close any open files first
         try:
-            if self._file:
-                self.close()
+            self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous posix file before opening new "\
                       'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
-            if read_config_value('posix', 'use_id2filename') == 'true':
-                fpath = un_abs_path(id2filename(int(filepath)))
-            else:
-                fpath = un_abs_path(filepath)
+            fpath = un_abs_path(self._id2filename(filepath))
             filename = os.path.join(self._prefix, fpath)
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname, 0755)
             self._filepath = filename
             self._file = ExtendedFile(self._filepath, mode)
             return self

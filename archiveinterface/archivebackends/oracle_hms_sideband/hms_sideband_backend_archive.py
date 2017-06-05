@@ -41,8 +41,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         """Open a hms sideband file."""
         # want to close any open files first
         try:
-            if self._file:
-                self.close()
+            self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous HMS Sideband file before opening new "\
                       'one with error: ' + str(ex)
@@ -53,6 +52,9 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             self._filepath = filename
             # path database refers to, rather then just the file system mount path
             sam_qfs_path = os.path.join(self._sam_qfs_prefix, path_info_munge(self._fpath))
+            dirname = os.path.dirname(sam_qfs_path)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname, 0755)
             self._file = ExtendedHmsSideband(self._filepath, mode, sam_qfs_path)
             return self
         except Exception as ex:
