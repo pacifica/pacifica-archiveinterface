@@ -98,7 +98,7 @@ Modified header sets the mtime of the file in the archive and is
 required.
 
 ```
-curl -X PUT -H 'Last-Modified: Sun, 06 Nov 1994 08:49:37 GMT' --upload-file /tmp/foo.txt http://127.0.0.1:8080/1
+curl -X PUT -H 'Last-Modified: Sun, 06 Nov 1994 08:49:37 GMT' --upload-file /tmp/foo.txt http://127.0.0.1:8080/12345
 ```
 
 Sample output:
@@ -113,7 +113,7 @@ Sample output:
 The HTTP `GET` method is used to get the contents
 of the specified file.
 ```
-curl -o /tmp/foo.txt http://127.0.0.1:8080/1
+curl -o /tmp/foo.txt http://127.0.0.1:8080/12345
 ```
 Sample output (without -o option):
 "Document Contents"
@@ -125,7 +125,7 @@ status of the file. The status includes, but is not limited to, the
 size, mtime, ctime, whether its on disk or tape. The values can be found
 within the headers.
 ```
-curl -I -X HEAD http://127.0.0.1:8080/1
+curl -I -X HEAD http://127.0.0.1:8080/12345
 ```
 Sample output:
 ```
@@ -133,7 +133,7 @@ HTTP/1.0 204 No Content
 Date: Fri, 07 Oct 2016 19:51:37 GMT
 Server: WSGIServer/0.1 Python/2.7.5
 X-Pacifica-Messsage: File was found
-X-Pacifica-File: /tmp/foo.txt
+X-Pacifica-File: /tmp/12345
 Content-Length: 18
 Last-Modified: 1473806059.29
 X-Pacifica-Ctime: 1473806059.29
@@ -148,13 +148,13 @@ The HTTP `POST` method is used to stage a file for use.  In posix this
 equates to a no-op on hpss it stages the file to the disk drive.
 
 ```
-curl -X POST http://127.0.0.1:8080/1
+curl -X POST http://127.0.0.1:8080/12345
 ```
 
 Sample Output:
 ```
 {
-    "file": "/myemsl-dev/bundle/file.1",
+    "file": "/12345",
     "message": "File was staged"
 }
 ```
