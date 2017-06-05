@@ -291,14 +291,18 @@ rec_makedirs(char *filepath)
         filep_copy = strdup(filepath);
         dirname_str = dirname(filep_copy);
         err = rec_makedirs(dirname_str);
-        free(filep_copy);
-        if(err == NULL)
+        if(err == NULL) {
+            free(filep_copy);
             return NULL;
-        hpss_err = hpss_Mkdir(dirname_str, 0755);
+        }
+        hpss_err = hpss_Mkdir(filepath, 0755);
         if(hpss_err != 0) {
+            perror("mkdir");
+            free(filep_copy);
             PyErr_SetString(archiveInterfaceError, "Unable to mkdir.");
             return NULL;
         }
+        free(filep_copy);
     }
     Py_RETURN_NONE;
 }
