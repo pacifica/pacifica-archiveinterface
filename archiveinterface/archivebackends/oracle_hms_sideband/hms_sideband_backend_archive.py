@@ -52,7 +52,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             self._filepath = filename
             # path database refers to, rather then just the file system mount path
             sam_qfs_path = os.path.join(self._sam_qfs_prefix, path_info_munge(self._fpath))
-            dirname = os.path.dirname(sam_qfs_path)
+            dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0755)
             self._file = ExtendedHmsSideband(self._filepath, mode, sam_qfs_path)
