@@ -16,17 +16,20 @@ class BasicArchiveTests(unittest.TestCase):
         f = open(filename,'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
-        self.assertEqual(resp, True)
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.headers, True)
 
     def test_simple_status(self):
         fileid = '1234'
         resp = requests.head(str(ARCHIVEURL + fileid))
-        self.assertEqual(resp, True)
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.headers, True)
 
     def test_simple_stage(self):
         fileid = '1234'
         resp = requests.post(str(ARCHIVEURL + fileid))
-        self.assertEqual(resp, True)
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.headers, True)
 
     def test_simple_read(self):
         fileid = '1234'
@@ -39,7 +42,8 @@ class BasicArchiveTests(unittest.TestCase):
             buf = resp.raw.read(1024)
         myfile.close()
         filesize = os.path.getsize(filename)
-        self.assertEqual(filesize, True)
+        #know the simple file writtten is 30 bytes from archive
+        self.assertEqual(filesize, 30)
 
 def suite():
     suite = unittest.TestSuite()
