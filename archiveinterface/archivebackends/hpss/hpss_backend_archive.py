@@ -93,6 +93,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             self._filepath = filename
             hpss = HpssExtended(self._filepath, self._latency)
             hpss.ping_core()
+            hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_void_p
             self._file = hpss_fopen(filename, mode)
@@ -183,6 +184,20 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss.set_mod_time(mod_time)
         except Exception as ex:
             err_str = "Can't set hpss file mod time with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
+    def set_file_permissions(self):
+        """Set the file permissions for an hpss archive file."""
+        try:
+            if self._filepath:
+                hpss = HpssExtended(self._filepath, self._latency)
+                hpss.ping_core()
+                rcode = self._hpsslib.hpss_Chmod(self._filepath, 0444)
+                if rcode < 0:
+                    err_str = 'Failed to chmod hpss file with code: '+str(rcode)
+                    raise ArchiveInterfaceError(err_str)
+        except Exception as ex:
+            err_str = "Can't set hpss file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def authenticate(self):

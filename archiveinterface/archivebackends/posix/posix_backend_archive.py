@@ -6,7 +6,8 @@ backend.
 """
 
 import os
-from archiveinterface.archive_utils import un_abs_path
+from archiveinterface.archive_utils import un_abs_path, read_config_value
+from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.abstract.abstract_backend_archive \
@@ -25,21 +26,28 @@ class PosixBackendArchive(AbstractBackendArchive):
         super(PosixBackendArchive, self).__init__(prefix)
         self._prefix = prefix
         self._file = None
+        self._filepath = None
+        self._id2filename = lambda x: x
+        if read_config_value('posix', 'use_id2filename') == 'true':
+            self._id2filename = lambda x: id2filename(int(x))
 
     def open(self, filepath, mode):
         """Open a posix file."""
         # want to close any open files first
         try:
-            if self._file:
-                self.close()
+            self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous posix file before opening new "\
                       'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
-            fpath = un_abs_path(filepath)
+            fpath = un_abs_path(self._id2filename(filepath))
             filename = os.path.join(self._prefix, fpath)
-            self._file = ExtendedFile(filename, mode)
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname, 0755)
+            self._filepath = filename
+            self._file = ExtendedFile(self._filepath, mode)
             return self
         except Exception as ex:
             err_str = "Can't open posix file with error: " + str(ex)
@@ -76,10 +84,19 @@ class PosixBackendArchive(AbstractBackendArchive):
     def set_mod_time(self, mod_time):
         """Set the mod time on a posix file."""
         try:
-            if self._file:
-                self._file.set_mod_time(mod_time)
+            if self._filepath:
+                os.utime(self._filepath, (mod_time, mod_time))
         except Exception as ex:
             err_str = "Can't set posix file mod time with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
+    def set_file_permissions(self):
+        """Set the file permissions for a posix file."""
+        try:
+            if self._filepath:
+                os.chmod(self._filepath, 0444)
+        except Exception as ex:
+            err_str = "Can't set posix file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):

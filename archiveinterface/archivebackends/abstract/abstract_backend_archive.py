@@ -25,6 +25,8 @@ class AbstractBackendArchive(object):
 
         Method that opens a file for the backend archive that implements
         this class Should return a file like object, most likely self.
+        This method is also responsible for making sure the dirname of
+        the filepath exists before trying to open.
         """
         pass
 
@@ -80,6 +82,15 @@ class AbstractBackendArchive(object):
         """Set Modification Time for File.
 
         Method that sets a files mod time for the backend archive that
+        implements this class.
+        """
+        pass
+
+    @abc.abstractmethod
+    def set_file_permissions(self):
+        """Set permissions for File.
+
+        Method that sets a files permissions for the backend archive that
         implements this class.
         """
         pass
