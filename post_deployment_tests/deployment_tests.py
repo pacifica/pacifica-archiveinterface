@@ -9,7 +9,7 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_write(self):
         filename = '/temp/test_simple_write.txt'
         fileid = '1234'
-        file1 = open(filename,'w')
+        file1 = open(filename,'w+')
         file1.write('Writing content for first file')
         file1.close()
         filesize = os.path.getsize(filename)
