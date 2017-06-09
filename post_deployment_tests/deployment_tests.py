@@ -7,7 +7,7 @@ ARCHIVEURL = 'http://127.0.0.1:8080/'
 
 class BasicArchiveTests(unittest.TestCase):
     def test_simple_write(self):
-        filename = '/temp/test_simple_write.txt'
+        filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
         file1 = open(filename,'w+')
         file1.write('Writing content for first file')
@@ -30,7 +30,7 @@ class BasicArchiveTests(unittest.TestCase):
 
     def test_simple_read(self):
         fileid = '1234'
-        filename = '/temp/test_simple_read.txt'
+        filename = '/tmp/test_simple_read.txt'
         resp = requests.get(str(ARCHIVEURL + fileid), stream=True)
         myfile = open(filename, 'wb+')
         buf = resp.raw.read(1024)
