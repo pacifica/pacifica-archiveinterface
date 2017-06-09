@@ -22,13 +22,13 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_status(self):
         fileid = '1234'
         resp = requests.head(str(ARCHIVEURL + fileid))
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers, True)
 
     def test_simple_stage(self):
         fileid = '1234'
         resp = requests.post(str(ARCHIVEURL + fileid))
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.headers, True)
 
     def test_simple_read(self):
