@@ -17,7 +17,7 @@ class BasicArchiveTests(unittest.TestCase):
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(resp.headers, True)
+        self.assertEqual(resp.json(), True)
 
     def test_simple_status(self):
         fileid = '1234'
@@ -25,7 +25,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
         self.assertEqual(resp.headers['content-length'], '30')
-        self.assertEqual(resp.headers['x-pacifica-message'], 'File was found')
+        self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
         self.assertEqual(resp.headers['x-pacifica-bytes-per-level'], '(30L,)')
 
     def test_simple_stage(self):
