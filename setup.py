@@ -1,7 +1,11 @@
 #!/usr/bin/python
 """Setup and install the archive interface with hpss."""
 import sys
+from pip.req import parse_requirements
 from distutils.core import setup, Extension
+
+# parse_requirements() returns generator of pip.req.InstallRequirement objects
+INSTALL_REQS = parse_requirements('requirements.txt')
 
 HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
                  sources=['archiveinterface/archivebackends/hpss/hpssExtensions.c'],
@@ -26,4 +30,5 @@ setup(name='PacificaArchiveInterface',
                 'archiveinterface.archivebackends.hpss',
                 'archiveinterface.archivebackends.oracle_hms_sideband'],
       scripts=['scripts/archiveinterfaceserver.py'],
+      install_requires=[str(ir.req) for ir in INSTALL_REQS],
       ext_modules=EXT_MODULES)
