@@ -1,3 +1,2 @@
 peewee
-pylint==1.6.3
 setuptools

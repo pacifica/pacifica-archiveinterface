@@ -1,6 +1,3 @@
-sudo: required
-services:
-  - docker
 language: python
 before_script:
  - echo 'US/Pacific' | sudo tee /etc/timezone
