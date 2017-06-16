@@ -5,7 +5,7 @@ from pip.req import parse_requirements
 from distutils.core import setup, Extension
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
-INSTALL_REQS = parse_requirements('requirements.txt')
+INSTALL_REQS = parse_requirements('requirements.txt', session='hack')
 
 HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
                  sources=['archiveinterface/archivebackends/hpss/hpssExtensions.c'],
