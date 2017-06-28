@@ -5,19 +5,27 @@ import unittest
 
 #url for the archive interface just deployed.
 ARCHIVEURL = 'http://127.0.0.1:8080/'
+CLEANLOCALFILES = True
+CLEANARCHIVEFILES = True
+ARCHIVEPREFIX = '/home/knig880/archive/'
+
 
 class BasicArchiveTests(unittest.TestCase):
+    local_files = []
+    archive_files = []
     def test_simple_write(self):
         filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
         file1 = open(filename,'w+')
         file1.write('Writing content for first file')
         file1.close()
+        self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
         f = open(filename,'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 201)
+        self.archive_files[fileid] = fileid
         data = resp.json()
         self.assertEqual(int(data['total_bytes']), 30)
         self.assertEqual(data['message'], 'File added to archive')
