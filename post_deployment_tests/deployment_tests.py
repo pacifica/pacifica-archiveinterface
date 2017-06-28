@@ -50,6 +50,22 @@ class BasicArchiveTests(unittest.TestCase):
         #know the simple file writtten is 30 bytes from archive
         self.assertEqual(filesize, 30)
 
+    def test_file_rewrite(self):
+        """Test trying to rewrite a file, rewrite should fail"""
+        filename = '/tmp/test_simple_write.txt'
+        fileid = '1234'
+        file1 = open(filename,'w+')
+        file1.write('Writing content for first file')
+        file1.close()
+        filesize = os.path.getsize(filename)
+        f = open(filename,'rb')
+        resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+        f.close()
+        self.assertEqual(resp.status_code, 500)
+        data = resp.json()
+        self.assertEqual(data['total_bytes'], 30)
+        self.assertEqual(data['message'], 'File added to archive')
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(BasicArchiveTests('test_simple_write'))
