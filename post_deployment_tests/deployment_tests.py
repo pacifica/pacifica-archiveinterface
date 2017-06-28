@@ -18,7 +18,7 @@ class BasicArchiveTests(unittest.TestCase):
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 201)
-        data = json.loads(resp.json())
+        data = resp.json()
         self.assertEqual(data['total_bytes'], 30)
 
     def test_simple_status(self):
