@@ -78,6 +78,25 @@ class BasicArchiveTests(unittest.TestCase):
         err_msg_length = len(error_msg)
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
+    def test_simple_cleanup(self):
+        """Clean up files that are created for testing """
+        if CLEANLOCALFILES:
+            for filepath in self.local_files:
+                try:
+                    os.remove(filepath)
+                except OSError:
+                    pass
+
+        if CLEANARCHIVEFILES:
+            for filepath in self.archive_files:
+                try:
+                    os.remove(ARCHIVEPREFIX + filepath)
+                except OSError:
+                    pass
+
+        self.assertEqual(True, True)
+
+
 class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_write(self):
         filename = '/tmp/binary_file'
