@@ -35,6 +35,7 @@ class BasicArchiveTests(unittest.TestCase):
         fileid = '1234'
         resp = requests.post(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), 200)
 
     def test_simple_read(self):
         fileid = '1234'
