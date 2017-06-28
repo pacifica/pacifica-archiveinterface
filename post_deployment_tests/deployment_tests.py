@@ -20,6 +20,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(resp.status_code, 201)
         data = resp.json()
         self.assertEqual(int(data['total_bytes']), 30)
+        self.assertEqual(data['message'], 'File added to archive')
 
     def test_simple_status(self):
         fileid = '1234'
