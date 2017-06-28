@@ -11,8 +11,8 @@ ARCHIVEPREFIX = '/home/knig880/archive/'
 
 
 class BasicArchiveTests(unittest.TestCase):
-    local_files = []
-    archive_files = []
+    local_files = {}
+    archive_files = {}
     def test_simple_write(self):
         filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
