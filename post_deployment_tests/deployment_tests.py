@@ -35,7 +35,8 @@ class BasicArchiveTests(unittest.TestCase):
         fileid = '1234'
         resp = requests.post(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json(), 200)
+        data = resp.json()
+        self.assertEqual(data['message'], 'File was staged')
 
     def test_simple_read(self):
         fileid = '1234'
@@ -70,6 +71,24 @@ class BasicArchiveTests(unittest.TestCase):
         err_msg_length = len(error_msg)
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
+class BinaryFileArchiveTests(unittest.TestCase):
+    def test_binary_file_write(self):
+        filename = '/tmp/binary_file'
+        fileid = '4321'
+        newFileBytes = [123, 3, 255, 0, 100]
+        file1 = open(filename,'wb+')
+        newFileByteArray = bytearray(newFileBytes)
+        file1.write(newFileByteArray)
+        file1.close()
+        filesize = os.path.getsize(filename)
+        f = open(filename,'rb')
+        resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+        f.close()
+        self.assertEqual(resp.status_code, 201)
+        data = resp.json()
+        self.assertEqual(int(data['total_bytes']), 5)
+        self.assertEqual(data['message'], 'File added to archive')
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(BasicArchiveTests('test_simple_write'))
@@ -77,6 +96,7 @@ def suite():
     suite.addTest(BasicArchiveTests('test_simple_stage'))
     suite.addTest(BasicArchiveTests('test_simple_read'))
     suite.addTest(BasicArchiveTests('test_file_rewrite'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_file_write'))
     return suite
 
 if __name__ == "__main__":
