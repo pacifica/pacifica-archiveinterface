@@ -72,6 +72,7 @@ def suite():
     suite.addTest(BasicArchiveTests('test_simple_status'))
     suite.addTest(BasicArchiveTests('test_simple_stage'))
     suite.addTest(BasicArchiveTests('test_simple_read'))
+    suite.addTest(BasicArchiveTests('test_file_rewrite'))
     return suite
 
 if __name__ == "__main__":
