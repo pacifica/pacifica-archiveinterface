@@ -29,7 +29,6 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
         self.assertEqual(resp.headers['content-length'], '30')
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
-        self.assertEqual(resp.headers['x-pacifica-bytes-per-level'], '(30L,)')
 
     def test_simple_stage(self):
         fileid = '1234'
@@ -65,7 +64,7 @@ class BasicArchiveTests(unittest.TestCase):
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
-        error_msg = "Can't open posix file with error: [Errno 13] Permission denied:"
+        error_msg = "Can't open"
         #get error message length since the file path returned is unique per deploymnet while
         #the rest of the error message is not
         err_msg_length = len(error_msg)
@@ -89,6 +88,56 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(int(data['total_bytes']), 5)
         self.assertEqual(data['message'], 'File added to archive')
 
+    def test_binary_file_status(self):
+        fileid = '4321'
+        resp = requests.head(str(ARCHIVEURL + fileid))
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
+        self.assertEqual(resp.headers['content-length'], '5')
+        self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
+
+    def test_binary_file_stage(self):
+        fileid = '4321'
+        resp = requests.post(str(ARCHIVEURL + fileid))
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data['message'], 'File was staged')
+
+    def test_binary_file_read(self):
+        fileid = '4321'
+        filename = '/tmp/test_binary_read'
+        resp = requests.get(str(ARCHIVEURL + fileid), stream=True)
+        myfile = open(filename, 'wb+')
+        buf = resp.raw.read(1024)
+        while buf:
+            myfile.write(buf)
+            buf = resp.raw.read(1024)
+        myfile.close()
+        filesize = os.path.getsize(filename)
+        #know the simple file writtten is 30 bytes from archive
+        self.assertEqual(filesize, 5)
+
+    def test_binary_file_rewrite(self):
+        """Test trying to rewrite a file, rewrite should fail"""
+        filename = '/tmp/binary_file'
+        fileid = '4321'
+        newFileBytes = [123, 3, 255, 0, 100]
+        file1 = open(filename,'wb+')
+        newFileByteArray = bytearray(newFileBytes)
+        file1.write(newFileByteArray)
+        file1.close()
+        filesize = os.path.getsize(filename)
+        f = open(filename,'rb')
+        resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+        f.close()
+        self.assertEqual(resp.status_code, 500)
+        data = resp.json()
+        error_msg = "Can't open"
+        #get error message length since the file path returned is unique per deploymnet while
+        #the rest of the error message is not
+        err_msg_length = len(error_msg)
+        self.assertEqual(data['message'][:err_msg_length], error_msg)
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(BasicArchiveTests('test_simple_write'))
@@ -97,6 +146,10 @@ def suite():
     suite.addTest(BasicArchiveTests('test_simple_read'))
     suite.addTest(BasicArchiveTests('test_file_rewrite'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_write'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_file_status'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_file_stage'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_file_read'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_file_rewrite'))
     return suite
 
 if __name__ == "__main__":
