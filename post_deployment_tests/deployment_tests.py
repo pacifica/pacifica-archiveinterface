@@ -63,8 +63,11 @@ class BasicArchiveTests(unittest.TestCase):
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
-        self.assertEqual(data['total_bytes'], 30)
-        self.assertEqual(data['message'], 'File added to archive')
+        error_msg = "Can't open posix file with error: [Errno 13] Permission denied:"
+        #get error message length since the file path returned is unique per deploymnet while
+        #the rest of the error message is not
+        err_msg_length = len(error_msg)
+        self.assertEqual(data['message'][:err_msg_length], error_msg)
 
 def suite():
     suite = unittest.TestSuite()
