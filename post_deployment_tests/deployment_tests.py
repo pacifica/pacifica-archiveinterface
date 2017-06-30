@@ -218,7 +218,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], '5')
+        self.assertEqual(resp.headers['content-length'], str(self.filesize))
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_large_binary_file_stage(self):
