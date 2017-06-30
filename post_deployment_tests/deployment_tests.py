@@ -202,6 +202,7 @@ def suite():
     suite.addTest(BinaryFileArchiveTests('test_binary_file_stage'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_read'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_rewrite'))
+    suite.addTest(BinaryFileArchiveTests('test_binary_cleanup'))
     return suite
 
 if __name__ == "__main__":
