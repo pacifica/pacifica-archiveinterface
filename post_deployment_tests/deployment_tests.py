@@ -205,7 +205,12 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.local_files[filename] = filename
         self.filesize['size'] = os.path.getsize(filename)
         f = open(filename,'rb')
-        resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+        try:
+            resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+        except IOError, e:
+            if e.errno == 32:
+                #error for browser closing pipe
+                pass
         f.close()
         self.archive_files[fileid] = fileid
         self.assertEqual(resp.status_code, 201)
