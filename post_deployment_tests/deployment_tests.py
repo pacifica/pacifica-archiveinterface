@@ -192,7 +192,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
 class LargeBinaryFileArchiveTests(unittest.TestCase):
     local_files = {}
     archive_files = {}
-    filesize = 0
+    filesize = []
     def test_large_binary_file_write(self):
         filename = '/tmp/large_binary_file'
         fileid = '9999'
@@ -203,14 +203,14 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
             flag += 1
         file1.close()
         self.local_files[filename] = filename
-        self.filesize = os.path.getsize(filename)
+        self.filesize[0] = os.path.getsize(filename)
         f = open(filename,'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.archive_files[fileid] = fileid
         self.assertEqual(resp.status_code, 201)
         data = resp.json()
-        self.assertEqual(int(data['total_bytes']), self.filesize)
+        self.assertEqual(int(data['total_bytes']), self.filesize[0])
         self.assertEqual(data['message'], 'File added to archive')
 
     def test_large_binary_file_status(self):
@@ -218,7 +218,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], str(self.filesize))
+        self.assertEqual(resp.headers['content-length'], str(self.filesize[0]))
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_large_binary_file_stage(self):
@@ -241,7 +241,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
         #know the simple file writtten is 30 bytes from archive
-        self.assertEqual(filesize, self.filesize)
+        self.assertEqual(filesize, self.filesize[0])
 
     def test_large_binary_file_rewrite(self):
         """Test trying to rewrite a file, rewrite should fail"""
