@@ -55,6 +55,7 @@ class BasicArchiveTests(unittest.TestCase):
             myfile.write(buf)
             buf = resp.raw.read(1024)
         myfile.close()
+        self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
         #know the simple file writtten is 30 bytes from archive
         self.assertEqual(filesize, 30)
@@ -98,6 +99,8 @@ class BasicArchiveTests(unittest.TestCase):
 
 
 class BinaryFileArchiveTests(unittest.TestCase):
+    local_files = {}
+    archive_files = {}
     def test_binary_file_write(self):
         filename = '/tmp/binary_file'
         fileid = '4321'
@@ -106,10 +109,12 @@ class BinaryFileArchiveTests(unittest.TestCase):
         newFileByteArray = bytearray(newFileBytes)
         file1.write(newFileByteArray)
         file1.close()
+        self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
         f = open(filename,'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
+        self.archive_files[fileid] = fileid
         self.assertEqual(resp.status_code, 201)
         data = resp.json()
         self.assertEqual(int(data['total_bytes']), 5)
@@ -140,6 +145,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
             myfile.write(buf)
             buf = resp.raw.read(1024)
         myfile.close()
+        self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
         #know the simple file writtten is 30 bytes from archive
         self.assertEqual(filesize, 5)
@@ -165,6 +171,24 @@ class BinaryFileArchiveTests(unittest.TestCase):
         err_msg_length = len(error_msg)
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
+    def test_binary_cleanup(self):
+        """Clean up files that are created for testing """
+        if CLEANLOCALFILES:
+            for filepath in self.local_files:
+                try:
+                    os.remove(filepath)
+                except OSError:
+                    pass
+
+        if CLEANARCHIVEFILES:
+            for filepath in self.archive_files:
+                try:
+                    os.remove(ARCHIVEPREFIX + filepath)
+                except OSError:
+                    pass
+
+        self.assertEqual(True, True)
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(BasicArchiveTests('test_simple_write'))
@@ -172,6 +196,7 @@ def suite():
     suite.addTest(BasicArchiveTests('test_simple_stage'))
     suite.addTest(BasicArchiveTests('test_simple_read'))
     suite.addTest(BasicArchiveTests('test_file_rewrite'))
+    suite.addTest(BasicArchiveTests('test_simple_cleanup'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_write'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_status'))
     suite.addTest(BinaryFileArchiveTests('test_binary_file_stage'))
