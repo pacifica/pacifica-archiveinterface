@@ -286,6 +286,46 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
 
         self.assertEqual(True, True)
 
+
+class ManyFileArchiveTests(unittest.TestCase):
+    """Class that tests the writing of many files at once"""
+    local_files = {}
+    archive_files = {}
+    def test_many_file_write(self):
+        """test writing many files to the archive"""
+        for i in range(3000, 4000):
+            filename = '/tmp/test_simple_write' + str(i) + '.txt'
+            fileid = str(i)
+            file1 = open(filename,'w+')
+            file1.write('Writing content for first file')
+            file1.close()
+            self.local_files[filename] = filename
+            filesize = os.path.getsize(filename)
+            f = open(filename,'rb')
+            resp = requests.put(str(ARCHIVEURL + fileid), data=f)
+            f.close()
+            self.assertEqual(resp.status_code, 201)
+            self.archive_files[fileid] = fileid
+            data = resp.json()
+
+    def test_many_file_cleanup(self):
+        """Clean up files that are created for testing """
+        if CLEANLOCALFILES:
+            for filepath in self.local_files:
+                try:
+                    os.remove(filepath)
+                except OSError:
+                    pass
+
+        if CLEANARCHIVEFILES:
+            for filepath in self.archive_files:
+                try:
+                    os.remove(ARCHIVEPREFIX + filepath)
+                except OSError:
+                    pass
+
+        self.assertEqual(True, True)
+
 def suite():
     """create the test suite in order it so test run correctly"""
     suite = unittest.TestSuite()
@@ -306,6 +346,8 @@ def suite():
     suite.addTest(LargeBinaryFileArchiveTests('test_large_binary_file_stage'))
     suite.addTest(LargeBinaryFileArchiveTests('test_large_binary_file_read'))
     suite.addTest(LargeBinaryFileArchiveTests('test_large_binary_cleanup'))
+    suite.addTest(ManyFileArchiveTests('test_many_file_write'))
+    suite.addTest(ManyFileArchiveTests('test_many_file_cleanup'))
     return suite
 
 if __name__ == "__main__":
