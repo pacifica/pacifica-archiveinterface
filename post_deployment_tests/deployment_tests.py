@@ -213,7 +213,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         fileid = '9999'
         file1 = open(filename,'wb+')
         flag = 0
-        while flag < 10000:
+        while flag < 1000000:
             file1.write(os.urandom(1024))
             flag += 1
         file1.close()
