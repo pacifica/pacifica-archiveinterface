@@ -292,7 +292,7 @@ class ManyFileArchiveTests(unittest.TestCase):
             self.assertEqual(resp.status_code, 201)
             self.archive_files[fileid] = fileid
             data = resp.json()
-			self.assertEqual(data['message'], 'File added to archive')
+            self.assertEqual(data['message'], 'File added to archive')
 
     def test_many_file_cleanup(self):
         """Clean up files that are created for testing."""
