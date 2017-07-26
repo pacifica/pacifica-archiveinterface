@@ -129,7 +129,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File added to archive')
 
     def test_binary_file_status(self):
-        """status a binary file in the archive."""
+        """Get a status for a binary file in the archive."""
         fileid = '4321'
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
