@@ -217,7 +217,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         except IOError, e:
             if e.errno == 32:
                 # error for browser closing pipe
-                print "Browser Closed connection. Subsequent test will prove pass or fail"
+                print 'Browser Closed connection. Subsequent test will prove pass or fail'
                 self.assertEqual(True, True)
                 return
 
