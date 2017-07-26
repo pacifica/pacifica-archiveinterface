@@ -213,3 +213,4 @@ ARCHIVEPREFIX is the path the archive inteface is using for its prefix.  The scr
 ```
 python deployment_tests.py
 ```
+Output will be the status of the tests against the archive interface
