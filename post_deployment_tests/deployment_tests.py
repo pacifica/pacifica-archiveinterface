@@ -20,17 +20,18 @@ class BasicArchiveTests(unittest.TestCase):
 
     local_files = {}
     archive_files = {}
+
     def test_simple_write(self):
         """Test writing a simple text file."""
 
         filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
-        file1 = open(filename,'w+')
+        file1 = open(filename, 'w+')
         file1.write('Writing content for first file')
         file1.close()
         self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
-        f = open(filename,'rb')
+        f = open(filename, 'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 201)
@@ -72,7 +73,7 @@ class BasicArchiveTests(unittest.TestCase):
         myfile.close()
         self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
-        #know the simple file writtten is 30 bytes from archive
+        # know the simple file writtten is 30 bytes from archive
         self.assertEqual(filesize, 30)
 
     def test_file_rewrite(self):
@@ -83,15 +84,14 @@ class BasicArchiveTests(unittest.TestCase):
         file1 = open(filename,'w+')
         file1.write('Writing content for first file')
         file1.close()
-        filesize = os.path.getsize(filename)
         f = open(filename,'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
         error_msg = "Can't open"
-        #get error message length since the file path returned is unique per deploymnet while
-        #the rest of the error message is not
+        # get error message length since the file path returned is unique per deploymnet while
+        # the rest of the error message is not
         err_msg_length = len(error_msg)
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
@@ -119,13 +119,13 @@ class BinaryFileArchiveTests(unittest.TestCase):
         filename = '/tmp/binary_file'
         fileid = '4321'
         newFileBytes = [123, 3, 255, 0, 100]
-        file1 = open(filename,'wb+')
+        file1 = open(filename, 'wb+')
         newFileByteArray = bytearray(newFileBytes)
         file1.write(newFileByteArray)
         file1.close()
         self.local_files[filename] = filename
         filesize = os.path.getsize(filename)
-        f = open(filename,'rb')
+        f = open(filename, 'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.archive_files[fileid] = fileid
@@ -179,15 +179,14 @@ class BinaryFileArchiveTests(unittest.TestCase):
         newFileByteArray = bytearray(newFileBytes)
         file1.write(newFileByteArray)
         file1.close()
-        filesize = os.path.getsize(filename)
-        f = open(filename,'rb')
+        f = open(filename, 'rb')
         resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
         error_msg = "Can't open"
-        #get error message length since the file path returned is unique per deploymnet while
-        #the rest of the error message is not
+        # get error message length since the file path returned is unique per deploymnet while
+        # the rest of the error message is not
         err_msg_length = len(error_msg)
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
@@ -209,12 +208,13 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
     local_files = {}
     archive_files = {}
     filesize = {}
+
     def test_large_binary_file_write(self):
         """test writing a large binary file to the archive."""
 
         filename = '/tmp/large_binary_file'
         fileid = '9999'
-        file1 = open(filename,'wb+')
+        file1 = open(filename, 'wb+')
         flag = 0
         while flag < 1000000:
             file1.write(os.urandom(1024))
@@ -222,12 +222,12 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         file1.close()
         self.local_files[filename] = filename
         self.filesize['size'] = os.path.getsize(filename)
-        f = open(filename,'rb')
+        f = open(filename, 'rb')
         try:
             resp = requests.put(str(ARCHIVEURL + fileid), data=f)
         except IOError, e:
             if e.errno == 32:
-                #error for browser closing pipe
+                # error for browser closing pipe
                 print "Browser Closed connection. Subsequent test will prove pass or fail"
                 self.assertEqual(True, True)
                 return
@@ -292,18 +292,18 @@ class ManyFileArchiveTests(unittest.TestCase):
 
     local_files = {}
     archive_files = {}
+
     def test_many_file_write(self):
         """test writing many files to the archive."""
 
         for i in range(3000, 4000):
             filename = '/tmp/test_simple_write' + str(i) + '.txt'
             fileid = str(i)
-            file1 = open(filename,'w+')
+            file1 = open(filename, 'w+')
             file1.write('Writing content for first file')
             file1.close()
             self.local_files[filename] = filename
-            filesize = os.path.getsize(filename)
-            f = open(filename,'rb')
+            f = open(filename, 'rb')
             resp = requests.put(str(ARCHIVEURL + fileid), data=f)
             f.close()
             self.assertEqual(resp.status_code, 201)
