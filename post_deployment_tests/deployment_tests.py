@@ -1,3 +1,5 @@
+"""module used for testing a deployed archive interface"""
+
 import os
 import json
 import requests
@@ -15,7 +17,8 @@ ARCHIVEPREFIX = '/home/knig880/archive/'
 
 
 class BasicArchiveTests(unittest.TestCase):
-    """Class that contains basic text file tests"""
+    """Class that contains basic text file tests."""
+
     local_files = {}
     archive_files = {}
     def test_simple_write(self):
@@ -89,26 +92,20 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
     def test_simple_cleanup(self):
-        """Clean up files that are created for testing """
+        """Clean up files that are created for testing"""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
-                try:
-                    os.remove(filepath)
-                except OSError:
-                    pass
+                os.remove(filepath)
 
         if CLEANARCHIVEFILES:
             for filepath in self.archive_files:
-                try:
-                    os.remove(ARCHIVEPREFIX + filepath)
-                except OSError:
-                    pass
-
+                os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
 
 class BinaryFileArchiveTests(unittest.TestCase):
-    """Class for testing binary files through the archive workflow"""
+    """Class for testing binary files through the archive workflow."""
+
     local_files = {}
     archive_files = {}
     def test_binary_file_write(self):
@@ -185,25 +182,19 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
     def test_binary_cleanup(self):
-        """Clean up files that are created for testing """
+        """Clean up files that are created for testing"""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
-                try:
-                    os.remove(filepath)
-                except OSError:
-                    pass
+                os.remove(filepath)
 
         if CLEANARCHIVEFILES:
             for filepath in self.archive_files:
-                try:
-                    os.remove(ARCHIVEPREFIX + filepath)
-                except OSError:
-                    pass
-
+                os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
 class LargeBinaryFileArchiveTests(unittest.TestCase):
-    """Class that tests the writing and reading of a large binary file"""
+    """Class that tests the writing and reading of a large binary file."""
+
     local_files = {}
     archive_files = {}
     filesize = {}
@@ -269,26 +260,20 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(filesize, self.filesize['size'])
 
     def test_large_binary_cleanup(self):
-        """Clean up files that are created for testing """
+        """Clean up files that are created for testing"""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
-                try:
-                    os.remove(filepath)
-                except OSError:
-                    pass
+                os.remove(filepath)
 
         if CLEANARCHIVEFILES:
             for filepath in self.archive_files:
-                try:
-                    os.remove(ARCHIVEPREFIX + filepath)
-                except OSError:
-                    pass
-
+                os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
 
 class ManyFileArchiveTests(unittest.TestCase):
-    """Class that tests the writing of many files at once"""
+    """Class that tests the writing of many files at once."""
+
     local_files = {}
     archive_files = {}
     def test_many_file_write(self):
@@ -309,21 +294,14 @@ class ManyFileArchiveTests(unittest.TestCase):
             data = resp.json()
 
     def test_many_file_cleanup(self):
-        """Clean up files that are created for testing """
+        """Clean up files that are created for testing"""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
-                try:
-                    os.remove(filepath)
-                except OSError:
-                    pass
+                os.remove(filepath)
 
         if CLEANARCHIVEFILES:
             for filepath in self.archive_files:
-                try:
-                    os.remove(ARCHIVEPREFIX + filepath)
-                except OSError:
-                    pass
-
+                os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
 def suite():
