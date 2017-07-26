@@ -84,7 +84,7 @@ class BasicArchiveTests(unittest.TestCase):
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
-        error_msg = "Can't open"
+        error_msg = 'Can\'t open'
         # get error message length since the file path returned is unique per deploymnet while
         # the rest of the error message is not
         err_msg_length = len(error_msg)
@@ -174,7 +174,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         f.close()
         self.assertEqual(resp.status_code, 500)
         data = resp.json()
-        error_msg = "Can't open"
+        error_msg = 'Can\'t open'
         # get error message length since the file path returned is unique per deploymnet while
         # the rest of the error message is not
         err_msg_length = len(error_msg)
