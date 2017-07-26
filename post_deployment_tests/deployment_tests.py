@@ -1,4 +1,4 @@
-"""module used for testing a deployed archive interface"""
+"""module used for testing a deployed archive interface."""
 
 import os
 import json
@@ -22,7 +22,7 @@ class BasicArchiveTests(unittest.TestCase):
     local_files = {}
     archive_files = {}
     def test_simple_write(self):
-        """Test writing a simple text file"""
+        """Test writing a simple text file."""
         filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
         file1 = open(filename,'w+')
@@ -40,7 +40,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File added to archive')
 
     def test_simple_status(self):
-        """Test statusing a simple text file"""
+        """Test statusing a simple text file."""
         fileid = '1234'
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
@@ -49,7 +49,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_simple_stage(self):
-        """test staging a simple text file"""
+        """test staging a simple text file."""
         fileid = '1234'
         resp = requests.post(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 200)
@@ -57,7 +57,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File was staged')
 
     def test_simple_read(self):
-        """test reading a simple text file"""
+        """test reading a simple text file."""
         fileid = '1234'
         filename = '/tmp/test_simple_read.txt'
         resp = requests.get(str(ARCHIVEURL + fileid), stream=True)
@@ -73,7 +73,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(filesize, 30)
 
     def test_file_rewrite(self):
-        """Test trying to rewrite a file, rewrite should fail"""
+        """Test trying to rewrite a file, rewrite should fail."""
         filename = '/tmp/test_simple_write.txt'
         fileid = '1234'
         file1 = open(filename,'w+')
@@ -92,7 +92,7 @@ class BasicArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
     def test_simple_cleanup(self):
-        """Clean up files that are created for testing"""
+        """Clean up files that are created for testing."""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
                 os.remove(filepath)
@@ -109,7 +109,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     local_files = {}
     archive_files = {}
     def test_binary_file_write(self):
-        """Write a binary file to the archive"""
+        """Write a binary file to the archive."""
         filename = '/tmp/binary_file'
         fileid = '4321'
         newFileBytes = [123, 3, 255, 0, 100]
@@ -129,7 +129,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File added to archive')
 
     def test_binary_file_status(self):
-        """status a binary file in the archive"""
+        """status a binary file in the archive."""
         fileid = '4321'
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
@@ -138,7 +138,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_binary_file_stage(self):
-        """test staging a binary file"""
+        """test staging a binary file."""
         fileid = '4321'
         resp = requests.post(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 200)
@@ -146,7 +146,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File was staged')
 
     def test_binary_file_read(self):
-        """test reading a binary file back form the archive"""
+        """test reading a binary file back form the archive."""
         fileid = '4321'
         filename = '/tmp/test_binary_read'
         resp = requests.get(str(ARCHIVEURL + fileid), stream=True)
@@ -161,7 +161,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(filesize, 5)
 
     def test_binary_file_rewrite(self):
-        """Test trying to rewrite a file, rewrite should fail"""
+        """Test trying to rewrite a file, rewrite should fail."""
         filename = '/tmp/binary_file'
         fileid = '4321'
         newFileBytes = [123, 3, 255, 0, 100]
@@ -182,7 +182,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'][:err_msg_length], error_msg)
 
     def test_binary_cleanup(self):
-        """Clean up files that are created for testing"""
+        """Clean up files that are created for testing."""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
                 os.remove(filepath)
@@ -199,7 +199,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
     archive_files = {}
     filesize = {}
     def test_large_binary_file_write(self):
-        """test writing a large binary file to the archive"""
+        """test writing a large binary file to the archive."""
         filename = '/tmp/large_binary_file'
         fileid = '9999'
         file1 = open(filename,'wb+')
@@ -228,7 +228,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File added to archive')
 
     def test_large_binary_file_status(self):
-        """test statusing a large binary file"""
+        """test statusing a large binary file."""
         fileid = '9999'
         resp = requests.head(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 204)
@@ -237,7 +237,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_large_binary_file_stage(self):
-        """test staging a large binary file"""
+        """test staging a large binary file."""
         fileid = '9999'
         resp = requests.post(str(ARCHIVEURL + fileid))
         self.assertEqual(resp.status_code, 200)
@@ -245,7 +245,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(data['message'], 'File was staged')
 
     def test_large_binary_file_read(self):
-        """test reading a large binary file"""
+        """test reading a large binary file."""
         fileid = '9999'
         filename = '/tmp/test_binary_read'
         resp = requests.get(str(ARCHIVEURL + fileid), stream=True)
@@ -260,7 +260,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(filesize, self.filesize['size'])
 
     def test_large_binary_cleanup(self):
-        """Clean up files that are created for testing"""
+        """Clean up files that are created for testing."""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
                 os.remove(filepath)
@@ -277,7 +277,7 @@ class ManyFileArchiveTests(unittest.TestCase):
     local_files = {}
     archive_files = {}
     def test_many_file_write(self):
-        """test writing many files to the archive"""
+        """test writing many files to the archive."""
         for i in range(3000, 4000):
             filename = '/tmp/test_simple_write' + str(i) + '.txt'
             fileid = str(i)
@@ -294,7 +294,7 @@ class ManyFileArchiveTests(unittest.TestCase):
             data = resp.json()
 
     def test_many_file_cleanup(self):
-        """Clean up files that are created for testing"""
+        """Clean up files that are created for testing."""
         if CLEANLOCALFILES:
             for filepath in self.local_files:
                 os.remove(filepath)
@@ -305,7 +305,7 @@ class ManyFileArchiveTests(unittest.TestCase):
         self.assertEqual(True, True)
 
 def suite():
-    """create the test suite in order it so test run correctly"""
+    """create the test suite in order it so test run correctly."""
     suite = unittest.TestSuite()
     suite.addTest(BasicArchiveTests('test_simple_write'))
     suite.addTest(BasicArchiveTests('test_simple_status'))
@@ -329,6 +329,6 @@ def suite():
     return suite
 
 if __name__ == "__main__":
-    """builds and runs the test suite"""
+    """builds and runs the test suite."""
     runner = unittest.TextTestRunner()
     runner.run(suite())
