@@ -191,6 +191,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
                 os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
+
 class LargeBinaryFileArchiveTests(unittest.TestCase):
     """Class that tests the writing and reading of a large binary file."""
 
@@ -305,6 +306,7 @@ class ManyFileArchiveTests(unittest.TestCase):
                 os.remove(ARCHIVEPREFIX + filepath)
         self.assertEqual(True, True)
 
+
 def suite():
     """create the test suite in order it so test run correctly."""
     suite = unittest.TestSuite()
@@ -328,6 +330,7 @@ def suite():
     suite.addTest(ManyFileArchiveTests('test_many_file_write'))
     suite.addTest(ManyFileArchiveTests('test_many_file_cleanup'))
     return suite
+
 
 if __name__ == "__main__":
     """builds and runs the test suite."""
