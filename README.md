@@ -195,6 +195,7 @@ extend that array to include the new backend type
 # Post Deployment Testing 
 Inside the post_deployment_test directory there is a file called deployment_tests.py
 This file will run a series of tests against a deployed archive interface.  The test are ordered so that they post, stage, status, and get files properly.
+There are a few global variables at the top of the file that need to be adjusted to each deployment.
 
 ## Variables to set in deployment_tests.py
 ```
