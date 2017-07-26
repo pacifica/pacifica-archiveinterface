@@ -332,7 +332,7 @@ def suite():
     return suite
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     """builds and runs the test suite."""
     runner = unittest.TextTestRunner()
     runner.run(suite())
