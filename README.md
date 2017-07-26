@@ -203,12 +203,12 @@ ARCHIVEURL = 'http://127.0.0.1:8080/'
 CLEANLOCALFILES = True
 CLEANARCHIVEFILES = True
 ARCHIVEPREFIX = 'path/to/archive/prefix'
-```
+
 ARCHIVEURL is the URL to the newly deployed archive_interface
 CLEANLOCALFILES if set to True, will remove all local dummy files generated to test against the archive interface
 CLEANARCHIVEFILES if set to True, will remove all files the testing file passes to the archive interface.  Will need the archive prefix set properly to work. Also assumes it has correct permissions and can get to the archive file system.
 ARCHIVEPREFIX is the path the archive inteface is using for its prefix.  The script will use this to try and delete the files from the archive.
-
+```
 ## Running deployment_tests.py
 ```
 python deployment_tests.py
