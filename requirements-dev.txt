@@ -3,4 +3,5 @@ coverage>4.0,<4.4
 peewee
 pre-commit
 pylint
+PyMySQL
 setuptools
