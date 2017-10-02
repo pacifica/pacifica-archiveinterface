@@ -3,6 +3,7 @@
 pre-commit run -a
 pylint \
     --rcfile=pylintrc \
+    --disable=duplicate-code \
     scripts/archiveinterfaceserver.py \
     archiveinterface.archive_interface \
     archiveinterface.archive_interface_responses \
