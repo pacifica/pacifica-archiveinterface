@@ -191,3 +191,26 @@ Update the archiveinterfaceserver.py file to support the new backend choice.
 File located: pacifica-archiveinterface->scripts->archiveinterfaceserver.py
 In this file the type argument is defined with its supported types.  Need to
 extend that array to include the new backend type
+
+# Post Deployment Testing
+Inside the post_deployment_test directory there is a file called deployment_test.py
+This file will run a series of tests against a deployed archive interface.  The test are ordered so that they post, stage, status, and get files properly.
+There are a few global variables at the top of the file that need to be adjusted to each deployment.
+
+## Variables to set in deployment_test.py
+```
+ARCHIVEURL = 'http://127.0.0.1:8080/'
+CLEANLOCALFILES = True
+CLEANARCHIVEFILES = True
+ARCHIVEPREFIX = 'path/to/archive/prefix'
+
+ARCHIVEURL is the URL to the newly deployed archive_interface
+CLEANLOCALFILES if set to True, will remove all local dummy files generated to test against the archive interface
+CLEANARCHIVEFILES if set to True, will remove all files the testing file passes to the archive interface.  Will need the archive prefix set properly to work. Also assumes it has correct permissions and can get to the archive file system.
+ARCHIVEPREFIX is the path the archive inteface is using for its prefix.  The script will use this to try and delete the files from the archive.
+```
+## Running deployment_test.py
+```
+python deployment_test.py
+```
+Output will be the status of the tests against the archive interface
