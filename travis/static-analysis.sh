@@ -20,3 +20,4 @@ pylint archiveinterface.archivebackends.oracle_hms_sideband.extended_hms_sideban
 pylint archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_backend_archive
 pylint archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status
 pylint archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_orm
+pylint post_deployment_tests/deployment_test.py

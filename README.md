@@ -213,6 +213,6 @@ export LOCALFILEPREFIX='/tmp'
 
 ## Running deployment_test.py
 ```
-python deployment_test.py
+pytest -v post_deployment_tests/deployment_test.py
 ```
 Output will be the status of the tests against the archive interface
