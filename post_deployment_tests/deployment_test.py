@@ -2,9 +2,8 @@
 import os
 from Queue import Queue
 from threading import Thread
-import requests
 import unittest
-from tempfile import mkstemp
+import requests
 
 # url for the archive interface just deployed.
 # Clean Local files will remove all the test file generated from where the script is run if true
@@ -47,7 +46,6 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_read(self):
         """test reading a simple text file."""
         fileid = '1234'
-        filename, filefd = mkstemp()
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
         data = resp.raw.read()
         # the len of string 'Writing content for first file'
@@ -100,7 +98,6 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_read(self):
         """test reading a binary file back form the archive."""
         fileid = '4321'
-        filename, filefd = mkstemp()
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
         data = resp.raw.read()
         self.assertEqual(len(data), 5)
@@ -126,9 +123,9 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
 
     def test_large_binary_file_write(self):
         """test writing a large binary file to the archive."""
-        filename, filefd = mkstemp()
         fileid = '9999'
 
+        # pylint: disable=too-few-public-methods
         class RandomFile(object):
             """Random File Object."""
 
@@ -143,6 +140,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
                     size = self.len - self.bytes_read
                 self.bytes_read += size
                 return os.urandom(size)
+        # pylint: enable=too-few-public-methods
 
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=RandomFile(self.large_file_size))
         self.assertEqual(resp.status_code, 201)
@@ -170,7 +168,6 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
     def test_large_binary_file_read(self):
         """test reading a large binary file."""
         fileid = '9999'
-        filename, filefd = mkstemp()
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
         filesize = 0
         buf = resp.raw.read(1024)
@@ -189,6 +186,7 @@ class ManyFileArchiveTests(unittest.TestCase):
         job_id_queue = Queue()
 
         def worker():
+            """Thread worker to send the test data."""
             work = True
             while work:
                 work = job_id_queue.get()
@@ -200,9 +198,9 @@ class ManyFileArchiveTests(unittest.TestCase):
                 job_id_queue.task_done()
 
         for i in range(num_worker_threads):
-            t = Thread(target=worker)
-            t.daemon = True
-            t.start()
+            new_thread = Thread(target=worker)
+            new_thread.daemon = True
+            new_thread.start()
 
         for i in range(3000, 4000):
             job_id_queue.put(i)
