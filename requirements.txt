@@ -1,3 +1,4 @@
 peewee
-pylint==1.6.3
+PyMySQL
+requests
 setuptools

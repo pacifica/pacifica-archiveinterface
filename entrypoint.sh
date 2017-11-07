@@ -1,8 +1,8 @@
 #!/bin/bash
 
-python ./scripts/archiveinterfaceserver.py \
-  -t $PACIFICA_AAPI_BACKEND_TYPE \
-  -p $PACIFICA_AAPI_PORT \
-  -a $PACIFICA_AAPI_ADDRESS \
-  --prefix $PACIFICA_AAPI_PREFIX \
-  "$@"
+cd /
+uwsgi \
+  --http-socket $PACIFICA_AAPI_ADDRESS:$PACIFICA_AAPI_PORT \
+  --master \
+  --die-on-term \
+  --wsgi-file /usr/src/app/archiveinterface/wsgi.py "$@"

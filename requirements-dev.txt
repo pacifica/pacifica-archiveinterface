@@ -1,6 +1,9 @@
 codeclimate-test-reporter
 coverage>4.0,<4.4
 peewee
+pep257
 pre-commit
 pylint
+PyMySQL
+requests
 setuptools
