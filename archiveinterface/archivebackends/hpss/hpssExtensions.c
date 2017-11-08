@@ -199,9 +199,9 @@ static PyObject *
 pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
     char *filepath;
-    char * filepathCopy;
     int rcode;
     int fd = 0;
+    u_signed64 offset64, size64;
 
     /*
         get the filepath passed in from the python code
@@ -212,9 +212,6 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    filepathCopy = strdup(filepath);
-
-
     fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
@@ -222,19 +219,22 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    rcode = hpss_Stage(fd, 0, cast64m(0), 0, BFS_STAGE_ALL);
+    if (hpss_FileGetAttributes(hpss_file, &attr) < 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        return NULL;
+    }
+    size64 = attr.Attrs.DataLength;
+    offset64 = cast64m(0);
+
+    rcode = hpss_Stage(fd, offset64, size64, 0, BFS_STAGE_ALL);
     if(rcode != 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         hpss_Close(fd);
-        free(filepathCopy);
         return NULL;
     }
     hpss_Close(fd);
-    /* Sleep is a hack to get around other hpss thread not finished yet
-    */
-    free(filepathCopy);
-    usleep(30000);
     Py_RETURN_NONE;
 }
 
