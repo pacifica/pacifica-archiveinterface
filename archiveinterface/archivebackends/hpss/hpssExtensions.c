@@ -154,27 +154,26 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
         latency[2] = time when ping request was sent (epoch)
         to get latency = latency[2] - latency[0]
     */
+    char *sitename;
     PyObject * latency= PyTuple_New(4);
     int ret;
-    hpss_uuid_t uuid;
+    hpss_srvr_id_t uuid;
     struct timeval tv;
     unsigned32 secs,usecs;
 
-    /*
-        The Hex values used here corresond to the EMSL HPSS CORE server
-        getting these values dynamically becomes difficult
-    */
-    uuid.time_low = 0xe52ea34e;
-    uuid.time_mid = 0xc9aa;
-    uuid.time_hi_and_version = 0x11de;
-    uuid.clock_seq_hi_and_reserved = 0xb4;
-    uuid.clock_seq_low = 0x08;
-    uuid.node[0] = 0x00;
-    uuid.node[1] = 0x21;
-    uuid.node[2] = 0x5e;
-    uuid.node[3] = 0xdc;
-    uuid.node[4] = 0x76;
-    uuid.node[5] = 0x4c;
+    if (!PyArg_ParseTuple(args, "s", &sitename))
+    {
+        PyErr_SetString(archiveInterfaceError, "Error parsing sitename argument");
+        return NULL;
+    }
+
+    /* Get the core server address/uuid information. */
+    ret = hpss_LookupRootCS(&uuid, sitename);
+    if(ret < 0)
+    {
+        PyErr_SetString(archiveInterfaceError, strerror(errno));
+        return NULL;
+    }
 
     /* Obtain current time as seconds elapsed since the Epoch. */
     gettimeofday(&tv,NULL);
