@@ -11,7 +11,7 @@ HPSS = Extension('archiveinterface.archivebackends.hpss._hpssExtensions',
                  sources=['archiveinterface/archivebackends/hpss/hpssExtensions.c'],
                  include_dirs=['/opt/hpss/include'],
                  library_dirs=['/opt/hpss/lib'],
-                 libraries=['hpss', 'tirpc'],
+                 libraries=['tirpc', 'hpsscs', 'hpss'],
                  extra_compile_args=['-DLINUX', '-DHPSS51', '-DLITTLEEND'])
 
 EXT_MODULES = []
