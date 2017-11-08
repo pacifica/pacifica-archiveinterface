@@ -220,7 +220,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    if(hpss_FileGetAttributes(fd, &attr) < 0)
+    if(hpss_FileGetAttributes(filepath, &attr) < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
