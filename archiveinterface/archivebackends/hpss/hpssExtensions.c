@@ -168,7 +168,7 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
     }
 
     /* Get the core server address/uuid information. */
-    ret = hpss_LookupRootCS(&uuid, sitename);
+    ret = hpss_LookupRootCS(sitename, &uuid);
     if(ret < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
