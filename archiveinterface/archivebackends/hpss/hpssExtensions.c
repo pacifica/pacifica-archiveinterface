@@ -202,6 +202,7 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
     int rcode;
     int fd = 0;
     u_signed64 offset64, size64;
+    hpss_fileattr_t attr;
 
     /*
         get the filepath passed in from the python code
@@ -212,14 +213,14 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
+    fd = hpss_Open(filepath, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     }
 
-    if (hpss_FileGetAttributes(hpss_file, &attr) < 0)
+    if(hpss_FileGetAttributes(fd, &attr) < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
