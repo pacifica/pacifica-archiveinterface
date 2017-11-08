@@ -23,11 +23,11 @@ class HpssExtended(object):
         self._latency = None
         self._filepath = filepath
 
-    def ping_core(self):
+    def ping_core(self, sitename):
         """Ping the Core server to see if its still active."""
         # Define acceptable latency in seconds
         acceptable_latency = self._accept_latency
-        latency_tuple = _hpssExtensions.hpss_ping_core()
+        latency_tuple = _hpssExtensions.hpss_ping_core(sitename)
         # Get the latency
         latency = self.parse_latency(latency_tuple)
 
