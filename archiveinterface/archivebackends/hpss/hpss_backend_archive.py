@@ -56,8 +56,6 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Constructor for the HPSS Backend Archive."""
         super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._user = read_config_value('hpss', 'user')
-        self._auth = read_config_value('hpss', 'auth')
         self._sitename = read_config_value('hpss', 'sitename')
         self._file = None
         self._filepath = None
@@ -203,9 +201,11 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def authenticate(self):
         """Authenticate the user with the hpss system."""
+        user = read_config_value('hpss', 'user')
+        auth = read_config_value('hpss', 'auth')
         rcode = self._hpsslib.hpss_SetLoginCred(
-            self._user, HPSS_AUTHN_MECH_UNIX,
-            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, self._auth
+            user, HPSS_AUTHN_MECH_UNIX,
+            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth
         )
         if rcode != 0:
             err_str = 'Could Not Authenticate, error code is:' + str(rcode)
