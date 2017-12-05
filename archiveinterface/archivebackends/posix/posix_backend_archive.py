@@ -76,7 +76,9 @@ class PosixBackendArchive(AbstractBackendArchive):
         """Write a posix file to the archive."""
         try:
             if self._file:
+                # pylint: disable=too-many-function-args
                 return self._file.write(buf)
+                # pylint: enable=too-many-function-args
         except Exception as ex:
             err_str = "Can't write posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
