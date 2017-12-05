@@ -29,6 +29,9 @@ setup(name='PacificaArchiveInterface',
                 'archiveinterface.archivebackends.posix',
                 'archiveinterface.archivebackends.hpss',
                 'archiveinterface.archivebackends.oracle_hms_sideband'],
-      scripts=['scripts/archiveinterfaceserver.py'],
+      scripts=['ArchiveInterfaceServer.py'],
+      entry_point={
+        'console_scripts': ['ArchiveInterface=archiveinterface:main'],
+      },
       install_requires=[str(ir.req) for ir in INSTALL_REQS],
       ext_modules=EXT_MODULES)
