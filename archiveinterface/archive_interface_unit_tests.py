@@ -173,16 +173,23 @@ class TestPosixBackendArchive(unittest.TestCase):
 
         # force a close to throw an error
         def close_error():
+            """Raise an error on close."""
             raise ArchiveInterfaceError('this is an error')
+        # function of testing
+        # pylint: disable=protected-access
         orig_close = backend._file.close
         backend._file.close = close_error
+        # pylint: enable=protected-access
         hit_exception = False
         try:
             my_file = backend.open(filepath, mode)
         except ArchiveInterfaceError:
             hit_exception = True
         self.assertTrue(hit_exception)
+        # function of testing
+        # pylint: disable=protected-access
         backend._file.close = orig_close
+        # pylint: enable=protected-access
         hit_exception = False
         try:
             my_file = backend.open(47, mode)
@@ -253,8 +260,12 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend.open(filepath, mode)
 
         def write_error():
+            """Raise an error on write."""
             raise IOError('Unable to Write!')
+        # easiest way to unit test is look at class variable
+        # pylint: disable=protected-access
         backend._file.write = write_error
+        # pylint: enable=protected-access
         hit_exception = False
         try:
             backend.write('write stuff')
@@ -283,14 +294,14 @@ class TestPosixBackendArchive(unittest.TestCase):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('bad_section', 'port')
-        self.assertTrue('Error reading config file, no section: bad_section', context.exception)
+            self.assertEqual('Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('hms_sideband', 'bad_field')
-        self.assertTrue('Error reading config file, no field: bad_field in section: hms_sideband',
-                        context.exception)
+            self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
+                             context.exception)
 
 
 if __name__ == '__main__':
