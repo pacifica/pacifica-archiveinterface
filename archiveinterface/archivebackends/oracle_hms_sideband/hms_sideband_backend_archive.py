@@ -124,3 +124,17 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't get HMS Sideband file status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+
+    def patch(self, file_id, old_path):
+        """Move a hms file."""
+        try:
+            fpath = un_abs_path(file_id)
+            new_filepath = os.path.join(self._prefix, path_info_munge(fpath))
+            new_directories = os.path.dirname(new_filepath)
+            if not os.path.exists(new_directories):
+                os.makedirs(new_directories)
+
+            shutil.move(old_path, new_filepath)
+        except Exception as ex:
+            err_str = "Can't move posix file with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)

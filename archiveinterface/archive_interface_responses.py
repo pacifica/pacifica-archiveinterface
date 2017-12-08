@@ -41,6 +41,14 @@ class Responses(object):
         }
         return self._response
 
+    def file_patch(self, start_response):
+        """Response on a successful put."""
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'File Moved Successfully',
+        }
+        return self._response
+
     def archive_working_response(self, start_response):
         """Response when doing a get on /."""
         start_response('200 OK', [('Content-Type', 'application/json')])
@@ -85,6 +93,14 @@ class Responses(object):
                 ('Content-Type', 'application/json')
             ]
             start_response('404 Not Found', response_headers)
+        return self._response
+
+    def json_patch_error_response(self, start_response):
+        """Response for when there is a problem reading the json file"""
+        start_response('400 Bad Request', [('Content-Type', 'application/json')])
+        self._response = {
+            'message': 'JSON content could not be read'
+        }
         return self._response
 
     def archive_exception(self, start_response, ex, request_method=None):

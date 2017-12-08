@@ -209,3 +209,16 @@ class HpssBackendArchive(AbstractBackendArchive):
         if rcode != 0:
             err_str = 'Could Not Authenticate, error code is:' + str(rcode)
             raise ArchiveInterfaceError(err_str)
+
+    def patch(self, file_id, old_path):
+        """Move a hpss file."""
+        try:
+            fpath = un_abs_path(file_id)
+            #want to open the hpss file first so that it creates the dirs
+            self.open(fpath, 'w')
+            new_filepath = self._filepath
+            self.close() #close the file so we can do the rename
+            self._hpsslib.hpss_Rename(old_path, new_filepath)
+        except Exception as ex:
+            err_str = "Can't rename hpss file with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
