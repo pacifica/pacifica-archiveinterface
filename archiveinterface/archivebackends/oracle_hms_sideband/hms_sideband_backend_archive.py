@@ -5,6 +5,7 @@ Module that implements the abstract_backend_archive class for a HMS Sideband
 backend.
 """
 import os
+import shutil
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.oracle_hms_sideband.extended_hms_sideband import (

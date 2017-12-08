@@ -6,6 +6,7 @@ backend.
 """
 
 import os
+import shutil
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
