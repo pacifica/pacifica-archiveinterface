@@ -116,11 +116,8 @@ class ArchiveInterfaceGenerator(object):
             data = json.loads(request_body)
             file_path = data['path']
             file_id = env['PATH_INFO']
-        except IOError:
+        except (IOError, ValueError):
             # is exception is probably from the read()
-            self._response = resp.json_patch_error_response(start_response)
-            return self.return_response()
-        except ValueError:
             self._response = resp.json_patch_error_response(start_response)
             return self.return_response()
         stderr.flush()
