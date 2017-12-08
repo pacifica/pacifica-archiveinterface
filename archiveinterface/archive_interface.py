@@ -104,7 +104,6 @@ class ArchiveInterfaceGenerator(object):
     def patch(self, env, start_response):
         """Move a file from the original path to the new one specified
         """
-        archivefile = None
         resp = interface_responses.Responses()
         try:
             request_body_size = int(env.get('CONTENT_LENGTH', 0))
@@ -121,7 +120,7 @@ class ArchiveInterfaceGenerator(object):
             self._response = resp.json_patch_error_response(start_response)
             return self.return_response()
         stderr.flush()
-        patch = self._archive.patch(file_id, file_path)
+        self._archive.patch(file_id, file_path)
         self._response = resp.file_patch(start_response)
         return self.return_response()
 
@@ -145,8 +144,7 @@ class ArchiveInterfaceGenerator(object):
                 return_response = self.patch(env, start_response)
             else:
                 resp = interface_responses.Responses()
-                self._response = resp.unknown_request(start_response,
-                                                  env['REQUEST_METHOD'])
+                self._response = resp.unknown_request(start_response, env['REQUEST_METHOD'])
                 return_response = self.return_response()
             return return_response
         except ArchiveInterfaceError as ex:

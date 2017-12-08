@@ -214,13 +214,13 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Move a hpss file."""
         try:
             fpath = un_abs_path(file_id)
-            #want to open the hpss file first so that it creates the dirs
+            # want to open the hpss file first so that it creates the dirs
             self.open(fpath, 'w')
             new_filepath = self._filepath
-            self.close() #close the file so we can do the rename
+            self.close()  # close the file so we can do the rename
             ret_val = self._hpsslib.hpss_Rename(str(old_path), str(new_filepath))
             if ret_val < 0:
-                raise Exception("Hpss rename error. Return val is: " + str(ret_val))
+                raise Exception('Hpss rename error. Return val is: ' + str(ret_val))
         except Exception as ex:
-            err_str = "Can't rename hpss file with error: " + str(ex)
+            err_str = 'Can not rename hpss file with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
