@@ -132,20 +132,23 @@ class ArchiveInterfaceGenerator(object):
     def pacifica_archiveinterface(self, env, start_response):
         """Parse request method type."""
         try:
+            return_response = None
             if env['REQUEST_METHOD'] == 'GET':
-                return self.get(env, start_response)
+                return_response = self.get(env, start_response)
             elif env['REQUEST_METHOD'] == 'PUT':
-                return self.put(env, start_response)
+                return_response = self.put(env, start_response)
             elif env['REQUEST_METHOD'] == 'HEAD':
-                return self.status(env, start_response)
+                return_response = self.status(env, start_response)
             elif env['REQUEST_METHOD'] == 'POST':
-                return self.stage(env, start_response)
+                return_response = self.stage(env, start_response)
             elif env['REQUEST_METHOD'] == 'PATCH':
-                return self.patch(env, start_response)
-            resp = interface_responses.Responses()
-            self._response = resp.unknown_request(start_response,
+                return_response = self.patch(env, start_response)
+            else:
+                resp = interface_responses.Responses()
+                self._response = resp.unknown_request(start_response,
                                                   env['REQUEST_METHOD'])
-            return self.return_response()
+                return_response = self.return_response()
+            return return_response
         except ArchiveInterfaceError as ex:
             # catching application errors
             # set the error reponse
