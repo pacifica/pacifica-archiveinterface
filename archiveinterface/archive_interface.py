@@ -1,5 +1,6 @@
 #!/usr/bin/python
 """Class for the archive interface.
+
 Allows API to file interactions for passed in archive backends.
 """
 import json
@@ -13,6 +14,7 @@ BLOCK_SIZE = 1 << 20
 
 class ArchiveInterfaceGenerator(object):
     """Archive Interface Generator.
+
     Defines the methods that can be used on files for request types.
     """
 
@@ -24,6 +26,7 @@ class ArchiveInterfaceGenerator(object):
 
     def get(self, env, start_response):
         """Get a file from WSGI request.
+
         Gets a file specified in the request and writes back the data.
         """
         archivefile = None
@@ -44,6 +47,7 @@ class ArchiveInterfaceGenerator(object):
 
     def put(self, env, start_response):
         """Write a file from WSGI requests.
+
         Writes a file passed in the request to the archive.
         """
         archivefile = None
@@ -75,6 +79,7 @@ class ArchiveInterfaceGenerator(object):
 
     def status(self, env, start_response):
         """Get the file status from WSGI request.
+
         Gets the status of a file specified in the request.
         """
         archivefile = None
@@ -89,6 +94,7 @@ class ArchiveInterfaceGenerator(object):
 
     def stage(self, env, start_response):
         """Stage a file from WSGI request.
+
         Stage the file specified in the request to disk.
         """
         archivefile = None
@@ -102,8 +108,7 @@ class ArchiveInterfaceGenerator(object):
         return self.return_response()
 
     def patch(self, env, start_response):
-        """Move a file from the original path to the new one specified
-        """
+        """Move a file from the original path to the new one specified."""
         resp = interface_responses.Responses()
         try:
             request_body_size = int(env.get('CONTENT_LENGTH', 0))
