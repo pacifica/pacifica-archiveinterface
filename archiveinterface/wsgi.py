@@ -31,4 +31,7 @@ BACKEND = FACTORY.get_backend_archive(
 )
 # Create the archive interface
 GENERATOR = ArchiveInterfaceGenerator(BACKEND)
+# This is a function not a constant but pylint doesn't know that
+# pylint: disable=invalid-name
 application = GENERATOR.pacifica_archiveinterface
+# pylint: enable=invalid-name
