@@ -45,7 +45,7 @@ class Responses(object):
         """Response on a successful put."""
         start_response('200 OK', [('Content-Type', 'application/json')])
         self._response = {
-            'message': 'File Moved Successfully',
+            'message': 'File Moved Successfully'
         }
         return self._response
 

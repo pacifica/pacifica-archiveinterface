@@ -114,7 +114,6 @@ class ArchiveInterfaceGenerator(object):
             request_body_size = int(env.get('CONTENT_LENGTH', 0))
         except ValueError:
             request_body_size = 0
-
         try:
             request_body = env['wsgi.input'].read(request_body_size)
             data = json.loads(request_body)

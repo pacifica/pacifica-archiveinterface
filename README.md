@@ -170,7 +170,7 @@ Sample Output:
 ```
 
 ## Move a File
-The HTTP `PATCH` method is used to move a file. 
+The HTTP `PATCH` method is used to move a file.
 The upload file contains the path to current file on archive
 The Id at the end of the url is where the file will be moved to
 
