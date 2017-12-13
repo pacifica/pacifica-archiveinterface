@@ -285,6 +285,17 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertEqual(buf, 'i am a test string')
         my_file.close()
 
+    def test_posix_backend_read_fail(self):
+        """Test reading a file from posix backend."""
+        self.test_posix_backend_write()
+        filepath = '1234'
+        mode = 'r'
+        backend = PosixBackendArchive('/tmp/')
+        my_file = backend.open(filepath, mode)
+        buf = my_file.read("iam a string which should cause an error")
+        self.assertEqual(buf, 'i am a test string')
+        my_file.close()
+
     def test_read_config_file(self):
         """Test reading from config file."""
         port = read_config_value('hms_sideband', 'port')
@@ -301,6 +312,14 @@ class TestPosixBackendArchive(unittest.TestCase):
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('hms_sideband', 'bad_field')
             self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
+                             context.exception)
+
+    def test_read_config_bad_file(self):
+        """Test reading from config file with bad section."""
+        with self.assertRaises(ValueError) as context:
+            set_config_name('fake/config/file')
+            read_config_value('hms_sideband', 'bad_field')
+            self.assertEqual('Failed to open config file with name: {fake/config/file}',
                              context.exception)
 
 
