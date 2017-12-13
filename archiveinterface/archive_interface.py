@@ -132,10 +132,10 @@ class ArchiveInterfaceGenerator(object):
         """Print all responses in a nice fashion."""
         return json.dumps(self._response, sort_keys=True, indent=4)
 
+    # pylint: disable=too-many-branches
     def pacifica_archiveinterface(self, env, start_response):
         """Parse request method type."""
         try:
-            # pylint: disable=too-many-branches
             return_response = None
             if env['REQUEST_METHOD'] == 'GET':
                 return_response = self.get(env, start_response)
