@@ -135,6 +135,7 @@ class ArchiveInterfaceGenerator(object):
     def pacifica_archiveinterface(self, env, start_response):
         """Parse request method type."""
         try:
+            # pylint: disable=too-many-branches
             return_response = None
             if env['REQUEST_METHOD'] == 'GET':
                 return_response = self.get(env, start_response)
