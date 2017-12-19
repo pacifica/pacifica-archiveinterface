@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Pacifica Archive Interface.
 
@@ -14,7 +15,7 @@ from os import getenv
 from archiveinterface.archive_utils import set_config_name
 from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archivebackends.archive_backend_factory import \
-     ArchiveBackendFactory
+    ArchiveBackendFactory
 
 BACKEND_TYPE = getenv('PAI_BACKEND_TYPE', 'posix')
 PREFIX = getenv('PAI_PREFIX', '/tmp')

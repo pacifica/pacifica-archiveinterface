@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module to Convert an integer id to a filepath for storage system."""
 import sys
 

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module that implements the Abstract backend archive for an hpss backend."""
 import os
 import sys
@@ -16,7 +17,9 @@ from archiveinterface.id2filename import id2filename
 
 RTLD_LAZY = 1
 RTLD_DEEPBIND = 8
+# pylint: disable=no-member
 sys.setdlopenflags(RTLD_LAZY | RTLD_DEEPBIND)
+# pylint: enable=no-member
 # import cant be at top due to lazy load
 # pylint: disable=wrong-import-position
 from archiveinterface.archivebackends.hpss.hpss_extended import HpssExtended  # noqa: E402
@@ -113,7 +116,8 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss.ping_core()
                 rcode = self._hpsslib.hpss_Fclose(self._file)
                 if rcode < 0:
-                    err_str = 'Failed to close hpss file with code: '+str(rcode)
+                    err_str = 'Failed to close hpss file with code: ' + \
+                        str(rcode)
                     raise ArchiveInterfaceError(err_str)
                 self._file = None
         except Exception as ex:
@@ -126,7 +130,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core()
-                buf = create_string_buffer('\000'*blocksize)
+                buf = create_string_buffer('\000' * blocksize)
                 rcode = self._hpsslib.hpss_Fread(buf, 1, blocksize, self._file)
                 if rcode < 0:
                     err_str = 'Failed During HPSS Fread,'\
@@ -194,7 +198,8 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss.ping_core()
                 rcode = self._hpsslib.hpss_Chmod(self._filepath, 0444)
                 if rcode < 0:
-                    err_str = 'Failed to chmod hpss file with code: '+str(rcode)
+                    err_str = 'Failed to chmod hpss file with code: ' + \
+                        str(rcode)
                     raise ArchiveInterfaceError(err_str)
         except Exception as ex:
             err_str = "Can't set hpss file permissions with error: " + str(ex)

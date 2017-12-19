@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module that has the abstract class for a file's status."""
 import abc
 
