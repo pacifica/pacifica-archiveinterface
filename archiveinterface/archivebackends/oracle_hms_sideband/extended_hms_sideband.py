@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module that allows for the extension of the hms sideband archive."""
 import os
 from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status import (

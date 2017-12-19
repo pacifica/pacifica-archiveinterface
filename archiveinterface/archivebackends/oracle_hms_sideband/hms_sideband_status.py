@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module that implements the Abstract Status class.
 
 For the oracle hms sideband archive backend type.

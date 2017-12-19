@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Pacifica Archive Interface.
 
@@ -12,7 +13,7 @@ from wsgiref.simple_server import make_server
 from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archive_utils import set_config_name
 from archiveinterface.archivebackends.archive_backend_factory import \
-     ArchiveBackendFactory
+    ArchiveBackendFactory
 
 
 def main():

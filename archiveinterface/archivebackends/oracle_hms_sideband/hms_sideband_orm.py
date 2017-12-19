@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """ORM for the sideband database."""
 # disabling some pylint checks due to this being a database model
 # things like too few methods and invalid class attributes like id
