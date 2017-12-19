@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Group of utility functions.
 
 Used in various parts of the archive interface.
@@ -32,7 +33,8 @@ def get_http_modified_time(env):
     try:
         mod_time = None
         if 'HTTP_LAST_MODIFIED' in env:
-            mod_time = eut.mktime_tz(eut.parsedate_tz(env['HTTP_LAST_MODIFIED']))
+            mod_time = eut.mktime_tz(
+                eut.parsedate_tz(env['HTTP_LAST_MODIFIED']))
         else:
             mod_time = time.time()
         return mod_time
@@ -54,11 +56,13 @@ def read_config_value(section, field):
         config = ConfigParser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
         if not dataset:
-            raise ValueError('Failed to open config file with name: {}'.format(str(CONFIG_FILE)))
+            raise ValueError(
+                'Failed to open config file with name: {}'.format(str(CONFIG_FILE)))
         value = config.get(section, field)
         return value
     except ConfigParser.NoSectionError:
-        raise ArchiveInterfaceError('Error reading config file, no section: ' + section)
+        raise ArchiveInterfaceError(
+            'Error reading config file, no section: ' + section)
     except ConfigParser.NoOptionError:
         raise ArchiveInterfaceError('Error reading config file, no field: ' + field +
                                     ' in section: ' + section)

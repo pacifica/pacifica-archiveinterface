@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Module used for testing a deployed archive interface."""
 import os
 from Queue import Queue
@@ -159,12 +161,13 @@ class RandomFile(object):
 class LargeBinaryFileArchiveTests(unittest.TestCase):
     """Class that tests the writing and reading of a large binary file."""
 
-    large_file_size = 1024*1024*1024
+    large_file_size = 1024 * 1024 * 1024
 
     def test_large_binary_file_write(self):
         """test writing a large binary file to the archive."""
         fileid = '9999'
-        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=RandomFile(self.large_file_size))
+        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid),
+                            data=RandomFile(self.large_file_size))
         self.assertEqual(resp.status_code, 201)
         data = resp.json()
         self.assertEqual(int(data['total_bytes']), self.large_file_size)
@@ -173,18 +176,21 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
     def test_large_binary_file_status(self):
         """test statusing a large binary file."""
         fileid = '9998'
-        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=RandomFile(self.large_file_size))
+        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid),
+                            data=RandomFile(self.large_file_size))
         self.assertEqual(resp.status_code, 201)
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], str(self.large_file_size))
+        self.assertEqual(
+            resp.headers['content-length'], str(self.large_file_size))
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_large_binary_file_stage(self):
         """test staging a large binary file."""
         fileid = '9997'
-        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=RandomFile(self.large_file_size))
+        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid),
+                            data=RandomFile(self.large_file_size))
         self.assertEqual(resp.status_code, 201)
         resp = requests.post('{}/{}'.format(ARCHIVEURL, fileid))
         self.assertEqual(resp.status_code, 200)
@@ -194,7 +200,8 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
     def test_large_binary_file_read(self):
         """test reading a large binary file."""
         fileid = '9996'
-        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=RandomFile(self.large_file_size))
+        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid),
+                            data=RandomFile(self.large_file_size))
         self.assertEqual(resp.status_code, 201)
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
         filesize = 0
@@ -218,7 +225,8 @@ class ManyFileArchiveTests(unittest.TestCase):
             work = job_id_queue.get()
             while work:
                 data = bytearray('Writing content for first file')
-                resp = requests.put('{}/{}'.format(ARCHIVEURL, work), data=data)
+                resp = requests.put(
+                    '{}/{}'.format(ARCHIVEURL, work), data=data)
                 self.assertEqual(resp.status_code, 201)
                 data = resp.json()
                 self.assertEqual(data['message'], 'File added to archive')

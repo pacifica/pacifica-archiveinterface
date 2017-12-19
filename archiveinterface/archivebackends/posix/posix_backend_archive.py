@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Posix Backend Archive Module.
 
 Module that implements the abstract_backend_archive class for a posix
