@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Posix Status Module.
 
 Module that implements the Abstract Status class for the posix

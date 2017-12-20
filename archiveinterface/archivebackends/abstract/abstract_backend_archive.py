@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Abstract Backend Module.
 
 Module that has the Abstract class for Archive Backends

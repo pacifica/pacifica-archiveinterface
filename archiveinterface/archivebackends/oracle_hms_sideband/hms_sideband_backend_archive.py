@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """HMS Sideband Backend Archive Module.
 
 Module that implements the abstract_backend_archive class for a HMS Sideband
@@ -36,7 +37,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         self._fpath = None
         self._filepath = None
         # since the database prefix may be different then the system the file is mounted on
-        self._sam_qfs_prefix = read_config_value('hms_sideband', 'sam_qfs_prefix')
+        self._sam_qfs_prefix = read_config_value(
+            'hms_sideband', 'sam_qfs_prefix')
 
     def open(self, filepath, mode):
         """Open a hms sideband file."""
@@ -52,11 +54,13 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             filename = os.path.join(self._prefix, path_info_munge(self._fpath))
             self._filepath = filename
             # path database refers to, rather then just the file system mount path
-            sam_qfs_path = os.path.join(self._sam_qfs_prefix, path_info_munge(self._fpath))
+            sam_qfs_path = os.path.join(
+                self._sam_qfs_prefix, path_info_munge(self._fpath))
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0755)
-            self._file = ExtendedHmsSideband(self._filepath, mode, sam_qfs_path)
+            self._file = ExtendedHmsSideband(
+                self._filepath, mode, sam_qfs_path)
             return self
         except Exception as ex:
             err_str = "Can't open HMS Sideband file with error: " + str(ex)
@@ -96,7 +100,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 os.utime(self._filepath, (mod_time, mod_time))
         except Exception as ex:
-            err_str = "Can't set HMS Sideband file mod time with error: " + str(ex)
+            err_str = "Can't set HMS Sideband file mod time with error: " + \
+                str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def set_file_permissions(self):
@@ -105,7 +110,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 os.chmod(self._filepath, 0444)
         except Exception as ex:
-            err_str = "Can't set HMS Sideband file permissions with error: " + str(ex)
+            err_str = "Can't set HMS Sideband file permissions with error: " + \
+                str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):
@@ -123,7 +129,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             if self._file:
                 return self._file.status()
         except Exception as ex:
-            err_str = "Can't get HMS Sideband file status with error: " + str(ex)
+            err_str = "Can't get HMS Sideband file status with error: " + \
+                str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def patch(self, file_id, old_path):

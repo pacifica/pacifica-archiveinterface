@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Factory for returning a Archive backend.
 
 New Backends must be added to the

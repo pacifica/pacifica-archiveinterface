@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Class for the archive interface.
 
 Allows API to file interactions for passed in archive backends.
@@ -156,7 +157,8 @@ class ArchiveInterfaceGenerator(object):
             # catching application errors
             # set the error reponse
             resp = interface_responses.Responses()
-            self._response = resp.archive_exception(start_response, ex, env['REQUEST_METHOD'])
+            self._response = resp.archive_exception(
+                start_response, ex, env['REQUEST_METHOD'])
             return self.return_response()
 
 

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Extended File Object Module.
 
 Module that Extends the functionality of the base file object
