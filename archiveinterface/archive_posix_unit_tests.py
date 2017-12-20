@@ -4,7 +4,7 @@
 import unittest
 import os
 from stat import ST_MODE
-from archiveinterface.archive_utils import read_config_value
+from archiveinterface.archive_utils import read_config_value, set_config_name
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
@@ -88,6 +88,58 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
         my_file.close()
+
+    def test_posix_backend_open_twice(self):
+        """Test opening a file from posix backend twice."""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open(filepath, mode)
+        my_file = backend.open(filepath, mode)
+        self.assertTrue(isinstance(my_file, PosixBackendArchive))
+        # easiest way to unit test is look at class variable
+        # pylint: disable=protected-access
+        self.assertTrue(isinstance(backend._file, ExtendedFile))
+        # pylint: enable=protected-access
+        my_file.close()
+
+    def test_posix_backend_open_errors(self):
+        """Test opening a file from posix backend with errors."""
+        backend = PosixBackendArchive('/tmp')
+        def close_error():
+            """Raise an error on close."""
+            raise ArchiveInterfaceError('this is an error')
+        # function of testing
+        # pylint: disable=protected-access
+        orig_close = backend._file.close
+        backend._file.close = close_error
+        # pylint: enable=protected-access
+        hit_exception = False
+        try:
+            my_file = backend.open(filepath, mode)
+        except ArchiveInterfaceError:
+            hit_exception = True
+        self.assertTrue(hit_exception)
+        # function of testing
+        # pylint: disable=protected-access
+        backend._file.close = orig_close
+        # pylint: enable=protected-access
+        hit_exception = False
+        try:
+            my_file = backend.open(47, mode)
+        except ArchiveInterfaceError as ex:
+            self.assertTrue('Cant remove absolute path' in str(ex))
+            hit_exception = True
+        self.assertTrue(hit_exception)
+
+    def test_posix_backend_open_id2filename(self):
+        """Test opening a file from posix backend twice."""
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open('/a/b/d', mode)
+        set_config_name('test_configs/posix-id2filename.cfg')
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open(12345, mode)
+        set_config_name('config.cfg')
 
     def test_posix_backend_close(self):
         """Test closing a file from posix backend."""
