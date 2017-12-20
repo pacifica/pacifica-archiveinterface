@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """HPSS Extended File Module.
 
 Module that holds the class to the interface for the hpss c extensions.
@@ -49,10 +50,10 @@ class HpssExtended(object):
         # LatencyTuple[3] = microseconds relative before ping
 
         lat_seconds = float(latency_tuple[0])
-        lat_microseconds = (float(latency_tuple[1])/1000000)
+        lat_microseconds = (float(latency_tuple[1]) / 1000000)
         response_time = lat_seconds + lat_microseconds
         before_ping_seconds = float(latency_tuple[2])
-        before_ping_microseconds = (float(latency_tuple[3])/1000000)
+        before_ping_microseconds = (float(latency_tuple[3]) / 1000000)
         before_ping_time = before_ping_seconds + before_ping_microseconds
         latency = response_time - before_ping_time
         self._latency = latency
