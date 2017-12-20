@@ -133,6 +133,7 @@ class TestPosixBackendArchive(unittest.TestCase):
             self.assertTrue('Cant remove absolute path' in str(ex))
             hit_exception = True
         self.assertTrue(hit_exception)
+        my_file.close()
 
     def test_posix_backend_open_id2f(self):
         """Test opening a file from posix backend twice."""
