@@ -150,7 +150,8 @@ class ArchiveInterfaceGenerator(object):
                 return_response = self.patch(env, start_response)
             else:
                 resp = interface_responses.Responses()
-                self._response = resp.unknown_request(start_response, env['REQUEST_METHOD'])
+                self._response = resp.unknown_request(
+                    start_response, env['REQUEST_METHOD'])
                 return_response = self.return_response()
             return return_response
         except ArchiveInterfaceError as ex:

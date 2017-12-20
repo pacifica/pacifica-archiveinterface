@@ -4,7 +4,7 @@
 import unittest
 import os
 from stat import ST_MODE
-from archiveinterface.archive_utils import  read_config_value
+from archiveinterface.archive_utils import read_config_value
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
@@ -88,7 +88,6 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
         my_file.close()
-
 
     def test_posix_backend_close(self):
         """Test closing a file from posix backend."""
