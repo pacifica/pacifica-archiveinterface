@@ -121,7 +121,5 @@ class Responses(object):
                 '500 Internal Server Error',
                 [('Content-Type', 'application/json')]
             )
-            self._response = {
-                'message': str(ex)
-            }
+            self._response = {'message': str(ex)}
         return self._response
