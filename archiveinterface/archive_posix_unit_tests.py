@@ -103,38 +103,6 @@ class TestPosixBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
         my_file.close()
 
-    def test_posix_backend_open_errors(self):
-        """Test opening a file from posix backend with errors."""
-        backend = PosixBackendArchive('/tmp')
-        mode = 'w'
-        filepath = '1234'
-        my_file = backend.open(filepath, mode)
-        my_file.close()
-        def close_error():
-            """Raise an error on close."""
-            raise ArchiveInterfaceError('this is an error')
-        # function of testing
-        # pylint: disable=protected-access
-        backend._file.close = close_error
-        # pylint: enable=protected-access
-        hit_exception = False
-        try:
-            backend.open(filepath, mode)
-        except ArchiveInterfaceError:
-            hit_exception = True
-        self.assertTrue(hit_exception)
-        # function of testing
-        # pylint: disable=protected-access
-        backend._file.close = orig_close
-        # pylint: enable=protected-access
-        hit_exception = False
-        try:
-            backend.open(47, mode)
-        except ArchiveInterfaceError as ex:
-            self.assertTrue('Cant remove absolute path' in str(ex))
-            hit_exception = True
-        self.assertTrue(hit_exception)
-
     def test_posix_backend_open_id2f(self):
         """Test opening a file from posix backend twice."""
         backend = PosixBackendArchive('/tmp')
