@@ -108,7 +108,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp')
         mode = 'w'
         filepath = '1234'
-
+        backend.open(filepath, mode)
         def close_error():
             """Raise an error on close."""
             raise ArchiveInterfaceError('this is an error')
