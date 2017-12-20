@@ -87,9 +87,6 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
         my_file.close()
-        # opening twice in a row is okay
-        my_file = backend.open(filepath, mode)
-        my_file = backend.open(filepath, mode)
 
     def test_posix_backend_close(self):
         """Test closing a file from posix backend."""
