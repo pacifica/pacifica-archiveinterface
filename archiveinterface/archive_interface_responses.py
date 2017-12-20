@@ -99,9 +99,7 @@ class Responses(object):
     def json_patch_error_response(self, start_response):
         """Response for when there is a problem reading the json file."""
         start_response('400 Bad Request', [('Content-Type', 'application/json')])
-        self._response = {
-            'message': 'JSON content could not be read'
-        }
+        self._response = {'message': 'JSON content could not be read'}
         return self._response
 
     def archive_exception(self, start_response, ex, request_method=None):
