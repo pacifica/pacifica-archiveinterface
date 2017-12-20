@@ -5,7 +5,9 @@
 
 class Responses(object):
     """Class to support the archive interface responses."""
+
     headers = [('Content-Type', 'application/json')]
+
     def __init__(self):
         """Constructor for the responses object."""
         self._response = None
