@@ -108,13 +108,13 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp')
         mode = 'w'
         filepath = '1234'
-        backend.open(filepath, mode)
+        my_file = backend.open(filepath, mode)
+        my_file.close()
         def close_error():
             """Raise an error on close."""
             raise ArchiveInterfaceError('this is an error')
         # function of testing
         # pylint: disable=protected-access
-        orig_close = backend._file.close
         backend._file.close = close_error
         # pylint: enable=protected-access
         hit_exception = False
