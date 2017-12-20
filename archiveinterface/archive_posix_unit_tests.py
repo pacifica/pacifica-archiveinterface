@@ -107,6 +107,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         """Test opening a file from posix backend with errors."""
         backend = PosixBackendArchive('/tmp')
         mode = 'w'
+        filepath = '1234'
         def close_error():
             """Raise an error on close."""
             raise ArchiveInterfaceError('this is an error')
@@ -132,15 +133,6 @@ class TestPosixBackendArchive(unittest.TestCase):
             self.assertTrue('Cant remove absolute path' in str(ex))
             hit_exception = True
         self.assertTrue(hit_exception)
-
-        backend = PosixBackendArchive('/tmp')
-        mode = 'w'
-        my_file = backend.open('/a/b/d', mode)
-        set_config_name('test_configs/posix-id2filename.cfg')
-        backend = PosixBackendArchive('/tmp')
-        my_file = backend.open(12345, mode)
-        set_config_name('config.cfg')
-        my_file.close()
 
     def test_posix_backend_open_id2f(self):
         """Test opening a file from posix backend twice."""
