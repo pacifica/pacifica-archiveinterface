@@ -5,17 +5,14 @@
 
 class Responses(object):
     """Class to support the archive interface responses."""
-
+    headers = [('Content-Type', 'application/json')]
     def __init__(self):
         """Constructor for the responses object."""
         self._response = None
 
     def unknown_request(self, start_response, request_method):
         """Response for when unknown request type given."""
-        start_response(
-            '400 Bad Request',
-            [('Content-Type', 'application/json')]
-        )
+        start_response('400 Bad Request', self.headers)
         self._response = {
             'message': 'Unknown request method',
             'request_method': request_method
@@ -24,10 +21,7 @@ class Responses(object):
 
     def unknown_exception(self, start_response):
         """Response when unknown exception occurs."""
-        start_response(
-            '500 Internal Server Error',
-            [('Content-Type', 'application/json')]
-        )
+        start_response('500 Internal Server Error', self.headers)
         self._response = {
             'message': 'Unknown Exception Occured'
         }
@@ -35,7 +29,7 @@ class Responses(object):
 
     def successful_put_response(self, start_response, total_bytes):
         """Response on a successful put."""
-        start_response('201 Created', [('Content-Type', 'application/json')])
+        start_response('201 Created', self.headers)
         self._response = {
             'message': 'File added to archive',
             'total_bytes': total_bytes
@@ -44,7 +38,7 @@ class Responses(object):
 
     def file_patch(self, start_response):
         """Response on a successful put."""
-        start_response('200 OK', [('Content-Type', 'application/json')])
+        start_response('200 OK', self.headers)
         self._response = {
             'message': 'File Moved Successfully'
         }
@@ -52,7 +46,7 @@ class Responses(object):
 
     def archive_working_response(self, start_response):
         """Response when doing a get on /."""
-        start_response('200 OK', [('Content-Type', 'application/json')])
+        start_response('200 OK', self.headers)
         self._response = {
             'message': 'Pacifica Archive Interface Up and Running'
         }
@@ -60,7 +54,7 @@ class Responses(object):
 
     def file_stage(self, start_response, filename):
         """Response for when file is on the hpss system."""
-        start_response('200 OK', [('Content-Type', 'application/json')])
+        start_response('200 OK', self.headers)
         self._response = {
             'message': 'File was staged',
             'file': str(filename)
@@ -98,7 +92,7 @@ class Responses(object):
 
     def json_patch_error_response(self, start_response):
         """Response for when there is a problem reading the json file."""
-        start_response('400 Bad Request', [('Content-Type', 'application/json')])
+        start_response('400 Bad Request', self.headers)
         self._response = {'message': 'JSON content could not be read'}
         return self._response
 
@@ -117,9 +111,6 @@ class Responses(object):
             ]
             start_response('500 Internal Server Error', response_headers)
         else:
-            start_response(
-                '500 Internal Server Error',
-                [('Content-Type', 'application/json')]
-            )
+            start_response('500 Internal Server Error', self.headers)
             self._response = {'message': str(ex)}
         return self._response
