@@ -102,7 +102,7 @@ class TestPosixBackendArchive(unittest.TestCase):
             # pylint: enable=protected-access
             self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
                              context.exception)
-        
+
     def test_posix_backend_open_twice(self):
         """Test opening a file from posix backend twice."""
         filepath = '1234'
