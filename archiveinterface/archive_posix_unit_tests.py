@@ -89,6 +89,21 @@ class TestPosixBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
         my_file.close()
 
+    def test_posix_backend_error(self):
+        """Test opening a file from posix backend."""
+        with self.assertRaises(ArchiveInterfaceError) as context:
+            filepath = '1234'
+            mode = 'w'
+            backend = PosixBackendArchive('/tmp')
+            # easiest way to unit test is look at class variable
+            # pylint: disable=protected-access
+            backend._file = 'none file object'
+            backend.open(filepath, mode)
+            # pylint: enable=protected-access
+            self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
+                             context.exception)
+        
+
     def test_posix_backend_open_twice(self):
         """Test opening a file from posix backend twice."""
         filepath = '1234'
