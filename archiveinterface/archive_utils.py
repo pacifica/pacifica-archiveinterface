@@ -21,7 +21,7 @@ def un_abs_path(path_name):
         if path.isabs(path_name):
             path_name = path_name[1:]
         return path_name
-    except AttributeError as ex:
+    except (AttributeError, TypeError) as ex:
         raise ArchiveInterfaceError('Cant remove absolute path: ' + str(ex))
 
 

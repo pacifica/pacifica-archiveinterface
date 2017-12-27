@@ -30,7 +30,7 @@ def main():
                         choices=['hpss', 'posix', 'hmssideband'],
                         help='use the typed backend')
     parser.add_argument('--prefix', metavar='PREFIX', dest='prefix',
-                        default='/tmp', help='prefix to save data at')
+                        default='{}tmp'.format(os.path.sep), help='prefix to save data at')
     parser.add_argument('--config', metavar='CONFIG', dest='config',
                         default=None, help='config file location')
 
