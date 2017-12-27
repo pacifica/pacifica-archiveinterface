@@ -7,17 +7,20 @@ import archiveinterface.archive_interface_responses as interface_responses
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
-def start_response(code, headers):
-    """Method to mock start_response"""
-        return [code, headers]
+
 
 class TestInterfaceResponses(unittest.TestCase):
     """Test the Interface Responses Class."""
 
+    @staticmethod
+    def start_response(code, headers):
+        """Method to mock start_response"""
+            return [code, headers]
+
     def test_unknown_request(self):
         """Test response for unknown request."""
         resp = interface_responses.Responses()
-        response = resp.unknown_request(start_response, 'badRequest')
+        response = resp.unknown_request(self.start_response, 'badRequest')
         jsn = json.loads(response)
         self.assertEqual(jsn['message'], 'Unknown request method')
         self.assertEqual(jsn['request_method'], 'badRequest')
