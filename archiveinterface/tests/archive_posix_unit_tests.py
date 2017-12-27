@@ -89,6 +89,18 @@ class TestPosixBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
         my_file.close()
 
+    def test_posix_backend_stage(self):
+        """Test staging a file from posix backend."""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open(filepath, mode)
+        status = my_file.stage()
+        # pylint: disable=protected-access
+        self.assertTrue(myfile._staged)
+        # pylint: enable=protected-access
+        my_file.close()
+
     def test_posix_backend_error(self):
         """Test opening a file from posix backend."""
         with self.assertRaises(ArchiveInterfaceError) as context:
