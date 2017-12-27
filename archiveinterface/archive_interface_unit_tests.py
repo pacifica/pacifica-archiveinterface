@@ -18,13 +18,15 @@ class TestArchiveUtils(unittest.TestCase):
 
     def test_utils_absolute_path(self):
         """Test the return of un_abs_path."""
-        return_one = un_abs_path('tmp/foo.text')
-        return_two = un_abs_path('/tmp/foo.text')
-        return_three = un_abs_path('/tmp/foo.text')
+        return_one = un_abs_path(os.path.join('tmp', 'foo.text'))
+        return_two = un_abs_path(os.path.sep + os.path.join('tmp', 'foo.text'))
+        return_three = un_abs_path(
+            os.path.sep + os.path.join('tmp', 'foo.text'))
         return_four = un_abs_path('foo.text')
-        self.assertEqual(return_one, 'tmp/foo.text')
-        self.assertEqual(return_two, 'tmp/foo.text')
-        self.assertNotEqual(return_three, '/tmp/foo.text')
+        self.assertEqual(return_one, os.path.join('tmp', 'foo.text'))
+        self.assertEqual(return_two, os.path.join('tmp', 'foo.text'))
+        self.assertNotEqual(return_three, os.path.sep +
+                            os.path.join('tmp', 'foo.text'))
         self.assertEqual(return_four, 'foo.text')
         hit_exception = False
         try:
