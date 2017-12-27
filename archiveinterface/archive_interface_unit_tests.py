@@ -18,13 +18,15 @@ class TestArchiveUtils(unittest.TestCase):
 
     def test_utils_absolute_path(self):
         """Test the return of un_abs_path."""
-        return_one = un_abs_path('tmp/foo.text')
-        return_two = un_abs_path('/tmp/foo.text')
-        return_three = un_abs_path('/tmp/foo.text')
+        return_one = un_abs_path(os.path.join('tmp', 'foo.text'))
+        return_two = un_abs_path(os.path.sep + os.path.join('tmp', 'foo.text'))
+        return_three = un_abs_path(
+            os.path.sep + os.path.join('tmp', 'foo.text'))
         return_four = un_abs_path('foo.text')
-        self.assertEqual(return_one, 'tmp/foo.text')
-        self.assertEqual(return_two, 'tmp/foo.text')
-        self.assertNotEqual(return_three, '/tmp/foo.text')
+        self.assertEqual(return_one, os.path.join('tmp', 'foo.text'))
+        self.assertEqual(return_two, os.path.join('tmp', 'foo.text'))
+        self.assertNotEqual(return_three, os.path.sep +
+                            os.path.join('tmp', 'foo.text'))
         self.assertEqual(return_four, 'foo.text')
         hit_exception = False
         try:
@@ -96,7 +98,7 @@ class TestExtendedFile(unittest.TestCase):
 
     def test_posix_file_status(self):
         """Test the correct values of a files status."""
-        filepath = '/tmp/1234'
+        filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
         status = my_file.status()
@@ -107,7 +109,7 @@ class TestExtendedFile(unittest.TestCase):
 
     def test_posix_file_stage(self):
         """Test the correct staging of a posix file."""
-        filepath = '/tmp/1234'
+        filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
         my_file.stage()
