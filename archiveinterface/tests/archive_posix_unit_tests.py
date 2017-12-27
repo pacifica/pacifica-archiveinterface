@@ -97,7 +97,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file = backend.open(filepath, mode)
         status = my_file.stage()
         # pylint: disable=protected-access
-        self.assertTrue(my_file._staged)
+        self.assertTrue(my_file._file._staged)
         # pylint: enable=protected-access
         my_file.close()
 

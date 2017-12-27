@@ -7,11 +7,12 @@ import archiveinterface.archive_interface_responses as interface_responses
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
+def start_response(code, headers):
+    """Method to mock start_response"""
+        return [code, headers]
+
 class TestInterfaceResponses(unittest.TestCase):
     """Test the Interface Responses Class."""
-
-    def start_response(code, headers):
-        return [code, headers]
 
     def test_unknown_request(self):
         """Test response for unknown request."""
