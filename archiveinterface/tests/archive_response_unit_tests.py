@@ -16,7 +16,7 @@ class TestInterfaceResponses(unittest.TestCase):
     def test_unknown_request(self):
         """Test response for unknown request."""
         resp = interface_responses.Responses()
-        response = resp.unknown_request(self.start_response, 'badRequest')
+        response = resp.unknown_request(start_response, 'badRequest')
         jsn = json.loads(response)
         self.assertEqual(jsn['message'], 'Unknown request method')
         self.assertEqual(jsn['request_method'], 'badRequest')
