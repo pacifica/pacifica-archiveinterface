@@ -16,7 +16,7 @@ class TestExtendedFile(unittest.TestCase):
 
     def test_posix_file_status(self):
         """Test the correct values of a files status."""
-        filepath = '/tmp/1234'
+        filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
         status = my_file.status()
@@ -27,7 +27,7 @@ class TestExtendedFile(unittest.TestCase):
 
     def test_posix_file_stage(self):
         """Test the correct staging of a posix file."""
-        filepath = '/tmp/1234'
+        filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
         mode = 'w'
         my_file = ExtendedFile(filepath, mode)
         my_file.stage()

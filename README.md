@@ -1,5 +1,6 @@
 # Pacifica Archive Interface
 [![Build Status](https://travis-ci.org/pacifica/pacifica-archiveinterface.svg?branch=master)](https://travis-ci.org/pacifica/pacifica-archiveinterface)
+[![Build status](https://ci.appveyor.com/api/projects/status/kxfjj5exb09foqlv?svg=true)](https://ci.appveyor.com/project/dmlb2000/pacifica-archiveinterface)
 [![Code Climate](https://codeclimate.com/github/pacifica/pacifica-archiveinterface/badges/gpa.svg)](https://codeclimate.com/github/pacifica/pacifica-archiveinterface)
 [![Test Coverage](https://codeclimate.com/github/pacifica/pacifica-archiveinterface/badges/coverage.svg)](https://codeclimate.com/github/pacifica/pacifica-archiveinterface/coverage)
 [![Issue Count](https://codeclimate.com/github/pacifica/pacifica-archiveinterface/badges/issue_count.svg)](https://codeclimate.com/github/pacifica/pacifica-archiveinterface)
