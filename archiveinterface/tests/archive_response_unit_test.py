@@ -4,9 +4,6 @@
 import unittest
 import json
 import archiveinterface.archive_interface_responses as interface_responses
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
-
-
 
 
 class TestInterfaceResponses(unittest.TestCase):
@@ -14,7 +11,7 @@ class TestInterfaceResponses(unittest.TestCase):
 
     @staticmethod
     def start_response(code, headers):
-        """Method to mock start_response"""
+        """Method to mock start_response."""
         return [code, headers]
 
     def test_unknown_request(self):
@@ -24,6 +21,14 @@ class TestInterfaceResponses(unittest.TestCase):
         jsn = json.loads(json.dumps(response))
         self.assertEqual(jsn['message'], 'Unknown request method')
         self.assertEqual(jsn['request_method'], 'badRequest')
+
+    def test_unknown_exception(self):
+        """Test response for unknown exception."""
+        resp = interface_responses.Responses()
+        response = resp.unknown_exception(self.start_response)
+        jsn = json.loads(json.dumps(response))
+        self.assertEqual(jsn['message'], 'Unknown Exception Occured')
+
 
 if __name__ == '__main__':
     unittest.main()

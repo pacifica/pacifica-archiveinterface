@@ -8,7 +8,6 @@ from archiveinterface.archive_utils import read_config_value, set_config_name
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
 class TestExtendedFile(unittest.TestCase):
@@ -95,7 +94,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         mode = 'w'
         backend = PosixBackendArchive('/tmp')
         my_file = backend.open(filepath, mode)
-        status = my_file.stage()
+        my_file.stage()
         # pylint: disable=protected-access
         self.assertTrue(my_file._file._staged)
         # pylint: enable=protected-access
