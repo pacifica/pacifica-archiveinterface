@@ -8,6 +8,7 @@ from archiveinterface.archive_utils import read_config_value, set_config_name
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
+from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 
 class TestExtendedFile(unittest.TestCase):
