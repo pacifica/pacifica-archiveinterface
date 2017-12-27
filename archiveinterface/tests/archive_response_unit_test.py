@@ -87,7 +87,3 @@ class TestInterfaceResponses(unittest.TestCase):
         resp = interface_responses.Responses()
         response = resp.file_status(self.start_response, status)
         self.assertEqual(response, '')
-
-
-if __name__ == '__main__':
-    unittest.main()
