@@ -1,0 +1,17 @@
+version: 0.1.{build}
+pull_requests:
+  do_not_increment_build_number: true
+
+environment:
+  matrix:
+    - PYTHON: C:\Python27-x64
+
+install:
+  - '%PYTHON%\python.exe -m pip install -r requirements-dev.txt'
+
+build: off
+
+test_script:
+  - ps: >
+      & "$env:PYTHON\python.exe" -m coverage run --include='archiveinterface/*' -m pytest -v archiveinterface/archive_interface_unit_tests.py;
+      & "$env:PYTHON\python.exe" -m coverage report -m --fail-under=70;
