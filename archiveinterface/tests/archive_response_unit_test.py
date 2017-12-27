@@ -81,7 +81,7 @@ class TestInterfaceResponses(unittest.TestCase):
         """Test response for patch error."""
         resp = interface_responses.Responses()
         response = resp.file_status(self.start_response, None)
-        self.assertEqual(response, None)
+        self.assertEqual(response, '')
         status = PosixStatus(11, 11, 10, 10)
         status.set_filepath('fake_path')
         resp = interface_responses.Responses()
