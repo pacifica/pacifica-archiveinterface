@@ -15,7 +15,7 @@ class TestInterfaceResponses(unittest.TestCase):
     @staticmethod
     def start_response(code, headers):
         """Method to mock start_response"""
-            return [code, headers]
+        return [code, headers]
 
     def test_unknown_request(self):
         """Test response for unknown request."""
