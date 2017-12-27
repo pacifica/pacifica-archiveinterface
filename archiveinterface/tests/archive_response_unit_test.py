@@ -73,6 +73,7 @@ class TestInterfaceResponses(unittest.TestCase):
         response = resp.archive_exception(self.start_response, 'random_error_message', 'notHEAD')
         jsn = json.loads(json.dumps(response))
         self.assertEqual(jsn['message'], 'random_error_message')
+        resp = interface_responses.Responses()
         response = resp.archive_exception(self.start_response, 'random_error_message', 'HEAD')
         self.assertEqual(response, None)
 
@@ -83,8 +84,9 @@ class TestInterfaceResponses(unittest.TestCase):
         self.assertEqual(response, None)
         status = PosixStatus(11, 11, 10, 10)
         status.set_filepath('fake_path')
+        resp = interface_responses.Responses()
         response = resp.file_status(self.start_response, status)
-        self.assertEqual(response, None)
+        self.assertEqual(response, '')
 
 
 if __name__ == '__main__':
