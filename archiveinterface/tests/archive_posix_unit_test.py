@@ -112,8 +112,6 @@ class TestPosixBackendArchive(unittest.TestCase):
             backend._file = 'none file object'
             backend.open(filepath, mode)
             # pylint: enable=protected-access
-            self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
-                             context.exception)
 
     def test_posix_backend_open_twice(self):
         """Test opening a file from posix backend twice."""
@@ -231,16 +229,17 @@ class TestPosixBackendArchive(unittest.TestCase):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('bad_section', 'port')
-            self.assertEqual(
-                'Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
         with self.assertRaises(ArchiveInterfaceError) as context:
             read_config_value('hms_sideband', 'bad_field')
-            self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
-                             context.exception)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_patch(self):
+        """Test patching file."""
+        filepath = '1234'
+        new_path = '5678'
+        backend = PosixBackendArchive('/tmp')
+        backend.patch(filepath, new_path)
+        # Error would be thrown on patch so nothing to assert
+        assertTrue(True)

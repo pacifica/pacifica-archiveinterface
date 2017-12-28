@@ -84,7 +84,3 @@ class TestId2Filename(unittest.TestCase):
         """Test the correct creation of an over shift point filename."""
         filename = id2filename((32 * 1024) + 1)
         self.assertEqual(filename, '/01/8001')
-
-
-if __name__ == '__main__':
-    unittest.main()
