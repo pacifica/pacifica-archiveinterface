@@ -237,9 +237,12 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_patch(self):
         """Test patching file."""
-        filepath = '1234'
+        old_path = '/tmp/1234'
         new_path = '5678'
+        mode = 'w'
         backend = PosixBackendArchive('/tmp')
-        backend.patch(filepath, new_path)
+        my_file = backend.open('1234', mode)
+        my_file.close()
+        backend.patch(new_path, old_path)
         # Error would be thrown on patch so nothing to assert
         assertTrue(True)
