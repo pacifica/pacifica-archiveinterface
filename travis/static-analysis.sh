@@ -12,7 +12,6 @@ pylint \
     archiveinterface.archive_utils \
     archiveinterface.id2filename \
     archiveinterface.archivebackends.archive_backend_factory \
-    archiveinterface.archivebackends.abstract.abstract_backend_archive \
     archiveinterface.archivebackends.abstract.abstract_status \
     archiveinterface.archivebackends.posix.posix_backend_archive \
     archiveinterface.archivebackends.posix.posix_status \

@@ -245,4 +245,4 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file.close()
         backend.patch(new_path, old_path)
         # Error would be thrown on patch so nothing to assert
-        assertTrue(True)
+        self.assertTrue(True)
