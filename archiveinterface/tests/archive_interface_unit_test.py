@@ -122,4 +122,4 @@ class TestBackendArchive(unittest.TestCase):
         """Test the creation of an invalid backend."""
         with self.assertRaises(NotImplementedError):
             factory = ArchiveBackendFactory()
-            backend = factory.get_backend_archive('badbackend', '/tmp')
+            factory.get_backend_archive('badbackend', '/tmp')
