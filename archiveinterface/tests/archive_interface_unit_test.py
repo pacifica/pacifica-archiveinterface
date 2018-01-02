@@ -100,24 +100,6 @@ class TestBackendArchive(unittest.TestCase):
         # pylint: enable=protected-access
         self.assertEqual('/tmp', prefix)
 
-    def test_hmssideband_backend(self):
-        """Test the creation of a posix backend."""
-        factory = ArchiveBackendFactory()
-        backend = factory.get_backend_archive('hmssideband', '/tmp')
-        # pylint: disable=protected-access
-        prefix = backend._prefix
-        # pylint: enable=protected-access
-        self.assertEqual('/tmp', prefix)
-
-    def test_hpss_backend(self):
-        """Test the creation of a posix backend."""
-        factory = ArchiveBackendFactory()
-        backend = factory.get_backend_archive('hpss', '/tmp')
-        # pylint: disable=protected-access
-        prefix = backend._prefix
-        # pylint: enable=protected-access
-        self.assertEqual('/tmp', prefix)
-
     def test_invalid_backend(self):
         """Test the creation of an invalid backend."""
         with self.assertRaises(NotImplementedError):
