@@ -6,6 +6,8 @@ import time
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from archiveinterface.archivebackends.archive_backend_factory import \
+    ArchiveBackendFactory
 
 
 class TestArchiveUtils(unittest.TestCase):
@@ -84,3 +86,12 @@ class TestId2Filename(unittest.TestCase):
         """Test the correct creation of an over shift point filename."""
         filename = id2filename((32 * 1024) + 1)
         self.assertEqual(filename, '/01/8001')
+
+
+class TestBackendArchive(unittest.TestCase):
+    """Test the backend archive."""
+
+    def test_posix_backend(self):
+        """Test the creation of a posix backend"""
+        factory = ArchiveBackendFactory()
+        backend = factory.get_backend_archive('posix', '/tmp')
