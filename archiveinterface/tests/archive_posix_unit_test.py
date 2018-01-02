@@ -103,7 +103,7 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_posix_backend_error(self):
         """Test opening a file from posix backend."""
-        with self.assertRaises(ArchiveInterfaceError) as context:
+        with self.assertRaises(ArchiveInterfaceError):
             filepath = '1234'
             mode = 'w'
             backend = PosixBackendArchive('/tmp')
@@ -227,12 +227,12 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_read_config_bad_section(self):
         """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError) as context:
+        with self.assertRaises(ArchiveInterfaceError):
             read_config_value('bad_section', 'port')
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError) as context:
+        with self.assertRaises(ArchiveInterfaceError):
             read_config_value('hms_sideband', 'bad_field')
 
     def test_patch(self):
@@ -245,4 +245,4 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file.close()
         backend.patch(new_path, old_path)
         # Error would be thrown on patch so nothing to assert
-        self.assertTrue(True)
+        self.assertEqual(old_path, '/tmp/1234')
