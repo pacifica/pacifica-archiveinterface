@@ -92,6 +92,10 @@ class TestBackendArchive(unittest.TestCase):
     """Test the backend archive."""
 
     def test_posix_backend(self):
-        """Test the creation of a posix backend"""
+        """Test the creation of a posix backend."""
         factory = ArchiveBackendFactory()
         backend = factory.get_backend_archive('posix', '/tmp')
+        # pylint: disable=protected-access
+        prefix = backend._prefix
+        # pylint: enable=protected-access
+        self.assertEqual('/tmp', prefix)
