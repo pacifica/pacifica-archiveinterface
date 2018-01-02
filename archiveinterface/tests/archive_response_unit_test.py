@@ -50,7 +50,8 @@ class TestInterfaceResponses(unittest.TestCase):
         resp = interface_responses.Responses()
         response = resp.archive_working_response(self.start_response)
         jsn = json.loads(json.dumps(response))
-        self.assertEqual(jsn['message'], 'Pacifica Archive Interface Up and Running')
+        self.assertEqual(
+            jsn['message'], 'Pacifica Archive Interface Up and Running')
 
     def test_file_stage(self):
         """Test response for successful stage."""
@@ -70,11 +71,13 @@ class TestInterfaceResponses(unittest.TestCase):
     def test_archive_exception(self):
         """Test response for patch error."""
         resp = interface_responses.Responses()
-        response = resp.archive_exception(self.start_response, 'random_error_message', 'notHEAD')
+        response = resp.archive_exception(
+            self.start_response, 'random_error_message', 'notHEAD')
         jsn = json.loads(json.dumps(response))
         self.assertEqual(jsn['message'], 'random_error_message')
         resp = interface_responses.Responses()
-        response = resp.archive_exception(self.start_response, 'random_error_message', 'HEAD')
+        response = resp.archive_exception(
+            self.start_response, 'random_error_message', 'HEAD')
         self.assertEqual(response, None)
 
     def test_file_status(self):
