@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Setup and install the archive interface with hpss."""
 import sys
+from os.path import isfile
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
 from distutils.core import Extension
@@ -25,9 +26,14 @@ HPSS = Extension(
 )
 
 EXT_MODULES = []
-if '--hpss' in sys.argv:
+if '--with-hpss' in sys.argv:
     EXT_MODULES.append(HPSS)
-    sys.argv.remove('--hpss')
+    sys.argv.remove('--with-hpss')
+elif isfile('/opt/hpss/include/hpss_api.h'):
+    EXT_MODULES.append(HPSS)
+if '--without-hpss' in sys.argv:
+    EXT_MODULES = []
+    sys.argv.remove('--without-hpss')
 
 setup(
     name='PacificaArchiveInterface',
