@@ -3,9 +3,11 @@
 """File used to unit test the pacifica archive interface."""
 import unittest
 import time
+import json
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archivebackends.archive_backend_factory import \
     ArchiveBackendFactory
 
@@ -105,3 +107,33 @@ class TestBackendArchive(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             factory = ArchiveBackendFactory()
             factory.get_backend_archive('badbackend', '/tmp')
+
+
+class TestArchiveGenerator(unittest.TestCase):
+    """Test the archive generator."""
+
+    @staticmethod
+    def start_response(code, headers):
+        """Method to mock start_response."""
+        return [code, headers]
+
+    def test_generator_creation(self):
+        """Test the creation of a archive generator."""
+        factory = ArchiveBackendFactory()
+        backend = factory.get_backend_archive('posix', '/tmp')
+        generator = ArchiveInterfaceGenerator(backend)
+        # pylint: disable=protected-access
+        archive = generator._archive
+        # pylint: enable=protected-access
+        self.assertEqual(backend, archive)
+
+    def test_generator_get(self):
+        """Test the creation of a archive generator."""
+        factory = ArchiveBackendFactory()
+        backend = factory.get_backend_archive('posix', '/tmp')
+        generator = ArchiveInterfaceGenerator(backend)
+        env['PATH_INFO'] = '/'
+        content = generator.get(env, self.start_response)
+        jsn = json.loads(json.dumps(content))
+        self.assertEqual(
+            jsn['message'], 'Pacifica Archive Interface Up and Running')
