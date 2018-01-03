@@ -132,6 +132,7 @@ class TestArchiveGenerator(unittest.TestCase):
         factory = ArchiveBackendFactory()
         backend = factory.get_backend_archive('posix', '/tmp')
         generator = ArchiveInterfaceGenerator(backend)
+        env = []
         env['PATH_INFO'] = '/'
         content = generator.get(env, self.start_response)
         jsn = json.loads(json.dumps(content))
