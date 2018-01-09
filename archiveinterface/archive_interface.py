@@ -4,7 +4,7 @@
 
 Allows API to file interactions for passed in archive backends.
 """
-from json import dumps
+import json
 from sys import stderr
 from archiveinterface.archive_utils import get_http_modified_time
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
@@ -108,25 +108,52 @@ class ArchiveInterfaceGenerator(object):
         archivefile.close()
         return self.return_response()
 
+    def patch(self, env, start_response):
+        """Move a file from the original path to the new one specified."""
+        resp = interface_responses.Responses()
+        try:
+            request_body_size = int(env.get('CONTENT_LENGTH', 0))
+        except ValueError:
+            request_body_size = 0
+        try:
+            request_body = env['wsgi.input'].read(request_body_size)
+            data = json.loads(request_body)
+            file_path = data['path']
+            file_id = env['PATH_INFO']
+        except (IOError, ValueError):
+            # is exception is probably from the read()
+            self._response = resp.json_patch_error_response(start_response)
+            return self.return_response()
+        stderr.flush()
+        self._archive.patch(file_id, file_path)
+        self._response = resp.file_patch(start_response)
+        return self.return_response()
+
     def return_response(self):
         """Print all responses in a nice fashion."""
-        return dumps(self._response, sort_keys=True, indent=4)
+        return json.dumps(self._response, sort_keys=True, indent=4)
 
+    # pylint: disable=too-many-branches
     def pacifica_archiveinterface(self, env, start_response):
         """Parse request method type."""
         try:
+            return_response = None
             if env['REQUEST_METHOD'] == 'GET':
-                return self.get(env, start_response)
+                return_response = self.get(env, start_response)
             elif env['REQUEST_METHOD'] == 'PUT':
-                return self.put(env, start_response)
+                return_response = self.put(env, start_response)
             elif env['REQUEST_METHOD'] == 'HEAD':
-                return self.status(env, start_response)
+                return_response = self.status(env, start_response)
             elif env['REQUEST_METHOD'] == 'POST':
-                return self.stage(env, start_response)
-            resp = interface_responses.Responses()
-            self._response = resp.unknown_request(start_response,
-                                                  env['REQUEST_METHOD'])
-            return self.return_response()
+                return_response = self.stage(env, start_response)
+            elif env['REQUEST_METHOD'] == 'PATCH':
+                return_response = self.patch(env, start_response)
+            else:
+                resp = interface_responses.Responses()
+                self._response = resp.unknown_request(
+                    start_response, env['REQUEST_METHOD'])
+                return_response = self.return_response()
+            return return_response
         except ArchiveInterfaceError as ex:
             # catching application errors
             # set the error reponse

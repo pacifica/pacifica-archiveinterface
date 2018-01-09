@@ -2,95 +2,13 @@
 # -*- coding: utf-8 -*-
 """File used to unit test the pacifica archive interface."""
 import unittest
-import time
 import os
 from stat import ST_MODE
-from archiveinterface.archive_utils import un_abs_path, get_http_modified_time, read_config_value, set_config_name
-from archiveinterface.id2filename import id2filename
+from archiveinterface.archive_utils import read_config_value, set_config_name
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
-
-
-class TestArchiveUtils(unittest.TestCase):
-    """Test the Archive utils class."""
-
-    def test_utils_absolute_path(self):
-        """Test the return of un_abs_path."""
-        return_one = un_abs_path(os.path.join('tmp', 'foo.text'))
-        return_two = un_abs_path(os.path.sep + os.path.join('tmp', 'foo.text'))
-        return_three = un_abs_path(
-            os.path.sep + os.path.join('tmp', 'foo.text'))
-        return_four = un_abs_path('foo.text')
-        self.assertEqual(return_one, os.path.join('tmp', 'foo.text'))
-        self.assertEqual(return_two, os.path.join('tmp', 'foo.text'))
-        self.assertNotEqual(return_three, os.path.sep +
-                            os.path.join('tmp', 'foo.text'))
-        self.assertEqual(return_four, 'foo.text')
-        hit_exception = False
-        try:
-            un_abs_path(47)
-        except ArchiveInterfaceError:
-            hit_exception = True
-        self.assertTrue(hit_exception)
-
-    def test_get_http_modified_time(self):
-        """Test to see if the path size of a directory is returned."""
-        env = dict()
-        env['HTTP_LAST_MODIFIED'] = 'SUN, 06 NOV 1994 08:49:37 GMT'
-        mod_time = get_http_modified_time(env)
-        self.assertEqual(mod_time, 784111777)
-        env = dict()
-        mod_time = get_http_modified_time(env)
-        self.assertEqual(int(mod_time), int(time.time()))
-        for thing in (None, [], 46):
-            hit_exception = False
-            try:
-                env['HTTP_LAST_MODIFIED'] = thing
-                get_http_modified_time(env)
-            except ArchiveInterfaceError:
-                hit_exception = True
-            self.assertTrue(hit_exception)
-
-
-class TestId2Filename(unittest.TestCase):
-    """Test the id2filename method."""
-
-    def test_id2filename_basic(self):
-        """Test the correct creation of a basicfilename."""
-        filename = id2filename(1234)
-        self.assertEqual(filename, '/d2/4d2')
-
-    def test_id2filename_negative(self):
-        """Test the correct creation of a negative filename."""
-        filename = id2filename(-1)
-        self.assertEqual(filename, '/file.-1')
-
-    def test_id2filename_zero(self):
-        """Test the correct creation of a zero filename."""
-        filename = id2filename(0)
-        self.assertEqual(filename, '/file.0')
-
-    def test_id2filename_simple(self):
-        """Test the correct creation of a simple filename."""
-        filename = id2filename(1)
-        self.assertEqual(filename, '/file.1')
-
-    def test_id2filename_u_shift_point(self):
-        """Test the correct creation of an under shift point filename."""
-        filename = id2filename((32 * 1024) - 1)
-        self.assertEqual(filename, '/ff/7fff')
-
-    def test_id2filename_shift_point(self):
-        """Test the correct creation of the shift point filename."""
-        filename = id2filename((32 * 1024))
-        self.assertEqual(filename, '/00/8000')
-
-    def test_id2filename_o_shift_point(self):
-        """Test the correct creation of an over shift point filename."""
-        filename = id2filename((32 * 1024) + 1)
-        self.assertEqual(filename, '/01/8001')
 
 
 class TestExtendedFile(unittest.TestCase):
@@ -170,42 +88,56 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
         my_file.close()
-        # opening twice in a row is okay
+
+    def test_posix_backend_stage(self):
+        """Test staging a file from posix backend."""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open(filepath, mode)
+        my_file.stage()
+        # pylint: disable=protected-access
+        self.assertTrue(my_file._file._staged)
+        # pylint: enable=protected-access
+        my_file.close()
+
+    def test_posix_backend_error(self):
+        """Test opening a file from posix backend."""
+        with self.assertRaises(ArchiveInterfaceError):
+            filepath = '1234'
+            mode = 'w'
+            backend = PosixBackendArchive('/tmp')
+            # easiest way to unit test is look at class variable
+            # pylint: disable=protected-access
+            backend._file = 'none file object'
+            backend.open(filepath, mode)
+            # pylint: enable=protected-access
+
+    def test_posix_backend_open_twice(self):
+        """Test opening a file from posix backend twice."""
+        filepath = '1234'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp')
         my_file = backend.open(filepath, mode)
         my_file = backend.open(filepath, mode)
-
-        # force a close to throw an error
-        def close_error():
-            """Raise an error on close."""
-            raise ArchiveInterfaceError('this is an error')
-        # function of testing
+        self.assertTrue(isinstance(my_file, PosixBackendArchive))
+        # easiest way to unit test is look at class variable
         # pylint: disable=protected-access
-        orig_close = backend._file.close
-        backend._file.close = close_error
+        self.assertTrue(isinstance(backend._file, ExtendedFile))
         # pylint: enable=protected-access
-        hit_exception = False
-        try:
-            my_file = backend.open(filepath, mode)
-        except ArchiveInterfaceError:
-            hit_exception = True
-        self.assertTrue(hit_exception)
-        # function of testing
-        # pylint: disable=protected-access
-        backend._file.close = orig_close
-        # pylint: enable=protected-access
-        hit_exception = False
-        try:
-            my_file = backend.open(47, mode)
-        except ArchiveInterfaceError as ex:
-            self.assertTrue('Cant remove absolute path' in str(ex))
-            hit_exception = True
-        self.assertTrue(hit_exception)
+        my_file.close()
 
+    def test_posix_backend_open_id2f(self):
+        """Test opening a file from posix backend twice."""
+        backend = PosixBackendArchive('/tmp')
+        mode = 'w'
         my_file = backend.open('/a/b/d', mode)
         set_config_name('test_configs/posix-id2filename.cfg')
         backend = PosixBackendArchive('/tmp')
         my_file = backend.open(12345, mode)
         set_config_name('config.cfg')
+        self.assertTrue(isinstance(my_file, PosixBackendArchive))
+        my_file.close()
 
     def test_posix_backend_close(self):
         """Test closing a file from posix backend."""
@@ -295,18 +227,22 @@ class TestPosixBackendArchive(unittest.TestCase):
 
     def test_read_config_bad_section(self):
         """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError) as context:
+        with self.assertRaises(ArchiveInterfaceError):
             read_config_value('bad_section', 'port')
-            self.assertEqual(
-                'Error reading config file, no section: bad_section', context.exception)
 
     def test_read_config_bad_field(self):
         """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError) as context:
+        with self.assertRaises(ArchiveInterfaceError):
             read_config_value('hms_sideband', 'bad_field')
-            self.assertEqual('Error reading config file, no field: bad_field in section: hms_sideband',
-                             context.exception)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_patch(self):
+        """Test patching file."""
+        old_path = '/tmp/1234'
+        new_path = '5678'
+        mode = 'w'
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open('1234', mode)
+        my_file.close()
+        backend.patch(new_path, old_path)
+        # Error would be thrown on patch so nothing to assert
+        self.assertEqual(old_path, '/tmp/1234')

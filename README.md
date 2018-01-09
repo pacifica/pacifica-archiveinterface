@@ -170,6 +170,29 @@ Sample Output:
 }
 ```
 
+## Move a File
+The HTTP `PATCH` method is used to move a file.
+The upload file contains the path to current file on archive
+The Id at the end of the url is where the file will be moved to
+
+```
+curl -X PATCH --upload-file /tmp/foo.json http://127.0.0.1:8080/2
+
+```
+
+Sample Output:
+```
+{
+    "message": "File Moved Successfully"
+}
+```
+Sample Upload File
+```
+{
+  "path": "/path/to/file/file.1"
+}
+```
+
 # Extending Supported Backends
 
 ## Create a backend directory
