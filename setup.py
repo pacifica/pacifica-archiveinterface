@@ -5,7 +5,7 @@ import sys
 from os.path import isfile
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
-from distutils.core import Extension
+from setuptools.extension import Extension
 # pylint: enable=import-error
 # pylint: enable=no-name-in-module
 from setuptools import setup, find_packages
