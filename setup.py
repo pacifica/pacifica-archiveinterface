@@ -21,7 +21,7 @@ HPSS = Extension(
     ],
     include_dirs=['/opt/hpss/include'],
     library_dirs=['/opt/hpss/lib'],
-    libraries=['tirpc', 'hpsscs', 'hpss'],
+    libraries=['hpss', 'tirpc'],
     extra_compile_args=['-DLINUX', '-DHPSS51', '-DLITTLEEND']
 )
 

@@ -154,26 +154,27 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
         latency[2] = time when ping request was sent (epoch)
         to get latency = latency[2] - latency[0]
     */
-    char *sitename;
     PyObject * latency= PyTuple_New(4);
     int ret;
-    hpss_srvr_id_t uuid;
+    hpss_uuid_t uuid;
     struct timeval tv;
     unsigned32 secs,usecs;
 
-    if (!PyArg_ParseTuple(args, "s", &sitename))
-    {
-        PyErr_SetString(archiveInterfaceError, "Error parsing sitename argument");
-        return NULL;
-    }
-
-    /* Get the core server address/uuid information. */
-    ret = hpss_LookupRootCS(sitename, &uuid);
-    if(ret < 0)
-    {
-        PyErr_SetString(archiveInterfaceError, strerror(errno));
-        return NULL;
-    }
+    /*
+        The Hex values used here corresond to the EMSL HPSS CORE server
+        getting these values dynamically becomes difficult
+    */
+    uuid.time_low = 0xe52ea34e;
+    uuid.time_mid = 0xc9aa;
+    uuid.time_hi_and_version = 0x11de;
+    uuid.clock_seq_hi_and_reserved = 0xb4;
+    uuid.clock_seq_low = 0x08;
+    uuid.node[0] = 0x00;
+    uuid.node[1] = 0x21;
+    uuid.node[2] = 0x5e;
+    uuid.node[3] = 0xdc;
+    uuid.node[4] = 0x76;
+    uuid.node[5] = 0x4c;
 
     /* Obtain current time as seconds elapsed since the Epoch. */
     gettimeofday(&tv,NULL);
@@ -199,10 +200,9 @@ static PyObject *
 pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
 {
     char *filepath;
+    char * filepathCopy;
     int rcode;
     int fd = 0;
-    u_signed64 offset64, size64;
-    hpss_fileattr_t attr;
 
     /*
         get the filepath passed in from the python code
@@ -213,29 +213,29 @@ pacifica_archiveinterface_stage(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    fd = hpss_Open(filepath, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
+    filepathCopy = strdup(filepath);
+
+
+    fd = hpss_Open(filepathCopy, O_RDONLY | O_NONBLOCK, 000, NULL, NULL, NULL);
     if(fd < 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         return NULL;
     }
 
-    if(hpss_FileGetAttributes(filepath, &attr) < 0)
-    {
-        PyErr_SetString(archiveInterfaceError, strerror(errno));
-        return NULL;
-    }
-    size64 = attr.Attrs.DataLength;
-    offset64 = cast64m(0);
-
-    rcode = hpss_Stage(fd, offset64, size64, 0, BFS_STAGE_ALL);
+    rcode = hpss_Stage(fd, 0, cast64m(0), 0, BFS_STAGE_ALL);
     if(rcode != 0)
     {
         PyErr_SetString(archiveInterfaceError, strerror(errno));
         hpss_Close(fd);
+        free(filepathCopy);
         return NULL;
     }
     hpss_Close(fd);
+    /* Sleep is a hack to get around other hpss thread not finished yet
+    */
+    free(filepathCopy);
+    usleep(30000);
     Py_RETURN_NONE;
 }
 
