@@ -59,7 +59,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Constructor for the HPSS Backend Archive."""
         super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._sitename = read_config_value('hpss', 'sitename')
+        self._user = read_config_value('hpss', 'user')
+        self._auth = read_config_value('hpss', 'auth')
         self._file = None
         self._filepath = None
         self._hpsslib = None
@@ -94,7 +95,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             filename = os.path.join(self._prefix, path_info_munge(fpath))
             self._filepath = filename
             hpss = HpssExtended(self._filepath, self._latency)
-            hpss.ping_core(self._sitename)
+            hpss.ping_core()
             hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_void_p
@@ -112,7 +113,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._file:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 rcode = self._hpsslib.hpss_Fclose(self._file)
                 if rcode < 0:
                     err_str = 'Failed to close hpss file with code: ' + \
@@ -128,7 +129,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 buf = create_string_buffer('\000' * blocksize)
                 rcode = self._hpsslib.hpss_Fread(buf, 1, blocksize, self._file)
                 if rcode < 0:
@@ -145,7 +146,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 buf_char_p = cast(buf, c_char_p)
                 rcode = self._hpsslib.hpss_Fwrite(
                     buf_char_p, 1, len(buf), self._file
@@ -161,7 +162,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 hpss.stage()
         except Exception as ex:
             err_str = "Can't stage hpss file with error: " + str(ex)
@@ -172,7 +173,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 return hpss.status()
         except Exception as ex:
             err_str = "Can't get hpss status with error: " + str(ex)
@@ -183,7 +184,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 hpss.set_mod_time(mod_time)
         except Exception as ex:
             err_str = "Can't set hpss file mod time with error: " + str(ex)
@@ -194,7 +195,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
+                hpss.ping_core()
                 rcode = self._hpsslib.hpss_Chmod(self._filepath, 0444)
                 if rcode < 0:
                     err_str = 'Failed to chmod hpss file with code: ' + \
@@ -206,11 +207,9 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def authenticate(self):
         """Authenticate the user with the hpss system."""
-        user = read_config_value('hpss', 'user')
-        auth = read_config_value('hpss', 'auth')
         rcode = self._hpsslib.hpss_SetLoginCred(
-            user, HPSS_AUTHN_MECH_UNIX,
-            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth
+            self._user, HPSS_AUTHN_MECH_UNIX,
+            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, self._auth
         )
         if rcode != 0:
             err_str = 'Could Not Authenticate, error code is:' + str(rcode)
