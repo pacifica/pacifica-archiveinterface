@@ -8,7 +8,7 @@ from os.path import isfile
 from distutils.core import Extension
 # pylint: enable=import-error
 # pylint: enable=no-name-in-module
-from setuptools import setup
+from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
@@ -42,16 +42,9 @@ setup(
     description='Pacifica Archive Interface',
     author='David Brown',
     author_email='david.brown@pnnl.gov',
-    packages=[
-        'archiveinterface',
-        'archiveinterface.archivebackends',
-        'archiveinterface.archivebackends.abstract',
-        'archiveinterface.archivebackends.posix',
-        'archiveinterface.archivebackends.hpss',
-        'archiveinterface.archivebackends.oracle_hms_sideband'
-    ],
+    packages=find_packages(),
     scripts=['ArchiveInterfaceServer.py'],
-    entry_point={
+    entry_points={
         'console_scripts': ['ArchiveInterface=archiveinterface:main'],
     },
     install_requires=[str(ir.req) for ir in INSTALL_REQS],
