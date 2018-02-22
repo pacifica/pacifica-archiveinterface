@@ -14,5 +14,6 @@ build: off
 test_script:
   - ps: >
       mkdir C:\tmp;
+      & "$env:PYTHON\python.exe" -m pre-commit run -a;
       & "$env:PYTHON\python.exe" -m coverage run --include='archiveinterface/*' -m pytest -v archiveinterface;
       & "$env:PYTHON\python.exe" -m coverage report -m --fail-under=80;
