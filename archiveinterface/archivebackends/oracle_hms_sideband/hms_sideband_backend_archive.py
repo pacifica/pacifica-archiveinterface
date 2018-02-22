@@ -84,6 +84,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't read HMS SIdeband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file handle invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
         """Write a HMS Sideband file to the archive."""
@@ -93,6 +95,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't write HMS Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file handle invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
         """Set the mod time on a HMS file."""
@@ -122,6 +126,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't stage HMS Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file handle invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def status(self):
         """Get the status of a HMS Sideband file."""
@@ -132,6 +138,8 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             err_str = "Can't get HMS Sideband file status with error: " + \
                 str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file handle invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def patch(self, file_id, old_path):
         """Move a hms file."""

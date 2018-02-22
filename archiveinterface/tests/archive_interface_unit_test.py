@@ -134,7 +134,7 @@ class TestArchiveGenerator(unittest.TestCase):
         generator = ArchiveInterfaceGenerator(backend)
         env = {}
         env['PATH_INFO'] = '/'
-        content = generator.get(env, self.start_response)
+        content = generator.GET(env, self.start_response)
         jsn = json.loads(content)
         self.assertEqual(
             jsn['message'], 'Pacifica Archive Interface Up and Running')

@@ -15,6 +15,36 @@ from archiveinterface.archive_interface_error import ArchiveInterfaceError
 CONFIG_FILE = 'config.cfg'
 
 
+def file_status(status, response):
+    """Response for when file is on the hpss system."""
+    if status:
+        response_headers = [
+            ('X-Pacifica-Messsage', 'File was found'),
+            ('X-Pacifica-File', str(status.filepath)),
+            ('Content-Length', str(status.filesize)),
+            ('Last-Modified', str(status.mtime)),
+            ('X-Pacifica-Ctime', str(status.ctime)),
+            ('X-Pacifica-Bytes-Per-Level', str(status.bytes_per_level)),
+            ('X-Pacifica-File-Storage-Media', str(status.file_storage_media)),
+            ('Content-Type', 'application/json')
+        ]
+        response.status = '204 No Content'
+    else:
+        response_headers = [
+            ('X-Pacifica-Messsage', 'File Not found'),
+            ('X-Pacifica-File', 'File Not Found'),
+            ('Content-Length', 'File Not Found'),
+            ('Last-Modified', 'File Not Found'),
+            ('X-Pacifica-Ctime', 'File Not Found'),
+            ('X-Pacifica-Bytes-Per-Level', 'File Not Found'),
+            ('X-Pacifica-File-Storage-Media', 'File Not Found'),
+            ('Content-Type', 'application/json')
+        ]
+        response.status = '404 Not Found'
+    for key, value in response_headers:
+        response.headers[key] = value
+
+
 def un_abs_path(path_name):
     """Remove absolute path piece."""
     try:

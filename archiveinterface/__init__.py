@@ -62,7 +62,7 @@ def main():
                         choices=['hpss', 'posix', 'hmssideband'],
                         help='use the typed backend')
     parser.add_argument('--prefix', metavar='PREFIX', dest='prefix',
-                        default='{}tmp'.format(os.path.sep), help='prefix to save data at')
+                        default='{}tmp'.format(path.sep), help='prefix to save data at')
     parser.add_argument('-c', '--config', metavar='CONFIG', dest='config',
                         default=getenv('ARCHIVEI_CONFIG'), help='config file location')
     parser.add_argument('--stop-after-a-moment', help=SUPPRESS,

@@ -4,11 +4,10 @@
 
 Allows API to file interactions for passed in archive backends.
 """
-import json
+import shutil
 import cherrypy
-from archiveinterface.archive_utils import get_http_modified_time
+from archiveinterface.archive_utils import get_http_modified_time, file_status
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
-import archiveinterface.archive_interface_responses as interface_responses
 
 BLOCK_SIZE = 1 << 20
 
@@ -25,12 +24,12 @@ class ArchiveInterfaceGenerator(object):
         self._response = None
         print 'Pacifica Archive Interface Up and Running'
 
+    # pylint: disable=invalid-name
     def GET(self, *args):
         """Get a file from WSGI request.
 
         Gets a file specified in the request and writes back the data.
         """
-        archivefile = None
         # if asking for / then return a message that the archive is working
         if not args:
             cherrypy.response.headers['Content-Type'] = 'application/json'
@@ -45,91 +44,66 @@ class ArchiveInterfaceGenerator(object):
                 yield buf
                 buf = archivefile.read(BLOCK_SIZE)
         return read()
+    # pylint: enable=invalid-name
 
     @cherrypy.tools.json_out()
+    # pylint: disable=invalid-name
     def PUT(self, filepath):
         """Write a file from WSGI requests.
 
         Writes a file passed in the request to the archive.
         """
-        archivefile = None
-        resp = interface_responses.Responses()
-        path_info = env['PATH_INFO']
         mod_time = get_http_modified_time(cherrypy.request.headers)
-        stderr.flush()
-        archivefile = self._archive.open(path_info, 'w')
+        archivefile = self._archive.open(filepath, 'w')
         try:
-            content_length = int(env['CONTENT_LENGTH'])
+            content_length = int(
+                cherrypy.request.headers.get('Content-Length'))
         except Exception as ex:
             raise ArchiveInterfaceError(
                 "Can't get file content length with error: {}".format(str(ex))
             )
-        while content_length > 0:
-            if content_length > BLOCK_SIZE:
-                buf = env['wsgi.input'].read(BLOCK_SIZE)
-            else:
-                buf = env['wsgi.input'].read(content_length)
-            archivefile.write(buf)
-            content_length -= len(buf)
-
-        self._response = resp.successful_put_response(start_response,
-                                                      env['CONTENT_LENGTH'])
+        shutil.copyfileobj(cherrypy.request.body, archivefile)
         archivefile.close()
         archivefile.set_mod_time(mod_time)
         archivefile.set_file_permissions()
-        return self.return_response()
+        cherrypy.response.status = '201 Created'
+        return {'message': 'File added to archive', 'total_bytes': content_length}
+    # pylint: enable=invalid-name
 
-    def HEAD(self, env, start_response):
+    # pylint: disable=invalid-name
+    def HEAD(self, filepath):
         """Get the file status from WSGI request.
 
         Gets the status of a file specified in the request.
         """
-        archivefile = None
-        path_info = env['PATH_INFO']
-        resp = interface_responses.Responses()
-        stderr.flush()
-        archivefile = self._archive.open(path_info, 'r')
+        archivefile = self._archive.open(filepath, 'r')
         status = archivefile.status()
-        self._response = resp.file_status(start_response, status)
+        file_status(status, cherrypy.response)
         archivefile.close()
-        return self.return_response()
+    # pylint: enable=invalid-name
 
-    def POST(self, env, start_response):
+    @cherrypy.tools.json_out()
+    # pylint: disable=invalid-name
+    def POST(self, filepath):
         """Stage a file from WSGI request.
 
         Stage the file specified in the request to disk.
         """
-        archivefile = None
-        path_info = env['PATH_INFO']
-        resp = interface_responses.Responses()
-        stderr.flush()
-        archivefile = self._archive.open(path_info, 'r')
+        archivefile = self._archive.open(filepath, 'r')
         archivefile.stage()
-        self._response = resp.file_stage(start_response, path_info)
         archivefile.close()
-        return self.return_response()
+        cherrypy.response.status = '200 OK'
+        return {'message': 'File was staged', 'file': filepath}
+    # pylint: enable=invalid-name
 
-    def PATCH(self, env, start_response):
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    # pylint: disable=invalid-name
+    def PATCH(self, filepath):
         """Move a file from the original path to the new one specified."""
-        resp = interface_responses.Responses()
-        try:
-            request_body_size = int(env.get('CONTENT_LENGTH', 0))
-        except ValueError:
-            request_body_size = 0
-        try:
-            request_body = env['wsgi.input'].read(request_body_size)
-            data = json.loads(request_body)
-            file_path = data['path']
-            file_id = env['PATH_INFO']
-        except (IOError, ValueError):
-            # is exception is probably from the read()
-            self._response = resp.json_patch_error_response(start_response)
-            return self.return_response()
-        stderr.flush()
+        file_path = cherrypy.request.body.json()['path']
+        file_id = filepath
         self._archive.patch(file_id, file_path)
-        self._response = resp.file_patch(start_response)
-        return self.return_response()
-
-    def return_response(self):
-        """Print all responses in a nice fashion."""
-        return json.dumps(self._response, sort_keys=True, indent=4)
+        cherrypy.response.status = '200 OK'
+        return {'message': 'File Moved Successfully'}
+    # pylint: enable=invalid-name

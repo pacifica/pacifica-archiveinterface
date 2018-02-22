@@ -139,6 +139,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file path invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
         """Write a file to the hpss archive."""
@@ -155,6 +157,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't write hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file path invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def stage(self):
         """Stage an hpss file to the top level drive."""
@@ -177,6 +181,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't get hpss status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file path invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
         """Set the mod time for an hpss archive file."""

@@ -12,6 +12,8 @@ to support the new Backend Archie type
 
 """
 from os import getenv
+import cherrypy
+from archiveinterface import error_page_default
 from archiveinterface.archive_utils import set_config_name
 from archiveinterface.archive_interface import ArchiveInterfaceGenerator
 from archiveinterface.archivebackends.archive_backend_factory import \
@@ -30,9 +32,13 @@ BACKEND = FACTORY.get_backend_archive(
     BACKEND_TYPE,
     PREFIX
 )
-# Create the archive interface
-GENERATOR = ArchiveInterfaceGenerator(BACKEND)
-# This is a function not a constant but pylint doesn't know that
+
+cherrypy.config.update({'error_page.default': error_page_default})
+# pylint doesn't realize that application is actually a callable
 # pylint: disable=invalid-name
-application = GENERATOR.pacifica_archiveinterface
+application = cherrypy.Application(
+    ArchiveInterfaceGenerator(BACKEND),
+    '/',
+    ARCHIVEI_CONFIG
+)
 # pylint: enable=invalid-name
