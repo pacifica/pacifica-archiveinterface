@@ -157,7 +157,11 @@ pacifica_archiveinterface_ping_core(PyObject *self, PyObject *args)
     char *sitename;
     PyObject * latency= PyTuple_New(4);
     int ret;
+#if HPSS_MINOR_VERSION == 5
     hpss_srvr_id_t uuid;
+#else
+    hpss_uuid_t uuid;
+#endif
     struct timeval tv;
     unsigned32 secs,usecs;
 
