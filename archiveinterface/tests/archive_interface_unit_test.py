@@ -3,7 +3,6 @@
 """File used to unit test the pacifica archive interface."""
 import unittest
 import time
-import json
 from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
@@ -132,9 +131,6 @@ class TestArchiveGenerator(unittest.TestCase):
         factory = ArchiveBackendFactory()
         backend = factory.get_backend_archive('posix', '/tmp')
         generator = ArchiveInterfaceGenerator(backend)
-        env = {}
-        env['PATH_INFO'] = '/'
-        content = generator.GET(env, self.start_response)
-        jsn = json.loads(content)
+        jsn = generator.GET('/')
         self.assertEqual(
             jsn['message'], 'Pacifica Archive Interface Up and Running')
