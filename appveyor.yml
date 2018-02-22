@@ -13,7 +13,7 @@ build: off
 
 test_script:
   - ps: >
-      mkdir C:\tmp; dir $env:PYTHON;
+      mkdir C:\tmp; dir $env:PYTHON\Scripts;
       pre-commit run -a;
       coverage run --include='archiveinterface/*' -m pytest -v archiveinterface;
       coverage report -m --fail-under=80;
