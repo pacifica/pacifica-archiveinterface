@@ -5,7 +5,7 @@
 Allows API to file interactions for passed in archive backends.
 """
 import json
-from sys import stderr
+import cherrypy
 from archiveinterface.archive_utils import get_http_modified_time
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 import archiveinterface.archive_interface_responses as interface_responses
@@ -25,28 +25,29 @@ class ArchiveInterfaceGenerator(object):
         self._response = None
         print 'Pacifica Archive Interface Up and Running'
 
-    def get(self, env, start_response):
+    def GET(self, *args):
         """Get a file from WSGI request.
 
         Gets a file specified in the request and writes back the data.
         """
         archivefile = None
-        path_info = env['PATH_INFO']
         # if asking for / then return a message that the archive is working
-        if path_info == '/':
-            resp = interface_responses.Responses()
-            self._response = resp.archive_working_response(start_response)
-            return self.return_response()
-        stderr.flush()
-        archivefile = self._archive.open(path_info, 'r')
+        if not args:
+            cherrypy.response.headers['Content-Type'] = 'application/json'
+            return {'message': 'Pacifica Archive Interface Up and Running'}
+        archivefile = self._archive.open(args[0], 'r')
+        cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
 
-        start_response('200 OK', [('Content-Type',
-                                   'application/octet-stream')])
-        if 'wsgi.file_wrapper' in env:
-            return env['wsgi.file_wrapper'](archivefile, BLOCK_SIZE)
-        return iter(lambda: archivefile.read(BLOCK_SIZE), '')
+        def read():
+            """Read the data from the file."""
+            buf = archivefile.read(BLOCK_SIZE)
+            while buf:
+                yield buf
+                buf = archivefile.read(BLOCK_SIZE)
+        return read()
 
-    def put(self, env, start_response):
+    @cherrypy.tools.json_out()
+    def PUT(self, filepath):
         """Write a file from WSGI requests.
 
         Writes a file passed in the request to the archive.
@@ -54,7 +55,7 @@ class ArchiveInterfaceGenerator(object):
         archivefile = None
         resp = interface_responses.Responses()
         path_info = env['PATH_INFO']
-        mod_time = get_http_modified_time(env)
+        mod_time = get_http_modified_time(cherrypy.request.headers)
         stderr.flush()
         archivefile = self._archive.open(path_info, 'w')
         try:
@@ -78,7 +79,7 @@ class ArchiveInterfaceGenerator(object):
         archivefile.set_file_permissions()
         return self.return_response()
 
-    def status(self, env, start_response):
+    def HEAD(self, env, start_response):
         """Get the file status from WSGI request.
 
         Gets the status of a file specified in the request.
@@ -93,7 +94,7 @@ class ArchiveInterfaceGenerator(object):
         archivefile.close()
         return self.return_response()
 
-    def stage(self, env, start_response):
+    def POST(self, env, start_response):
         """Stage a file from WSGI request.
 
         Stage the file specified in the request to disk.
@@ -108,7 +109,7 @@ class ArchiveInterfaceGenerator(object):
         archivefile.close()
         return self.return_response()
 
-    def patch(self, env, start_response):
+    def PATCH(self, env, start_response):
         """Move a file from the original path to the new one specified."""
         resp = interface_responses.Responses()
         try:
@@ -132,36 +133,3 @@ class ArchiveInterfaceGenerator(object):
     def return_response(self):
         """Print all responses in a nice fashion."""
         return json.dumps(self._response, sort_keys=True, indent=4)
-
-    # pylint: disable=too-many-branches
-    def pacifica_archiveinterface(self, env, start_response):
-        """Parse request method type."""
-        try:
-            return_response = None
-            if env['REQUEST_METHOD'] == 'GET':
-                return_response = self.get(env, start_response)
-            elif env['REQUEST_METHOD'] == 'PUT':
-                return_response = self.put(env, start_response)
-            elif env['REQUEST_METHOD'] == 'HEAD':
-                return_response = self.status(env, start_response)
-            elif env['REQUEST_METHOD'] == 'POST':
-                return_response = self.stage(env, start_response)
-            elif env['REQUEST_METHOD'] == 'PATCH':
-                return_response = self.patch(env, start_response)
-            else:
-                resp = interface_responses.Responses()
-                self._response = resp.unknown_request(
-                    start_response, env['REQUEST_METHOD'])
-                return_response = self.return_response()
-            return return_response
-        except ArchiveInterfaceError as ex:
-            # catching application errors
-            # set the error reponse
-            resp = interface_responses.Responses()
-            self._response = resp.archive_exception(
-                start_response, ex, env['REQUEST_METHOD'])
-            return self.return_response()
-
-
-if __name__ == '__main__':
-    pass
