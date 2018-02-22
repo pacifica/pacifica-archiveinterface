@@ -131,6 +131,6 @@ class TestArchiveGenerator(unittest.TestCase):
         factory = ArchiveBackendFactory()
         backend = factory.get_backend_archive('posix', '/tmp')
         generator = ArchiveInterfaceGenerator(backend)
-        jsn = generator.GET('/')
+        jsn = generator.GET()
         self.assertEqual(
             jsn['message'], 'Pacifica Archive Interface Up and Running')
