@@ -17,30 +17,23 @@ CONFIG_FILE = 'config.cfg'
 
 def file_status(status, response):
     """Response for when file is on the hpss system."""
-    if status:
-        response_headers = [
-            ('X-Pacifica-Messsage', 'File was found'),
-            ('X-Pacifica-File', str(status.filepath)),
-            ('Content-Length', str(status.filesize)),
-            ('Last-Modified', str(status.mtime)),
-            ('X-Pacifica-Ctime', str(status.ctime)),
-            ('X-Pacifica-Bytes-Per-Level', str(status.bytes_per_level)),
-            ('X-Pacifica-File-Storage-Media', str(status.file_storage_media)),
-            ('Content-Type', 'application/json')
-        ]
-        response.status = '204 No Content'
-    else:
-        response_headers = [
-            ('X-Pacifica-Messsage', 'File Not found'),
-            ('X-Pacifica-File', 'File Not Found'),
-            ('Content-Length', 'File Not Found'),
-            ('Last-Modified', 'File Not Found'),
-            ('X-Pacifica-Ctime', 'File Not Found'),
-            ('X-Pacifica-Bytes-Per-Level', 'File Not Found'),
-            ('X-Pacifica-File-Storage-Media', 'File Not Found'),
-            ('Content-Type', 'application/json')
-        ]
-        response.status = '404 Not Found'
+    response_headers = [
+        ('X-Pacifica-Messsage', 'File was found' if status else 'File Not found'),
+        ('X-Pacifica-File', str(getattr(status, 'filepath', 'File Not Found'))),
+        ('Content-Length', str(getattr(status, 'filesize', 'File Not Found'))),
+        ('Last-Modified', str(getattr(status, 'mtime', 'File Not Found'))),
+        ('X-Pacifica-Ctime', str(getattr(status, 'ctime', 'File Not Found'))),
+        (
+            'X-Pacifica-Bytes-Per-Level',
+            str(getattr(status, 'bytes_per_level', 'File Not Found'))
+        ),
+        (
+            'X-Pacifica-File-Storage-Media',
+            str(getattr(status, 'file_storage_media', 'File Not Found'))
+        ),
+        ('Content-Type', 'application/json')
+    ]
+    response.status = '204 No Content' if status else '404 Not Found'
     for key, value in response_headers:
         response.headers[key] = value
 
