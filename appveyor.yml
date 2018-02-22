@@ -13,7 +13,7 @@ build: off
 
 test_script:
   - ps: >
-      mkdir C:\tmp;
-      $env:PYTHON\Scripts\pre-commit.exe run -a;
-      $env:PYTHON\Scripts\coverage.exe run --include='archiveinterface/*' -m pytest -v archiveinterface;
-      $env:PYTHON\Scripts\coverage.exe report -m --fail-under=80;
+      mkdir C:\tmp; env:PATH = "$env:PYTHON\Scripts;$env:PATH";
+      pre-commit run -a;
+      coverage run --include='archiveinterface/*' -m pytest -v archiveinterface;
+      coverage report -m --fail-under=80;
