@@ -7,7 +7,8 @@ environment:
     - PYTHON: C:\Python27-x64
 
 install:
-  - ps: & "$env:PYTHON\python.exe" -m pip install -r requirements-dev.txt
+  - ps: >
+      & "$env:PYTHON\python.exe" -m pip install -r requirements-dev.txt
 
 build: off
 
