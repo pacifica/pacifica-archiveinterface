@@ -22,8 +22,8 @@ from archiveinterface.archivebackends.archive_backend_factory import \
 BACKEND_TYPE = getenv('PAI_BACKEND_TYPE', 'posix')
 PREFIX = getenv('PAI_PREFIX', '/tmp')
 
-ARCHIVEI_CONFIG = getenv('ARCHIVEI_CONFIG')
-CP_CONFIG = getenv('CP_CONFIG')
+ARCHIVEI_CONFIG = getenv('ARCHIVEI_CONFIG', 'config.cfg')
+CP_CONFIG = getenv('CP_CONFIG', 'server.conf')
 if ARCHIVEI_CONFIG:
     set_config_name(ARCHIVEI_CONFIG)
 

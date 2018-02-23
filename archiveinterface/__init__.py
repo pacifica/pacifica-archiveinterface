@@ -64,9 +64,9 @@ def main():
     parser.add_argument('--prefix', metavar='PREFIX', dest='prefix',
                         default='{}tmp'.format(path.sep), help='prefix to save data at')
     parser.add_argument('--cherrypy-config', metavar='CP_CONFIG', dest='cp_config',
-                        default=getenv('CP_CONFIG'), help='cherrypy config file location')
+                        default=getenv('CP_CONFIG', 'server.conf'), help='cherrypy config file location')
     parser.add_argument('-c', '--config', metavar='CONFIG', dest='config',
-                        default=getenv('ARCHIVEI_CONFIG'), help='config file location')
+                        default=getenv('ARCHIVEI_CONFIG', 'config.cfg'), help='config file location')
     parser.add_argument('--stop-after-a-moment', help=SUPPRESS,
                         default=False, dest='stop_later',
                         action='store_true')
