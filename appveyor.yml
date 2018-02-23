@@ -10,7 +10,7 @@ install:
   - ps: >
       & "$env:PYTHON\python.exe" -m virtualenv C:\pacifica;
       C:\pacifica\Scripts\activate.ps1;
-      pip install --upgrade pip setuptools wheel
+      pip install --upgrade pip setuptools wheel;
       pip install -r requirements-dev.txt
 
 build: off
