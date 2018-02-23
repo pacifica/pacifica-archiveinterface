@@ -20,7 +20,7 @@ def file_status(status, response):
     response_headers = [
         ('X-Pacifica-Messsage', 'File was found' if status else 'File Not found'),
         ('X-Pacifica-File', str(getattr(status, 'filepath', 'File Not Found'))),
-        ('Content-Length', str(getattr(status, 'filesize', 'File Not Found'))),
+        ('X-Content-Length', str(getattr(status, 'filesize', 'File Not Found'))),
         ('Last-Modified', str(getattr(status, 'mtime', 'File Not Found'))),
         ('X-Pacifica-Ctime', str(getattr(status, 'ctime', 'File Not Found'))),
         (

@@ -37,7 +37,7 @@ class BasicArchiveTests(unittest.TestCase):
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], '30')
+        self.assertEqual(resp.headers['x-content-length'], '30')
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_simple_stage(self):
