@@ -8,13 +8,16 @@ environment:
 
 install:
   - ps: >
-      & "$env:PYTHON\python.exe" -m pip install -r requirements-dev.txt
+      & "$env:PYTHON\python.exe" -m virtualenv C:\pacifica;
+      C:\pacifica\Scripts\activate.ps1;
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements-dev.txt
 
 build: off
 
 test_script:
   - ps: >
-      mkdir C:\tmp; $env:PATH = "$env:PYTHON\Scripts;$env:PATH";
+      mkdir C:\tmp; C:\pacifica\Scripts\activate.ps1;
       pre-commit run -a;
       coverage run --include='archiveinterface/*' -m pytest -v archiveinterface;
       coverage report -m --fail-under=80;
