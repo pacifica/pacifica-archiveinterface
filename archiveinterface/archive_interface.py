@@ -18,6 +18,8 @@ class ArchiveInterfaceGenerator(object):
     Defines the methods that can be used on files for request types.
     """
 
+    exposed = True
+
     def __init__(self, archive):
         """Create an archive interface generator."""
         self._archive = archive
