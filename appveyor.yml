@@ -19,5 +19,5 @@ test_script:
   - ps: >
       mkdir C:\tmp; C:\pacifica\Scripts\activate.ps1;
       pre-commit run -a;
-      coverage run --include='archiveinterface/*' -m pytest -v archiveinterface;
+      coverage run --include='archiveinterface/*' --omit='archiveinterface/archivebackends/abstract/*' -m pytest -v archiveinterface;
       coverage report -m --fail-under=80;
