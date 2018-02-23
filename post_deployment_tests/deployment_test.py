@@ -74,8 +74,7 @@ class BasicArchiveTests(unittest.TestCase):
         error_msg = 'Can\'t open'
         # get error message length since the file path returned is unique per deploymnet while
         # the rest of the error message is not
-        err_msg_length = len(error_msg)
-        self.assertEqual(data['message'][:err_msg_length], error_msg)
+        self.assertTrue(error_msg in data['traceback'])
 
 
 class BinaryFileArchiveTests(unittest.TestCase):
