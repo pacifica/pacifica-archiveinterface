@@ -81,13 +81,7 @@ class HpssBackendArchive(AbstractBackendArchive):
     def open(self, filepath, mode):
         """Open an hpss file."""
         # want to close any open files first
-        try:
-            if self._file:
-                self.close()
-        except ArchiveInterfaceError as ex:
-            err_str = "Can't close previous hpss file before "\
-                      'opening new one with error: ' + str(ex)
-            raise ArchiveInterfaceError(err_str)
+        self.close()
         try:
             fpath = un_abs_path(filepath)
             self._filepath = filename = os.path.join(
