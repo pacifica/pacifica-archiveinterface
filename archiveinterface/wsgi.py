@@ -23,6 +23,7 @@ BACKEND_TYPE = getenv('PAI_BACKEND_TYPE', 'posix')
 PREFIX = getenv('PAI_PREFIX', '/tmp')
 
 ARCHIVEI_CONFIG = getenv('ARCHIVEI_CONFIG')
+CP_CONFIG = getenv('CP_CONFIG')
 if ARCHIVEI_CONFIG:
     set_config_name(ARCHIVEI_CONFIG)
 
@@ -39,6 +40,6 @@ cherrypy.config.update({'error_page.default': error_page_default})
 application = cherrypy.Application(
     ArchiveInterfaceGenerator(BACKEND),
     '/',
-    ARCHIVEI_CONFIG
+    CP_CONFIG
 )
 # pylint: enable=invalid-name
