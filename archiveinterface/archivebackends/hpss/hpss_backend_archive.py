@@ -88,12 +88,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             err_str = "Can't close previous hpss file before "\
                       'opening new one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
-
-        # try to open file
         try:
             fpath = un_abs_path(filepath)
-            filename = os.path.join(self._prefix, path_info_munge(fpath))
-            self._filepath = filename
+            self._filepath = filename = os.path.join(
+                self._prefix, path_info_munge(fpath))
             hpss = HpssExtended(self._filepath, self._latency)
             hpss.ping_core(self._sitename)
             hpss.makedirs()
