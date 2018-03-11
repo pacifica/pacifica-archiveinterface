@@ -107,6 +107,14 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._file:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core(self._sitename)
+                hpss_fflush = self._hpsslib.hpss_Fflush
+                hpss_fflush.restype = c_int
+                hpss_fflush.argtypes = [c_void_p]
+                rcode = hpss_fflush(self._file)
+                if rcode < 0:
+                    err_str = 'Failed to flush hpss file with code: ' + \
+                        str(rcode)
+                    raise ArchiveInterfaceError(err_str)
                 hpss_fclose = self._hpsslib.hpss_Fclose
                 hpss_fclose.restype = c_int
                 hpss_fclose.argtypes = [c_void_p]
@@ -125,7 +133,6 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
                 buf = create_string_buffer('\000' * blocksize)
                 hpss_fread = self._hpsslib.hpss_Fread
                 hpss_fread.restype = c_size_t
@@ -147,7 +154,6 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
                 buf_char_p = cast(buf, c_char_p)
                 hpss_fwrite = self._hpsslib.hpss_Fwrite
                 hpss_fwrite.restype = c_size_t
