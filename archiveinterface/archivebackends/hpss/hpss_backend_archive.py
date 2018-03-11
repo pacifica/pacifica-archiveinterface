@@ -243,5 +243,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                 raise Exception(
                     'Hpss rename error. Return val is: ' + str(ret_val))
         except Exception as ex:
-            err_str = 'Can not rename hpss file with error: ' + str(ex)
+            err_str = 'Can not rename hpss file {} to {} with error: {}'.format(
+                old_path, file_id, str(ex)
+            )
             raise ArchiveInterfaceError(err_str)
