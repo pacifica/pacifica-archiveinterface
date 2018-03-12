@@ -3,7 +3,8 @@
 """Module that implements the Abstract backend archive for an hpss backend."""
 import os
 import sys
-from ctypes import cdll, c_void_p, create_string_buffer, c_char_p, cast
+from ctypes import cdll, create_string_buffer, cast
+from ctypes import c_void_p, c_char_p, c_int, c_size_t
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.abstract.abstract_backend_archive import (
@@ -80,24 +81,17 @@ class HpssBackendArchive(AbstractBackendArchive):
     def open(self, filepath, mode):
         """Open an hpss file."""
         # want to close any open files first
-        try:
-            if self._file:
-                self.close()
-        except ArchiveInterfaceError as ex:
-            err_str = "Can't close previous hpss file before "\
-                      'opening new one with error: ' + str(ex)
-            raise ArchiveInterfaceError(err_str)
-
-        # try to open file
+        self.close()
         try:
             fpath = un_abs_path(filepath)
-            filename = os.path.join(self._prefix, path_info_munge(fpath))
-            self._filepath = filename
+            self._filepath = filename = os.path.join(
+                self._prefix, path_info_munge(fpath))
             hpss = HpssExtended(self._filepath, self._latency)
             hpss.ping_core(self._sitename)
             hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_void_p
+            hpss_fopen.argtypes = [c_char_p, c_char_p]
             self._file = hpss_fopen(filename, mode)
             if self._file < 0:
                 err_str = 'Failed opening Hpss File, code: ' + str(self._file)
@@ -113,7 +107,18 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._file:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core(self._sitename)
-                rcode = self._hpsslib.hpss_Fclose(self._file)
+                hpss_fflush = self._hpsslib.hpss_Fflush
+                hpss_fflush.restype = c_int
+                hpss_fflush.argtypes = [c_void_p]
+                rcode = hpss_fflush(self._file)
+                if rcode < 0:
+                    err_str = 'Failed to flush hpss file with code: ' + \
+                        str(rcode)
+                    raise ArchiveInterfaceError(err_str)
+                hpss_fclose = self._hpsslib.hpss_Fclose
+                hpss_fclose.restype = c_int
+                hpss_fclose.argtypes = [c_void_p]
+                rcode = hpss_fclose(self._file)
                 if rcode < 0:
                     err_str = 'Failed to close hpss file with code: ' + \
                         str(rcode)
@@ -127,10 +132,11 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Read a file from the hpss archive."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
                 buf = create_string_buffer('\000' * blocksize)
-                rcode = self._hpsslib.hpss_Fread(buf, 1, blocksize, self._file)
+                hpss_fread = self._hpsslib.hpss_Fread
+                hpss_fread.restype = c_size_t
+                hpss_fread.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
+                rcode = hpss_fread(buf, 1, blocksize, self._file)
                 if rcode < 0:
                     err_str = 'Failed During HPSS Fread,'\
                               'return value is: ' + str(rcode)
@@ -139,17 +145,18 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file path invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
         """Write a file to the hpss archive."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
-                hpss.ping_core(self._sitename)
                 buf_char_p = cast(buf, c_char_p)
-                rcode = self._hpsslib.hpss_Fwrite(
-                    buf_char_p, 1, len(buf), self._file
-                )
+                hpss_fwrite = self._hpsslib.hpss_Fwrite
+                hpss_fwrite.restype = c_size_t
+                hpss_fwrite.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
+                rcode = hpss_fwrite(buf_char_p, 1, len(buf), self._file)
                 if rcode != len(buf):
                     raise ArchiveInterfaceError('Short write for hpss file')
         except Exception as ex:
@@ -177,6 +184,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't get hpss status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file path invalid'
+        raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
         """Set the mod time for an hpss archive file."""
@@ -224,11 +233,15 @@ class HpssBackendArchive(AbstractBackendArchive):
             self.open(fpath, 'w')
             new_filepath = self._filepath
             self.close()  # close the file so we can do the rename
-            ret_val = self._hpsslib.hpss_Rename(
-                str(old_path), str(new_filepath))
+            hpss_rename = self._hpsslib.hpss_Rename
+            hpss_rename.restype = c_int
+            hpss_rename.argtypes = [c_char_p, c_char_p]
+            ret_val = hpss_rename(str(old_path), str(new_filepath))
             if ret_val < 0:
                 raise Exception(
                     'Hpss rename error. Return val is: ' + str(ret_val))
         except Exception as ex:
-            err_str = 'Can not rename hpss file with error: ' + str(ex)
+            err_str = 'Can not rename hpss file {} to {} with error: {}'.format(
+                old_path, file_id, str(ex)
+            )
             raise ArchiveInterfaceError(err_str)
