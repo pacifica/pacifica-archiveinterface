@@ -78,6 +78,12 @@ class HpssBackendArchive(AbstractBackendArchive):
             err_str = "Can't authenticate with hpss, error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
+    @staticmethod
+    def _check_rcode(rcode, msg):
+        """Check if rcode is < 0 and raise error."""
+        if rcode < 0:
+            raise ArchiveInterfaceError(msg)
+
     def open(self, filepath, mode):
         """Open an hpss file."""
         # want to close any open files first
@@ -93,9 +99,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_fopen.restype = c_void_p
             hpss_fopen.argtypes = [c_char_p, c_char_p]
             self._file = hpss_fopen(filename, mode)
-            if self._file < 0:
-                err_str = 'Failed opening Hpss File, code: ' + str(self._file)
-                raise ArchiveInterfaceError(err_str)
+            self._check_rcode(
+                self._file,
+                'Failed opening Hpss File, code: ' + str(self._file)
+            )
             return self
         except Exception as ex:
             err_str = "Can't open hpss file with error: " + str(ex)
@@ -111,18 +118,18 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss_fflush.restype = c_int
                 hpss_fflush.argtypes = [c_void_p]
                 rcode = hpss_fflush(self._file)
-                if rcode < 0:
-                    err_str = 'Failed to flush hpss file with code: ' + \
-                        str(rcode)
-                    raise ArchiveInterfaceError(err_str)
+                self._check_rcode(
+                    rcode,
+                    'Failed to flush hpss file with code: ' + str(rcode)
+                )
                 hpss_fclose = self._hpsslib.hpss_Fclose
                 hpss_fclose.restype = c_int
                 hpss_fclose.argtypes = [c_void_p]
                 rcode = hpss_fclose(self._file)
-                if rcode < 0:
-                    err_str = 'Failed to close hpss file with code: ' + \
-                        str(rcode)
-                    raise ArchiveInterfaceError(err_str)
+                self._check_rcode(
+                    rcode,
+                    'Failed to close hpss file with code: ' + str(rcode)
+                )
                 self._file = None
         except Exception as ex:
             err_str = "Can't close hpss file with error: " + str(ex)
@@ -137,10 +144,10 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss_fread.restype = c_size_t
                 hpss_fread.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
                 rcode = hpss_fread(buf, 1, blocksize, self._file)
-                if rcode < 0:
-                    err_str = 'Failed During HPSS Fread,'\
-                              'return value is: ' + str(rcode)
-                    raise ArchiveInterfaceError(err_str)
+                self._check_rcode(
+                    rcode,
+                    'Failed During HPSS Fread, return value is: ' + str(rcode)
+                )
                 return buf.raw[:rcode]
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
@@ -205,10 +212,10 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core(self._sitename)
                 rcode = self._hpsslib.hpss_Chmod(self._filepath, 0444)
-                if rcode < 0:
-                    err_str = 'Failed to chmod hpss file with code: ' + \
-                        str(rcode)
-                    raise ArchiveInterfaceError(err_str)
+                self._check_rcode(
+                    rcode,
+                    'Failed to chmod hpss file with code: ' + str(rcode)
+                )
         except Exception as ex:
             err_str = "Can't set hpss file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -221,9 +228,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             user, HPSS_AUTHN_MECH_UNIX,
             HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth
         )
-        if rcode != 0:
-            err_str = 'Could Not Authenticate, error code is:' + str(rcode)
-            raise ArchiveInterfaceError(err_str)
+        self._check_rcode(
+            rcode,
+            'Could Not Authenticate, error code is:' + str(rcode)
+        )
 
     def patch(self, file_id, old_path):
         """Move a hpss file."""
@@ -237,9 +245,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_rename.restype = c_int
             hpss_rename.argtypes = [c_char_p, c_char_p]
             ret_val = hpss_rename(str(old_path), str(new_filepath))
-            if ret_val < 0:
-                raise Exception(
-                    'Hpss rename error. Return val is: ' + str(ret_val))
+            self._check_rcode(
+                ret_val,
+                'Hpss rename error. Return val is: ' + str(ret_val)
+            )
         except Exception as ex:
             err_str = 'Can not rename hpss file {} to {} with error: {}'.format(
                 old_path, file_id, str(ex)
