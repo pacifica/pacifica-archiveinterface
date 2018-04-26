@@ -5,7 +5,9 @@ before_script:
 python:
 - 2.7
 env:
-- RUN_LINTS=true
+  matrix:
+  - RUN_LINTS=true
+  - RUN_LINTS=
 install:
 - pip install -r requirements-dev.txt
 script:
