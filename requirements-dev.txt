@@ -1,9 +1,10 @@
+cherrypy
 codeclimate-test-reporter
 coverage>4.0,<4.4
-peewee
+peewee>2
 pep257
 pre-commit
-pylint<1.8
+pylint
 PyMySQL
 pytest
 requests

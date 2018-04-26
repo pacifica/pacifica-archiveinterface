@@ -7,12 +7,17 @@ environment:
     - PYTHON: C:\Python27-x64
 
 install:
-  - '%PYTHON%\python.exe -m pip install -r requirements-dev.txt'
+  - ps: >
+      & "$env:PYTHON\python.exe" -m virtualenv C:\pacifica;
+      C:\pacifica\Scripts\activate.ps1;
+      python -m pip install --upgrade pip setuptools wheel;
+      python -m pip install -r requirements-dev.txt
 
 build: off
 
 test_script:
   - ps: >
-      mkdir C:\tmp;
-      & "$env:PYTHON\python.exe" -m coverage run --include='archiveinterface/*' -m pytest -v archiveinterface/tests/archive_interface_unit_test.py archiveinterface/tests/archive_posix_unit_test.py archiveinterface/tests/archive_response_unit_test.py;
-      & "$env:PYTHON\python.exe" -m coverage report -m --fail-under=80;
+      mkdir C:\tmp; C:\pacifica\Scripts\activate.ps1;
+      pre-commit run -a;
+      coverage run --include='archiveinterface/*' --omit='archiveinterface/archivebackends/abstract/*' -m pytest -v archiveinterface;
+      coverage report -m --fail-under=80;

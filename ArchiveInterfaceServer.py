@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# pylint: disable=invalid-name
 """Run the archive interface server."""
 from archiveinterface import main
 

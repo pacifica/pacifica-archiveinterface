@@ -37,7 +37,7 @@ class BasicArchiveTests(unittest.TestCase):
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], '30')
+        self.assertEqual(resp.headers['x-content-length'], '30')
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_simple_stage(self):
@@ -74,8 +74,7 @@ class BasicArchiveTests(unittest.TestCase):
         error_msg = 'Can\'t open'
         # get error message length since the file path returned is unique per deploymnet while
         # the rest of the error message is not
-        err_msg_length = len(error_msg)
-        self.assertEqual(data['message'][:err_msg_length], error_msg)
+        self.assertTrue(error_msg in data['traceback'])
 
 
 class BinaryFileArchiveTests(unittest.TestCase):
@@ -100,7 +99,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
-        self.assertEqual(resp.headers['content-length'], '5')
+        self.assertEqual(resp.headers['x-content-length'], '5')
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_binary_file_stage(self):
@@ -136,8 +135,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
         error_msg = 'Can\'t open'
         # get error message length since the file path returned is unique per deploymnet while
         # the rest of the error message is not
-        err_msg_length = len(error_msg)
-        self.assertEqual(data['message'][:err_msg_length], error_msg)
+        self.assertTrue(error_msg in data['traceback'])
 
 
 # pylint: disable=too-few-public-methods
@@ -183,7 +181,7 @@ class LargeBinaryFileArchiveTests(unittest.TestCase):
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.headers['x-pacifica-file-storage-media'], 'disk')
         self.assertEqual(
-            resp.headers['content-length'], str(self.large_file_size))
+            resp.headers['x-content-length'], str(self.large_file_size))
         self.assertEqual(resp.headers['x-pacifica-messsage'], 'File was found')
 
     def test_large_binary_file_stage(self):
