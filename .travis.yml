@@ -1,8 +1,18 @@
 language: python
 before_script:
- - echo 'US/Pacific' | sudo tee /etc/timezone
- - sudo dpkg-reconfigure --frontend noninteractive tzdata
+- echo 'US/Pacific' | sudo tee /etc/timezone
+- sudo dpkg-reconfigure --frontend noninteractive tzdata
 python:
-  - "2.7"
-install: "pip install -r requirements-dev.txt"
-script: bash -xe ./travis/static-analysis.sh && bash -xe ./travis/unit-tests.sh && bash -xe ./travis/test-deploy.sh
+- 2.7
+env:
+- RUN_LINTS=true
+install:
+- pip install -r requirements-dev.txt
+script:
+- >
+  if [[ -z $RUN_LINTS ]] ; then
+    bash -xe ./travis/unit-tests.sh &&
+    bash -xe ./travis/test-deploy.sh
+  else
+    bash -xe ./travis/static-analysis.sh
+  fi
