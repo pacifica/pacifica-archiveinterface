@@ -44,6 +44,7 @@ class ExtendedHmsSideband(file):
     def _stat_ino_sql(self, fname, directory):
         """Return the record for specified file and directory."""
         SamInode.database_connect()
+        # pylint: disable=no-member
         result = (
             SamInode.select()
             .join(SamFile, on=(SamFile.ino == SamInode.ino))
@@ -51,6 +52,7 @@ class ExtendedHmsSideband(file):
             .where(SamPath.path == str(directory), SamFile.name == str(fname))
             .get()
         )
+        # pylint: enable=no-member
         SamInode.database_close()
 
         if result:
