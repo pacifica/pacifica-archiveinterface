@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 """Module used for testing a deployed archive interface."""
 import os
-from Queue import Queue
+try:  # python 2 import
+    from Queue import Queue
+except ImportError:  # pragma: no cover
+    from queue import Queue
 from threading import Thread
 import unittest
 import requests
