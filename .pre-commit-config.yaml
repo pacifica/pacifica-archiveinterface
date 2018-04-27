@@ -50,3 +50,4 @@ repos:
     rev: v1.1.5
     hooks:
     -   id: remove-tabs
+    -   id: remove-crlf

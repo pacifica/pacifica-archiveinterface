@@ -43,9 +43,9 @@ class TestPosixStatus(unittest.TestCase):
 
     def test_posix_status_object(self):
         """Test the correct creation of posix status object."""
-        status = PosixStatus(036, 035, 15, 15)
-        self.assertEqual(status.mtime, 036)
-        self.assertEqual(status.ctime, 035)
+        status = PosixStatus(0o36, 0o35, 15, 15)
+        self.assertEqual(status.mtime, 0o36)
+        self.assertEqual(status.ctime, 0o35)
         self.assertEqual(status.bytes_per_level, 15)
         self.assertEqual(status.filesize, 15)
         self.assertEqual(status.defined_levels, ['disk'])
@@ -53,13 +53,13 @@ class TestPosixStatus(unittest.TestCase):
 
     def test_posix_status_storage_media(self):
         """Test the correct finding of posix storage media."""
-        status = PosixStatus(036, 035, 15, 15)
+        status = PosixStatus(0o36, 0o35, 15, 15)
         value = status.find_file_storage_media()
         self.assertEqual(value, 'disk')
 
     def test_posix_status_levels(self):
         """Test the correct setting of file storage levels."""
-        status = PosixStatus(036, 035, 15, 15)
+        status = PosixStatus(0o36, 0o35, 15, 15)
         value = status.define_levels()
         self.assertEqual(value, ['disk'])
 

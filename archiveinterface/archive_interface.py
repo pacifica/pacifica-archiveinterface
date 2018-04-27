@@ -4,6 +4,7 @@
 
 Allows API to file interactions for passed in archive backends.
 """
+from __future__ import print_function
 import shutil
 import cherrypy
 from archiveinterface.archive_utils import get_http_modified_time, file_status
@@ -24,7 +25,7 @@ class ArchiveInterfaceGenerator(object):
         """Create an archive interface generator."""
         self._archive = archive
         self._response = None
-        print 'Pacifica Archive Interface Up and Running'
+        print('Pacifica Archive Interface Up and Running')
 
     # pylint: disable=invalid-name
     def GET(self, *args):

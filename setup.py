@@ -9,7 +9,10 @@ from setuptools.extension import Extension
 # pylint: enable=import-error
 # pylint: enable=no-name-in-module
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
+try:  # pip version 9
+    from pip.req import parse_requirements
+except ImportError:
+    from pip._internal.req import parse_requirements
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
 INSTALL_REQS = parse_requirements('requirements.txt', session='hack')

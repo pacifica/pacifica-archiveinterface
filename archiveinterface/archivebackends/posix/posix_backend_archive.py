@@ -47,7 +47,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             filename = os.path.join(self._prefix, fpath)
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
-                os.makedirs(dirname, 0755)
+                os.makedirs(dirname, 0o755)
             self._filepath = filename
             self._file = ExtendedFile(self._filepath, mode)
             return self
@@ -103,7 +103,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         """Set the file permissions for a posix file."""
         try:
             if self._filepath:
-                os.chmod(self._filepath, 0444)
+                os.chmod(self._filepath, 0o444)
         except Exception as ex:
             err_str = "Can't set posix file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)

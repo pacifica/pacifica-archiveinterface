@@ -4,6 +4,7 @@ before_script:
 - sudo dpkg-reconfigure --frontend noninteractive tzdata
 python:
 - 2.7
+- 3.6
 env:
   matrix:
   - RUN_LINTS=true

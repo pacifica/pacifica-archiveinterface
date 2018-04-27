@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """Module to Convert an integer id to a filepath for storage system."""
+from __future__ import print_function
 import sys
 
 
@@ -27,4 +28,4 @@ def id2filename(fileid):
 
 
 if __name__ == '__main__':  # pragma: no cover
-    print id2filename(int(sys.argv[1]))
+    print(id2filename(int(sys.argv[1])))

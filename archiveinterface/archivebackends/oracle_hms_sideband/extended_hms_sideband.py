@@ -2,18 +2,19 @@
 # -*- coding: utf-8 -*-
 """Module that allows for the extension of the hms sideband archive."""
 import os
+from archiveinterface.archive_utils import file_type, int_type
 from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status import (
     HmsSidebandStatus)
 from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_orm import (
     SamInode, SamFile, SamPath)
 
 
-class ExtendedHmsSideband(file):
+class ExtendedHmsSideband(file_type):
     """Extending default file stuct to support additional methods."""
 
     def __init__(self, filepath, mode, sam_qfs_path):
         """Extended HSM Sideband Constructor."""
-        file.__init__(self, filepath, mode)
+        file_type.__init__(self, filepath, mode)
         self._path = filepath
         self._sam_qfs_path = sam_qfs_path
 
@@ -28,9 +29,9 @@ class ExtendedHmsSideband(file):
             ctime = stat_record['ctime']
             # if the record is online then on disk, else say not on disk but on tape
             if stat_record['online'] == 1:
-                bytes_per_level = (long(stat_record['size']),)
+                bytes_per_level = (int_type(stat_record['size']),)
             else:
-                bytes_per_level = (long(0), long(stat_record['size']))
+                bytes_per_level = (int_type(0), int_type(stat_record['size']))
             filesize = stat_record['size']
             status = HmsSidebandStatus(mtime, ctime, bytes_per_level, filesize)
             status.set_filepath(self._path)

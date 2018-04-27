@@ -8,11 +8,22 @@ import email.utils as eut
 import time
 import ConfigParser
 from os import path
+from six import PY2, integer_types
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 # defaulting to this, but the global is set in the archiveinterfaceserver if different
 # looks at command line first, then environment, and then falls back to config.cfg
 CONFIG_FILE = 'config.cfg'
+# pylint: disable=invalid-name
+if PY2:
+    # pylint: disable=undefined-variable
+    file_type = file  # noqa
+    # pylint: enable=undefined-variable
+else:
+    from io import TextIOWrapper
+    file_type = TextIOWrapper
+int_type = integer_types[0]
+# pylint: enable=invalid-name
 
 
 def file_status(status, response):
