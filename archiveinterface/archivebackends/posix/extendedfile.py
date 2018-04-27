@@ -11,6 +11,7 @@ to import:
 >>> ExtendedFile(path, mode)
 """
 import os
+from six import PY2
 from archiveinterface.archive_utils import file_type, int_type
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 
@@ -18,9 +19,18 @@ from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 class ExtendedFile(file_type):
     """Extending default file stuct to support additional methods."""
 
-    def __init__(self, filepath, mode):
+    def __init__(self, filepath, mode, *args, **kwargs):
         """Set some additional attributes to support staging."""
-        file_type.__init__(self, filepath, mode)
+        if PY2:
+            super(ExtendedFile, self).__init__(filepath, mode, *args, **kwargs)
+        else:
+            from io import FileIO, BufferedReader, BufferedWriter
+            file_obj = FileIO(filepath, mode)
+            if 'r' in mode:
+                buf_obj = BufferedReader(file_obj)
+            else:
+                buf_obj = BufferedWriter(file_obj)
+            super(ExtendedFile, self).__init__(buf_obj)
         self._path = filepath
         self._staged = True
 
