@@ -6,7 +6,10 @@ Used in various parts of the archive interface.
 """
 import email.utils as eut
 import time
-import ConfigParser
+try:  # The python 2 version
+    import ConfigParser as configparser
+except ImportError:  # pragma: no cover
+    import configparser
 from os import path
 from six import PY2, integer_types
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
@@ -87,16 +90,16 @@ def set_config_name(name):
 def read_config_value(section, field):
     """Read the value from the config file if exists."""
     try:
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         dataset = config.read(CONFIG_FILE)
         if not dataset:
             raise ValueError(
                 'Failed to open config file with name: {}'.format(str(CONFIG_FILE)))
         value = config.get(section, field)
         return value
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         raise ArchiveInterfaceError(
             'Error reading config file, no section: ' + section)
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         raise ArchiveInterfaceError('Error reading config file, no field: ' + field +
                                     ' in section: ' + section)
