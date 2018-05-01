@@ -4,6 +4,7 @@
 import unittest
 import os
 from stat import ST_MODE
+from six import PY2
 from archiveinterface.archive_utils import read_config_value, set_config_name
 from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
@@ -158,7 +159,10 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         error = my_file.write('i am a test string')
-        self.assertEqual(error, None)
+        if PY2:
+            self.assertEqual(error, None)
+        else:
+            self.assertEqual(error, 18)
         my_file.close()
 
     def test_posix_file_mod_time(self):
