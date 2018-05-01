@@ -211,7 +211,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core(self._sitename)
-                rcode = self._hpsslib.hpss_Chmod(self._filepath, 0444)
+                rcode = self._hpsslib.hpss_Chmod(self._filepath, 0o444)
                 self._check_rcode(
                     rcode,
                     'Failed to chmod hpss file with code: ' + str(rcode)

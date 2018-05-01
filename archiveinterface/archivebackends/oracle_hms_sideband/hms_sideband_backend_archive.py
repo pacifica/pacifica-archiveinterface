@@ -58,7 +58,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
                 self._sam_qfs_prefix, path_info_munge(self._fpath))
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
-                os.makedirs(dirname, 0755)
+                os.makedirs(dirname, 0o755)
             self._file = ExtendedHmsSideband(
                 self._filepath, mode, sam_qfs_path)
             return self
@@ -112,7 +112,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
         """Set the file permissions for a posix file."""
         try:
             if self._filepath:
-                os.chmod(self._filepath, 0444)
+                os.chmod(self._filepath, 0o444)
         except Exception as ex:
             err_str = "Can't set HMS Sideband file permissions with error: " + \
                 str(ex)
