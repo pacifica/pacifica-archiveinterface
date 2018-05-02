@@ -9,10 +9,8 @@ import os
 import shutil
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
-from archiveinterface.archivebackends.oracle_hms_sideband.extended_hms_sideband import (
-    ExtendedHmsSideband)
-from archiveinterface.archivebackends.abstract.abstract_backend_archive \
-    import AbstractBackendArchive
+from archiveinterface.archivebackends.oracle_hms_sideband.extended_hms_sideband import extended_hsmsideband_factory
+from archiveinterface.archivebackends.abstract.abstract_backend_archive import AbstractBackendArchive
 from archiveinterface.id2filename import id2filename
 
 
@@ -47,7 +45,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             self.close()
         except ArchiveInterfaceError as ex:
             err_str = "Can't close previous HMS Sideband file before opening new "\
-                      'one with error: ' + str(ex)
+                'one with error: ' + str(ex)
             raise ArchiveInterfaceError(err_str)
         try:
             self._fpath = un_abs_path(filepath)
@@ -59,7 +57,7 @@ class HmsSidebandBackendArchive(AbstractBackendArchive):
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0o755)
-            self._file = ExtendedHmsSideband(
+            self._file = extended_hsmsideband_factory(
                 self._filepath, mode, sam_qfs_path)
             return self
         except Exception as ex:
