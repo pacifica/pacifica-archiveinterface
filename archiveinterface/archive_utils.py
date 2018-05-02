@@ -25,7 +25,7 @@ if PY2:
 else:
     from io import TextIOWrapper
     file_type = TextIOWrapper
-int_type = integer_types[0]
+int_type = integer_types[-1]
 # pylint: enable=invalid-name
 
 

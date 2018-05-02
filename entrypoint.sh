@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd /
 uwsgi \
   --http-socket $PACIFICA_AAPI_ADDRESS:$PACIFICA_AAPI_PORT \
   --master \
