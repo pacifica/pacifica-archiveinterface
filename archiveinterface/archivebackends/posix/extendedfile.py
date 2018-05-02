@@ -18,7 +18,7 @@ from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 
 def extended_file_factory(filepath, mode):
     """Return appropiate binary io object with additional methods."""
-    if PY2:
+    if PY2:  # pragma: no cover only one version of python
         # pylint: disable=undefined-variable
         file_obj_cls = file  # noqa
         # pylint: enable=undefined-variable
@@ -34,7 +34,7 @@ def extended_file_factory(filepath, mode):
 
         def __init__(self, filepath, mode, *args, **kwargs):
             """Set some additional attributes to support staging."""
-            if PY2:
+            if PY2:  # pragma: no cover only one version of python
                 super(ExtendedFile, self).__init__(
                     filepath, mode, *args, **kwargs)
             else:
