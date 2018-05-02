@@ -23,6 +23,8 @@ if PY2:
 else:  # pragma: no cover only will work on one version of python
     def bytes_type(unicode_obj):
         """Convert the unicode object into bytes."""
+        if isinstance(unicode_obj, bytes):
+            return unicode_obj
         return bytes(unicode_obj, 'UTF-8')
 int_type = integer_types[-1]
 # pylint: enable=invalid-name
