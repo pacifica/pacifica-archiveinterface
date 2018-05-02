@@ -11,20 +11,13 @@ try:  # The python 2 version
 except ImportError:  # pragma: no cover
     import configparser
 from os import path
-from six import PY2, integer_types
+from six import integer_types
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 # defaulting to this, but the global is set in the archiveinterfaceserver if different
 # looks at command line first, then environment, and then falls back to config.cfg
 CONFIG_FILE = 'config.cfg'
 # pylint: disable=invalid-name
-if PY2:
-    # pylint: disable=undefined-variable
-    file_type = file  # noqa
-    # pylint: enable=undefined-variable
-else:
-    from io import TextIOWrapper
-    file_type = TextIOWrapper
 int_type = integer_types[-1]
 # pylint: enable=invalid-name
 

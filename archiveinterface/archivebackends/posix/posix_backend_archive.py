@@ -11,7 +11,7 @@ import shutil
 from archiveinterface.archive_utils import un_abs_path, read_config_value
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
-from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
+from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
 from archiveinterface.archivebackends.abstract.abstract_backend_archive \
     import AbstractBackendArchive
 
@@ -49,7 +49,7 @@ class PosixBackendArchive(AbstractBackendArchive):
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0o755)
             self._filepath = filename
-            self._file = ExtendedFile(self._filepath, mode)
+            self._file = extended_file_factory(self._filepath, mode)
             return self
         except Exception as ex:
             err_str = "Can't open posix file with error: " + str(ex)
