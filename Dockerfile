@@ -10,5 +10,4 @@ ENV PAI_BACKEND_TYPE posix
 ENV PACIFICA_AAPI_ADDRESS 0.0.0.0
 ENV PACIFICA_AAPI_PORT 8080
 ENV PAI_PREFIX /srv
-ENV ARCHIVEI_CONFIG /usr/src/app/config.cfg
 ENTRYPOINT [ "/bin/bash", "/usr/src/app/entrypoint.sh" ]
