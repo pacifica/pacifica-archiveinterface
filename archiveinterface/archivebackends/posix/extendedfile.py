@@ -12,39 +12,50 @@ to import:
 """
 import os
 from six import PY2
-from archiveinterface.archive_utils import file_type, int_type
+from archiveinterface.archive_utils import int_type
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 
 
-class ExtendedFile(file_type):
-    """Extending default file stuct to support additional methods."""
+def extended_file_factory(filepath, mode):
+    """Return appropiate binary io object with additional methods."""
+    if PY2:  # pragma: no cover only one version of python
+        # pylint: disable=undefined-variable
+        file_obj_cls = file  # noqa
+        # pylint: enable=undefined-variable
+    elif 'r' in mode:
+        from io import BufferedReader
+        file_obj_cls = BufferedReader
+    else:
+        from io import BufferedWriter
+        file_obj_cls = BufferedWriter
 
-    def __init__(self, filepath, mode, *args, **kwargs):
-        """Set some additional attributes to support staging."""
-        if PY2:
-            super(ExtendedFile, self).__init__(filepath, mode, *args, **kwargs)
-        else:
-            from io import FileIO, BufferedReader, BufferedWriter
-            file_obj = FileIO(filepath, mode)
-            if 'r' in mode:
-                buf_obj = BufferedReader(file_obj)
+    class ExtendedFile(file_obj_cls):
+        """Extending default file stuct to support additional methods."""
+
+        def __init__(self, filepath, mode, *args, **kwargs):
+            """Set some additional attributes to support staging."""
+            if PY2:  # pragma: no cover only one version of python
+                super(ExtendedFile, self).__init__(
+                    filepath, mode, *args, **kwargs)
             else:
-                buf_obj = BufferedWriter(file_obj)
-            super(ExtendedFile, self).__init__(buf_obj)
-        self._path = filepath
-        self._staged = True
+                from io import FileIO
+                file_obj = FileIO(filepath, mode)
+                super(ExtendedFile, self).__init__(file_obj)
+            self._path = filepath
+            self._staged = True
 
-    def status(self):
-        """Return status of file. Since POSIX, will always return disk."""
-        mtime = os.path.getmtime(self._path)
-        ctime = os.path.getctime(self._path)
-        bytes_per_level = (int_type(os.path.getsize(self._path)),)
-        filesize = os.path.getsize(self._path)
-        status = PosixStatus(mtime, ctime, bytes_per_level, filesize)
-        status.set_filepath(self._path)
+        def status(self):
+            """Return status of file. Since POSIX, will always return disk."""
+            mtime = os.path.getmtime(self._path)
+            ctime = os.path.getctime(self._path)
+            bytes_per_level = (int_type(os.path.getsize(self._path)),)
+            filesize = os.path.getsize(self._path)
+            status = PosixStatus(mtime, ctime, bytes_per_level, filesize)
+            status.set_filepath(self._path)
 
-        return status
+            return status
 
-    def stage(self):
-        """Stage a file. Since POSIX, essentially a no op."""
-        self._staged = True
+        def stage(self):
+            """Stage a file. Since POSIX, essentially a no op."""
+            self._staged = True
+    return ExtendedFile(filepath, mode)

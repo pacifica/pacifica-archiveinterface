@@ -5,8 +5,8 @@ import unittest
 import os
 from stat import ST_MODE
 from six import PY2
-from archiveinterface.archive_utils import read_config_value, set_config_name
-from archiveinterface.archivebackends.posix.extendedfile import ExtendedFile
+from archiveinterface.archive_utils import read_config_value, set_config_name, bytes_type
+from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
@@ -18,7 +18,7 @@ class TestExtendedFile(unittest.TestCase):
     def test_posix_file_status(self):
         """Test the correct values of a files status."""
         filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
-        my_file = ExtendedFile(filepath, 'w')
+        my_file = extended_file_factory(filepath, 'w')
         status = my_file.status()
         self.assertTrue(isinstance(status, PosixStatus))
         self.assertEqual(status.filesize, 0)
@@ -29,7 +29,7 @@ class TestExtendedFile(unittest.TestCase):
         """Test the correct staging of a posix file."""
         filepath = '{}{}'.format(os.path.sep, os.path.join('tmp', '1234'))
         mode = 'w'
-        my_file = ExtendedFile(filepath, mode)
+        my_file = extended_file_factory(filepath, mode)
         my_file.stage()
         # easiest way to unit test is look at class variable
         # pylint: disable=protected-access
@@ -85,7 +85,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(my_file, PosixBackendArchive))
         # easiest way to unit test is look at class variable
         # pylint: disable=protected-access
-        self.assertTrue(isinstance(backend._file, ExtendedFile))
+        self.assertEqual(backend._file.__class__.__name__, 'ExtendedFile')
         # pylint: enable=protected-access
         my_file.close()
 
@@ -123,7 +123,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         self.assertTrue(isinstance(my_file, PosixBackendArchive))
         # easiest way to unit test is look at class variable
         # pylint: disable=protected-access
-        self.assertTrue(isinstance(backend._file, ExtendedFile))
+        self.assertEqual(backend._file.__class__.__name__, 'ExtendedFile')
         # pylint: enable=protected-access
         my_file.close()
 
@@ -147,7 +147,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         my_file = backend.open(filepath, mode)
         # easiest way to unit test is look at class variable
         # pylint: disable=protected-access
-        self.assertTrue(isinstance(backend._file, ExtendedFile))
+        self.assertEqual(backend._file.__class__.__name__, 'ExtendedFile')
         my_file.close()
         self.assertEqual(backend._file, None)
         # pylint: enable=protected-access
@@ -220,7 +220,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         buf = my_file.read(-1)
-        self.assertEqual(buf, 'i am a test string')
+        self.assertEqual(buf, bytes_type('i am a test string'))
         my_file.close()
 
     def test_read_config_file(self):
