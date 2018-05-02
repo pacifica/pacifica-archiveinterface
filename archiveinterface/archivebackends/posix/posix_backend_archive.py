@@ -8,7 +8,7 @@ backend.
 
 import os
 import shutil
-from archiveinterface.archive_utils import un_abs_path, read_config_value
+from archiveinterface.archive_utils import un_abs_path, read_config_value, bytes_type
 from archiveinterface.id2filename import id2filename
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
@@ -82,7 +82,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         try:
             if self._file:
                 # pylint: disable=too-many-function-args
-                return self._file.write(buf)
+                return self._file.write(bytes_type(buf))
                 # pylint: enable=too-many-function-args
         except Exception as ex:
             err_str = "Can't write posix file with error: " + str(ex)

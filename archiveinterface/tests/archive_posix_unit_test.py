@@ -5,7 +5,7 @@ import unittest
 import os
 from stat import ST_MODE
 from six import PY2
-from archiveinterface.archive_utils import read_config_value, set_config_name
+from archiveinterface.archive_utils import read_config_value, set_config_name, bytes_type
 from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
 from archiveinterface.archivebackends.posix.posix_status import PosixStatus
 from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
@@ -220,7 +220,7 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp/')
         my_file = backend.open(filepath, mode)
         buf = my_file.read(-1)
-        self.assertEqual(buf, 'i am a test string')
+        self.assertEqual(buf, bytes_type('i am a test string'))
         my_file.close()
 
     def test_read_config_file(self):

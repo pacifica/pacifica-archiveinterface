@@ -11,13 +11,19 @@ try:  # The python 2 version
 except ImportError:  # pragma: no cover
     import configparser
 from os import path
-from six import integer_types
+from six import integer_types, PY2
 from archiveinterface.archive_interface_error import ArchiveInterfaceError
 
 # defaulting to this, but the global is set in the archiveinterfaceserver if different
 # looks at command line first, then environment, and then falls back to config.cfg
 CONFIG_FILE = 'config.cfg'
 # pylint: disable=invalid-name
+if PY2:
+    bytes_type = str
+else:  # pragma: no cover only will work on one version of python
+    def bytes_type(unicode_obj):
+        """Convert the unicode object into bytes."""
+        return bytes(unicode_obj, 'UTF-8')
 int_type = integer_types[-1]
 # pylint: enable=invalid-name
 
