@@ -104,7 +104,7 @@ class ArchiveInterfaceGenerator(object):
     # pylint: disable=invalid-name
     def PATCH(self, filepath):
         """Move a file from the original path to the new one specified."""
-        file_path = cherrypy.request.body.json()['path']
+        file_path = cherrypy.request.json['path']
         file_id = filepath
         self._archive.patch(file_id, file_path)
         cherrypy.response.status = '200 OK'
