@@ -47,6 +47,10 @@ class ArchiveInterfaceGenerator(object):
                 yield buf
                 buf = archivefile.read(BLOCK_SIZE)
         return read()
+    # as documented in cherrypy wiki
+    # pylint: disable=protected-access
+    GET._cp_config = {'response.stream': True}
+    # pylint: enable=protected-access
     # pylint: enable=invalid-name
 
     @cherrypy.tools.json_out()
