@@ -18,9 +18,9 @@ except ImportError:
 INSTALL_REQS = parse_requirements('requirements.txt', session='hack')
 
 HPSS = Extension(
-    'archiveinterface.archivebackends.hpss._hpssExtensions',
+    'pacifica.archiveinterface.backends.hpss._hpssExtensions',
     sources=[
-        'archiveinterface/archivebackends/hpss/hpssExtensions.c'
+        'pacifica/archiveinterface/backends/hpss/hpssExtensions.c'
     ],
     include_dirs=['/opt/hpss/include'],
     library_dirs=['/opt/hpss/lib'],
@@ -39,16 +39,16 @@ if '--without-hpss' in sys.argv:
     sys.argv.remove('--without-hpss')
 
 setup(
-    name='PacificaArchiveInterface',
+    name='pacifica-archiveinterface',
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     description='Pacifica Archive Interface',
     author='David Brown',
     author_email='david.brown@pnnl.gov',
     packages=find_packages(),
-    scripts=['ArchiveInterfaceServer.py'],
+    namespace_packages=['pacifica'],
     entry_points={
-        'console_scripts': ['ArchiveInterface=archiveinterface:main'],
+        'console_scripts': ['ArchiveInterface=pacifica.archiveinterface:main'],
     },
     install_requires=[str(ir.req) for ir in INSTALL_REQS],
     ext_modules=EXT_MODULES
