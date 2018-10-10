@@ -5,11 +5,11 @@ import os
 import sys
 from ctypes import cdll, create_string_buffer, cast
 from ctypes import c_void_p, c_char_p, c_int, c_size_t
-from archiveinterface.archive_utils import un_abs_path, read_config_value
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
-from archiveinterface.archivebackends.abstract.abstract_backend_archive import (
-    AbstractBackendArchive)
-from archiveinterface.id2filename import id2filename
+from ...archive_utils import un_abs_path
+from ...config import get_config
+from ...exception import ArchiveInterfaceError
+from ..abstract.archive import AbstractBackendArchive
+from ...id2filename import id2filename
 
 # Due to an update in hpss version we need to lazy load the linked
 # c types.  Doing this with dlopen flags. 8 is the UNIX flag Integer for
@@ -23,7 +23,7 @@ sys.setdlopenflags(RTLD_LAZY | RTLD_DEEPBIND)
 # pylint: enable=no-member
 # import cant be at top due to lazy load
 # pylint: disable=wrong-import-position
-from archiveinterface.archivebackends.hpss.hpss_extended import HpssExtended  # noqa: E402
+from ..hpss.extended import HpssExtended  # noqa: E402
 # pylint: enable=wrong-import-position
 
 # place where hpss lib is installed on a unix machine
@@ -60,7 +60,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Constructor for the HPSS Backend Archive."""
         super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._sitename = read_config_value('hpss', 'sitename')
+        self._sitename = get_config().get('hpss', 'sitename')
         self._file = None
         self._filepath = None
         self._hpsslib = None
@@ -222,8 +222,8 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def authenticate(self):
         """Authenticate the user with the hpss system."""
-        user = read_config_value('hpss', 'user')
-        auth = read_config_value('hpss', 'auth')
+        user = get_config().get('hpss', 'user')
+        auth = get_config().get('hpss', 'auth')
         rcode = self._hpsslib.hpss_SetLoginCred(
             user, HPSS_AUTHN_MECH_UNIX,
             HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth

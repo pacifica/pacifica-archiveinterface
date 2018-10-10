@@ -3,6 +3,7 @@
 """Setup and install the archive interface with hpss."""
 import sys
 from os.path import isfile
+from os import path
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
 from setuptools.extension import Extension
@@ -43,12 +44,17 @@ setup(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     description='Pacifica Archive Interface',
+    url='https://pypi.python.org/pypi/pacifica-archiveinterface/',
+    long_description=open(path.join(
+        path.abspath(path.dirname(__file__)),
+        'README.md')).read(),
+    long_description_content_type='text/markdown',
     author='David Brown',
     author_email='david.brown@pnnl.gov',
     packages=find_packages(),
     namespace_packages=['pacifica'],
     entry_points={
-        'console_scripts': ['ArchiveInterface=pacifica.archiveinterface:main'],
+        'console_scripts': ['pacifica-archiveinterface=pacifica.archiveinterface.__main__:main'],
     },
     install_requires=[str(ir.req) for ir in INSTALL_REQS],
     ext_modules=EXT_MODULES

@@ -1,13 +1,8 @@
-cherrypy
+-r requirements.txt
 codeclimate-test-reporter
 coverage>4.0,<4.4
-pacifica-configparser
-peewee>2
 pep257
 pre-commit
-pylint
-PyMySQL
+pylint<2
 pytest
-requests
 setuptools
-six

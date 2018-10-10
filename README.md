@@ -31,7 +31,7 @@ python ./setup.py install
 
 # Running It
 
-There are three ways of running the archive interface; POSIX, ORACLE_HMS_SIDEBAND and HPSS.
+There are three ways of running the archive interface; POSIX, ORACLE_HSM_SIDEBAND and HPSS.
 
 Posix File System Backend
 ```
@@ -42,9 +42,9 @@ HPSS Archive Backend
 python ./archiveinterfaceserver.py -t hpss  -p 8080 -a 127.0.0.1 --prefix /path
 ```
 
-ORACLE_HMS_SIDEBAND
+ORACLE_HSM_SIDEBAND
 ```
-python ./archiveinterfaceserver.py -t hmssideband  -p 8080 -a 127.0.0.1 --prefix /path
+python ./archiveinterfaceserver.py -t hsmsideband  -p 8080 -a 127.0.0.1 --prefix /path
 ```
 
 # Config file
@@ -64,7 +64,7 @@ use_id2filename = false
 user = hpss.unix
 auth = /var/hpss/etc/hpss.unix.keytab
 
-[hms_sideband]
+[hsm_sideband]
 sam_qfs_prefix = /tmp/path
 schema = schema_name
 host = host

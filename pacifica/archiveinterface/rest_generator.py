@@ -6,11 +6,23 @@ Allows API to file interactions for passed in archive backends.
 """
 from __future__ import print_function
 import shutil
+from json import dumps
 import cherrypy
-from archiveinterface.archive_utils import get_http_modified_time, file_status
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from .archive_utils import get_http_modified_time, file_status
+from .exception import ArchiveInterfaceError
 
 BLOCK_SIZE = 1 << 20
+
+
+def error_page_default(**kwargs):
+    """The default error page should always enforce json."""
+    cherrypy.response.headers['Content-Type'] = 'application/json'
+    return dumps({
+        'status': kwargs['status'],
+        'message': kwargs['message'],
+        'traceback': kwargs['traceback'],
+        'version': kwargs['version']
+    })
 
 
 class ArchiveInterfaceGenerator(object):

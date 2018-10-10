@@ -9,13 +9,13 @@
 from peewee import MySQLDatabase, CharField
 from peewee import IntegerField, BigIntegerField
 from peewee import Model, CompositeKey, FloatField
-from archiveinterface.archive_utils import read_config_value
+from ...config import get_config
 
-MYSQL_ADDR = read_config_value('hms_sideband', 'host')
-MYSQL_PORT = read_config_value('hms_sideband', 'port')
-MYSQL_USER = read_config_value('hms_sideband', 'user')
-MYSQL_PASS = read_config_value('hms_sideband', 'password')
-MYSQL_SCHEMA = read_config_value('hms_sideband', 'schema')
+MYSQL_ADDR = get_config().get('hsm_sideband', 'host')
+MYSQL_PORT = get_config().get('hsm_sideband', 'port')
+MYSQL_USER = get_config().get('hsm_sideband', 'user')
+MYSQL_PASS = get_config().get('hsm_sideband', 'password')
+MYSQL_SCHEMA = get_config().get('hsm_sideband', 'schema')
 
 DB = MySQLDatabase(MYSQL_SCHEMA,
                    host=MYSQL_ADDR,

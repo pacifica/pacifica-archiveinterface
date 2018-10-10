@@ -1,13 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""Module that allows for the extension of the hms sideband archive."""
+"""Module that allows for the extension of the hsm sideband archive."""
 import os
 from six import PY2
-from archiveinterface.archive_utils import int_type
-from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_status import (
-    HmsSidebandStatus)
-from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_orm import (
-    SamInode, SamFile, SamPath)
+from ...archive_utils import int_type
+from .status import HsmSidebandStatus
+from .orm import SamInode, SamFile, SamPath
 
 
 def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
@@ -23,17 +21,17 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
         from io import BufferedWriter
         file_obj_cls = BufferedWriter
 
-    class ExtendedHmsSideband(file_obj_cls):
+    class ExtendedHsmSideband(file_obj_cls):
         """Extending default file stuct to support additional methods."""
 
         def __init__(self, filepath, mode, sam_qfs_path):
             """Extended HSM Sideband Constructor."""
             if PY2:  # pragma: no cover only one version of python
-                super(ExtendedHmsSideband, self).__init__(filepath, mode)
+                super(ExtendedHsmSideband, self).__init__(filepath, mode)
             else:
                 from io import FileIO
                 file_obj = FileIO(filepath, mode)
-                super(ExtendedHmsSideband, self).__init__(file_obj)
+                super(ExtendedHsmSideband, self).__init__(file_obj)
             self._path = filepath
             self._sam_qfs_path = sam_qfs_path
 
@@ -53,14 +51,14 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
                     bytes_per_level = (
                         int_type(0), int_type(stat_record['size']))
                 filesize = stat_record['size']
-                status = HmsSidebandStatus(
+                status = HsmSidebandStatus(
                     mtime, ctime, bytes_per_level, filesize)
                 status.set_filepath(self._path)
                 return status
             return None
 
         def stage(self):
-            """Stage a file. HMS stages a file when a read call is made."""
+            """Stage a file. HSM stages a file when a read call is made."""
             self.read(1024)
 
         def _stat_ino_sql(self, fname, directory):
@@ -87,4 +85,4 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
             status = {'ino': result.ino, 'size': result.size, 'ctime': result.create_time,
                       'mtime': result.modify_time, 'online': result.online}
             return status
-    return ExtendedHmsSideband(filepath, mode, sam_qfs_path)
+    return ExtendedHsmSideband(filepath, mode, sam_qfs_path)

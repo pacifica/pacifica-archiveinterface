@@ -1,26 +1,25 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""Posix Status Module.
+"""Module that implements the Abstract Status class.
 
-Module that implements the Abstract Status class for the posix
-archive backend type.
+For the oracle hsm sideband archive backend type.
 """
 
-from ..abstract.abstract_status import AbstractStatus
+from ..abstract.status import AbstractStatus
 
 
-class PosixStatus(AbstractStatus):
-    """Posix Status Class.
+class HsmSidebandStatus(AbstractStatus):
+    """Class for handling hsmSideband status pieces.
 
-    Class for handling posix status pieces
-    needs mtime,ctime, bytes per level array.
+    Needs mtime,ctime, bytes per level array
     """
 
     _disk = 'disk'
+    _tape = 'tape'
 
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
-        """Constructor for posix status class."""
-        super(PosixStatus, self).__init__(
+        """Constructor to build the object."""
+        super(HsmSidebandStatus, self).__init__(
             mtime,
             ctime,
             bytes_per_level,
@@ -35,15 +34,22 @@ class PosixStatus(AbstractStatus):
         self.file_storage_media = self.find_file_storage_media()
 
     def find_file_storage_media(self):
-        """Get the file storage media.  Showed always be disk for posix."""
+        """Get the file storage media.
+
+        Should always be disk for hsmSideband.
+        """
         level_array = self.defined_levels
-        disk_level = 0
-        return level_array[disk_level]
+        ret_val = None
+        if self.bytes_per_level[0] == self.filesize:
+            ret_val = level_array[0]
+        else:
+            ret_val = level_array[1]
+        return ret_val
 
     def define_levels(self):
         """Set up what each level definition means."""
-        # This defines posix integer levels.  Always disk
-        type_per_level = [self._disk]
+        # This defines hsmSideband integer levels.  First level disk, second is tape
+        type_per_level = [self._disk, self._tape]
         return type_per_level
 
     def set_filepath(self, filepath):

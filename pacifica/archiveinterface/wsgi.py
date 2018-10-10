@@ -13,19 +13,12 @@ to support the new Backend Archie type
 """
 from os import getenv
 import cherrypy
-from archiveinterface import error_page_default
-from archiveinterface.archive_utils import set_config_name
-from archiveinterface.archive_interface import ArchiveInterfaceGenerator
-from archiveinterface.archivebackends.archive_backend_factory import \
-    ArchiveBackendFactory
+from .rest_generator import ArchiveInterfaceGenerator, error_page_default
+from .backends.factory import ArchiveBackendFactory
+from .globals import CHERRYPY_CONFIG
 
 BACKEND_TYPE = getenv('PAI_BACKEND_TYPE', 'posix')
 PREFIX = getenv('PAI_PREFIX', '/tmp')
-
-ARCHIVEI_CONFIG = getenv('ARCHIVEI_CONFIG', 'config.cfg')
-CP_CONFIG = getenv('CP_CONFIG', 'server.conf')
-if ARCHIVEI_CONFIG:
-    set_config_name(ARCHIVEI_CONFIG)
 
 # Get the specified Backend Archive
 FACTORY = ArchiveBackendFactory()
@@ -40,6 +33,6 @@ cherrypy.config.update({'error_page.default': error_page_default})
 application = cherrypy.Application(
     ArchiveInterfaceGenerator(BACKEND),
     '/',
-    CP_CONFIG
+    CHERRYPY_CONFIG
 )
 # pylint: enable=invalid-name

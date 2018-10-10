@@ -1,7 +1,5 @@
 cherrypy
-pacifica-configparser
 peewee>2
 PyMySQL
 requests
-setuptools
 six
