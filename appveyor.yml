@@ -12,7 +12,7 @@ install:
       & "$env:PYTHON\python.exe" -m virtualenv C:\pacifica;
       C:\pacifica\Scripts\activate.ps1;
       python -m pip install --upgrade pip setuptools wheel;
-      python -m pip install -r requirements-dev.txt
+      python -m pip install -r requirements-dev.txt;
 
 build: off
 
@@ -20,5 +20,8 @@ test_script:
   - ps: >
       mkdir C:\tmp; C:\pacifica\Scripts\activate.ps1;
       pre-commit run -a;
-      coverage run --include='archiveinterface/*' --omit='archiveinterface/archivebackends/abstract/*' -m pytest -v archiveinterface;
+      pip install .;
+      $env:ARCHIVEINTERFACE_CPCONFIG = "$PWD/server.conf";
+      cd tests;
+      coverage run --include='*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -v;
       coverage report -m --fail-under=80;

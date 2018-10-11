@@ -8,12 +8,12 @@ backend.
 
 import os
 import shutil
-from archiveinterface.archive_utils import un_abs_path, read_config_value, bytes_type
-from archiveinterface.id2filename import id2filename
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
-from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
-from archiveinterface.archivebackends.abstract.abstract_backend_archive \
-    import AbstractBackendArchive
+from ...archive_utils import un_abs_path, bytes_type
+from ...config import get_config
+from ...id2filename import id2filename
+from ...exception import ArchiveInterfaceError
+from .extendedfile import extended_file_factory
+from ..abstract.archive import AbstractBackendArchive
 
 
 class PosixBackendArchive(AbstractBackendArchive):
@@ -30,7 +30,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._id2filename = lambda x: x
-        if read_config_value('posix', 'use_id2filename') == 'true':
+        if get_config().get('posix', 'use_id2filename') == 'true':
             self._id2filename = lambda x: id2filename(int(x))
 
     def open(self, filepath, mode):
@@ -54,7 +54,6 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't open posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        return None
 
     def close(self):
         """Close a posix file."""
@@ -133,7 +132,7 @@ class PosixBackendArchive(AbstractBackendArchive):
     def patch(self, file_id, old_path):
         """Move a posix file."""
         try:
-            if read_config_value('posix', 'use_id2filename') == 'true':
+            if get_config().get('posix', 'use_id2filename') == 'true':
                 fpath = un_abs_path(id2filename(int(un_abs_path(file_id))))
             else:
                 fpath = un_abs_path(file_id)

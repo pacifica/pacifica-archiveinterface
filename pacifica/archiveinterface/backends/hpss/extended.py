@@ -8,11 +8,11 @@ from os.path import dirname
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
-import archiveinterface.archivebackends.hpss._hpssExtensions as _hpssExtensions
+from ..hpss import _hpssExtensions
 # pylint: enable=import-error
 # pylint: enable=no-name-in-module
-from archiveinterface.archivebackends.hpss.hpss_status import HpssStatus
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from .status import HpssStatus
+from ...exception import ArchiveInterfaceError
 
 
 class HpssExtended(object):

@@ -32,15 +32,12 @@ class ArchiveBackendFactory(object):
 
         Only want to load backend type being used.
         """
-        if name == 'hpss':
-            from archiveinterface.archivebackends.hpss.hpss_backend_archive \
-                import HpssBackendArchive
+        if name == 'hpss':  # pragma: no cover licensing issues for testing
+            from .hpss.archive import HpssBackendArchive
             self.share_classes = {'hpss': HpssBackendArchive}
         elif name == 'posix':
-            from archiveinterface.archivebackends.posix.posix_backend_archive \
-                import PosixBackendArchive
+            from .posix.archive import PosixBackendArchive
             self.share_classes = {'posix': PosixBackendArchive}
-        elif name == 'hmssideband':
-            from archiveinterface.archivebackends.oracle_hms_sideband.hms_sideband_backend_archive \
-                import HmsSidebandBackendArchive
-            self.share_classes = {'hmssideband': HmsSidebandBackendArchive}
+        elif name == 'hsmsideband':  # pragma: no cover don't have example database yet
+            from .oracle_hsm_sideband.archive import HsmSidebandBackendArchive
+            self.share_classes = {'hsmsideband': HsmSidebandBackendArchive}

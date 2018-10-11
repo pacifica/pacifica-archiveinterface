@@ -3,12 +3,11 @@
 """File used to unit test the pacifica archive interface."""
 import unittest
 import time
-from archiveinterface.archive_utils import un_abs_path, get_http_modified_time
-from archiveinterface.id2filename import id2filename
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
-from archiveinterface.archive_interface import ArchiveInterfaceGenerator
-from archiveinterface.archivebackends.archive_backend_factory import \
-    ArchiveBackendFactory
+from pacifica.archiveinterface.archive_utils import un_abs_path, get_http_modified_time
+from pacifica.archiveinterface.id2filename import id2filename
+from pacifica.archiveinterface.exception import ArchiveInterfaceError
+from pacifica.archiveinterface.rest_generator import ArchiveInterfaceGenerator
+from pacifica.archiveinterface.backends.factory import ArchiveBackendFactory
 
 
 class TestArchiveUtils(unittest.TestCase):

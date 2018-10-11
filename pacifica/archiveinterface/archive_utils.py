@@ -6,19 +6,12 @@ Used in various parts of the archive interface.
 """
 import email.utils as eut
 import time
-try:  # The python 2 version
-    import ConfigParser as configparser
-except ImportError:  # pragma: no cover
-    import configparser
 from os import path
 from six import integer_types, PY2
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from .exception import ArchiveInterfaceError
 
-# defaulting to this, but the global is set in the archiveinterfaceserver if different
-# looks at command line first, then environment, and then falls back to config.cfg
-CONFIG_FILE = 'config.cfg'
 # pylint: disable=invalid-name
-if PY2:
+if PY2:  # pragma: no cover
     bytes_type = str
 else:  # pragma: no cover only will work on one version of python
     def bytes_type(unicode_obj):
@@ -78,29 +71,3 @@ def get_http_modified_time(env):
         return mod_time
     except (TypeError, IndexError, AttributeError) as ex:
         raise ArchiveInterfaceError('Cant parse the files modtime: ' + str(ex))
-
-
-def set_config_name(name):
-    """Set the global config name."""
-    # pylint: disable=global-statement
-    global CONFIG_FILE
-    # pylint: enable=global-statement
-    CONFIG_FILE = name
-
-
-def read_config_value(section, field):
-    """Read the value from the config file if exists."""
-    try:
-        config = configparser.RawConfigParser()
-        dataset = config.read(CONFIG_FILE)
-        if not dataset:
-            raise ValueError(
-                'Failed to open config file with name: {}'.format(str(CONFIG_FILE)))
-        value = config.get(section, field)
-        return value
-    except configparser.NoSectionError:
-        raise ArchiveInterfaceError(
-            'Error reading config file, no section: ' + section)
-    except configparser.NoOptionError:
-        raise ArchiveInterfaceError('Error reading config file, no field: ' + field +
-                                    ' in section: ' + section)

@@ -12,8 +12,8 @@ to import:
 """
 import os
 from six import PY2
-from archiveinterface.archive_utils import int_type
-from archiveinterface.archivebackends.posix.posix_status import PosixStatus
+from ...archive_utils import int_type
+from .status import PosixStatus
 
 
 def extended_file_factory(filepath, mode):

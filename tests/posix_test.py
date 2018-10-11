@@ -5,11 +5,12 @@ import unittest
 import os
 from stat import ST_MODE
 from six import PY2
-from archiveinterface.archive_utils import read_config_value, set_config_name, bytes_type
-from archiveinterface.archivebackends.posix.extendedfile import extended_file_factory
-from archiveinterface.archivebackends.posix.posix_status import PosixStatus
-from archiveinterface.archivebackends.posix.posix_backend_archive import PosixBackendArchive
-from archiveinterface.archive_interface_error import ArchiveInterfaceError
+from pacifica.archiveinterface.archive_utils import bytes_type
+from pacifica.archiveinterface.backends.posix.extendedfile import extended_file_factory
+from pacifica.archiveinterface.backends.posix.status import PosixStatus
+from pacifica.archiveinterface.backends.posix.archive import PosixBackendArchive
+from pacifica.archiveinterface.exception import ArchiveInterfaceError
+import pacifica.archiveinterface.config as pa_config
 
 
 class TestExtendedFile(unittest.TestCase):
@@ -132,10 +133,11 @@ class TestPosixBackendArchive(unittest.TestCase):
         backend = PosixBackendArchive('/tmp')
         mode = 'w'
         my_file = backend.open('/a/b/d', mode)
-        set_config_name('test_configs/posix-id2filename.cfg')
+        temp_cfg_file = pa_config.CONFIG_FILE
+        pa_config.CONFIG_FILE = 'test_configs/posix-id2filename.cfg'
         backend = PosixBackendArchive('/tmp')
         my_file = backend.open(12345, mode)
-        set_config_name('config.cfg')
+        pa_config.CONFIG_FILE = temp_cfg_file
         self.assertTrue(isinstance(my_file, PosixBackendArchive))
         my_file.close()
 
@@ -222,21 +224,6 @@ class TestPosixBackendArchive(unittest.TestCase):
         buf = my_file.read(-1)
         self.assertEqual(buf, bytes_type('i am a test string'))
         my_file.close()
-
-    def test_read_config_file(self):
-        """Test reading from config file."""
-        port = read_config_value('hms_sideband', 'port')
-        self.assertEqual(port, '3306')
-
-    def test_read_config_bad_section(self):
-        """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError):
-            read_config_value('bad_section', 'port')
-
-    def test_read_config_bad_field(self):
-        """Test reading from config file with bad section."""
-        with self.assertRaises(ArchiveInterfaceError):
-            read_config_value('hms_sideband', 'bad_field')
 
     def test_patch(self):
         """Test patching file."""

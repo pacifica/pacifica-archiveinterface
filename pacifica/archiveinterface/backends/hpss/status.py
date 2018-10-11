@@ -6,7 +6,7 @@ Module that implements the Abstract Status class for the hpss
 archive backend type.
 """
 
-from ..abstract.abstract_status import AbstractStatus
+from ..abstract.status import AbstractStatus
 
 
 class HpssStatus(AbstractStatus):
