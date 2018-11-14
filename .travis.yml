@@ -2,6 +2,7 @@ language: python
 stages:
 - lint
 - test
+- test-docker
 - deploy
 ".script": &1
 - pip install .
@@ -21,6 +22,16 @@ jobs:
     python: 3.6
   - script: *1
     python: 2.7
+  - stage: test-docker
+    sudo: required
+    python: 2.7
+    services:
+    - docker
+    script: >
+      docker-compose build --pull;
+      docker-compose up -d;
+      cd post_deployment_tests;
+      python -m unittest deployment_test.BasicArchiveTests
   - stage: deploy
     language: python
     script: skip

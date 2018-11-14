@@ -8,6 +8,7 @@ except ImportError:  # pragma: no cover
     from queue import Queue
 from threading import Thread
 import unittest
+from six import PY2
 import requests
 
 # url for the archive interface just deployed.
@@ -18,13 +19,20 @@ import requests
 ARCHIVEURL = os.getenv('ARCHIVE_URL', 'http://127.0.0.1:8080')
 
 
+def unistr2binary(data_str):
+    """Convert a string to binary in 2/3."""
+    if PY2:  # pragma: no cover python 2 only
+        return bytearray(data_str)
+    return bytes(data_str, 'utf8')  # pragma: no cover python 3 only
+
+
 class BasicArchiveTests(unittest.TestCase):
     """Class that contains basic text file tests."""
 
     def test_simple_write(self):
         """Test writing a simple text file."""
         fileid = '1234'
-        data = bytearray('Writing content for first file')
+        data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         respdata = resp.json()
@@ -34,7 +42,7 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_status(self):
         """Test statusing a simple text file."""
         fileid = '1235'
-        data = bytearray('Writing content for first file')
+        data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
@@ -46,7 +54,7 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_stage(self):
         """test staging a simple text file."""
         fileid = '1236'
-        data = bytearray('Writing content for first file')
+        data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.post('{}/{}'.format(ARCHIVEURL, fileid))
@@ -57,7 +65,7 @@ class BasicArchiveTests(unittest.TestCase):
     def test_simple_read(self):
         """test reading a simple text file."""
         fileid = '1237'
-        data = bytearray('Writing content for first file')
+        data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
@@ -68,7 +76,7 @@ class BasicArchiveTests(unittest.TestCase):
     def test_file_rewrite(self):
         """Test trying to rewrite a file, rewrite should fail."""
         fileid = '1238'
-        data = bytearray('Writing content for first file')
+        data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
@@ -86,7 +94,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_write(self):
         """Write a binary file to the archive."""
         fileid = '4321'
-        data = bytearray([123, 3, 255, 0, 100])
+        data = unistr2binary([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         respdata = resp.json()
@@ -96,7 +104,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_status(self):
         """Get a status for a binary file in the archive."""
         fileid = '4322'
-        data = bytearray([123, 3, 255, 0, 100])
+        data = unistr2binary([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
@@ -108,7 +116,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_stage(self):
         """test staging a binary file."""
         fileid = '4323'
-        data = bytearray([123, 3, 255, 0, 100])
+        data = unistr2binary([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.post('{}/{}'.format(ARCHIVEURL, fileid))
@@ -119,7 +127,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_read(self):
         """test reading a binary file back form the archive."""
         fileid = '4324'
-        data = bytearray([123, 3, 255, 0, 100])
+        data = unistr2binary([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
@@ -129,7 +137,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_rewrite(self):
         """Test trying to rewrite a file, rewrite should fail."""
         fileid = '4325'
-        data = bytearray([123, 3, 255, 0, 100])
+        data = unistr2binary([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
@@ -225,7 +233,7 @@ class ManyFileArchiveTests(unittest.TestCase):
             """Thread worker to send the test data."""
             work = job_id_queue.get()
             while work:
-                data = bytearray('Writing content for first file')
+                data = unistr2binary('Writing content for first file')
                 resp = requests.put(
                     '{}/{}'.format(ARCHIVEURL, work), data=data)
                 self.assertEqual(resp.status_code, 201)
