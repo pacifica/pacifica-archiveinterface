@@ -103,7 +103,7 @@ pacifica_archiveinterface_filesize(PyObject *self, PyObject *args)
     /* Sleep is a hack to get around other hpss thread not finished yet
     */
     usleep(30000);
-    return Py_BuildValue("i", (int)Buf.st_size);
+    return Py_BuildValue("l", (long)Buf.st_size);
 }
 
 static PyObject *
