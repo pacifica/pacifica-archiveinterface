@@ -30,7 +30,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._id2filename = lambda x: x
-        if get_config().get('posix', 'use_id2filename') == 'true':
+        if get_config().getboolean('posix', 'use_id2filename'):
             self._id2filename = lambda x: id2filename(int(x))
 
     def open(self, filepath, mode):

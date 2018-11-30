@@ -4,7 +4,7 @@
 try:
     from ConfigParser import SafeConfigParser
 except ImportError:  # pragma: no cover python 2 vs 3 issue
-    from configparser import SafeConfigParser
+    from configparser import ConfigParser as SafeConfigParser
 from pacifica.archiveinterface.globals import CONFIG_FILE
 
 
