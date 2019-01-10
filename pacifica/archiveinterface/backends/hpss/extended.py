@@ -8,7 +8,10 @@ from os.path import dirname
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
-from ..hpss import _hpssExtensions
+try:
+    from ..hpss import _hpssExtensions
+except ImportError:
+    pass
 # pylint: enable=import-error
 # pylint: enable=no-name-in-module
 from .status import HpssStatus
