@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """File used to unit test the pacifica archive interface."""
+from json import loads
 import unittest
 import time
 from pacifica.archiveinterface.archive_utils import un_abs_path, get_http_modified_time
@@ -130,6 +131,6 @@ class TestArchiveGenerator(unittest.TestCase):
         factory = ArchiveBackendFactory()
         backend = factory.get_backend_archive('posix', '/tmp')
         generator = ArchiveInterfaceGenerator(backend)
-        jsn = generator.GET()
+        jsn = loads(generator.GET())
         self.assertEqual(
             jsn['message'], 'Pacifica Archive Interface Up and Running')

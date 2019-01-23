@@ -8,7 +8,7 @@ from __future__ import print_function
 import shutil
 from json import dumps
 import cherrypy
-from .archive_utils import get_http_modified_time, file_status
+from .archive_utils import get_http_modified_time, file_status, bytes_type
 from .exception import ArchiveInterfaceError
 
 BLOCK_SIZE = 1 << 20
@@ -48,7 +48,7 @@ class ArchiveInterfaceGenerator(object):
         # if asking for / then return a message that the archive is working
         if not args:
             cherrypy.response.headers['Content-Type'] = 'application/json'
-            return {'message': 'Pacifica Archive Interface Up and Running'}
+            return bytes_type(dumps({'message': 'Pacifica Archive Interface Up and Running'}))
         archivefile = self._archive.open(args[0], 'r')
         cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
 
