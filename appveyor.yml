@@ -25,4 +25,4 @@ test_script:
       $env:ARCHIVEINTERFACE_CPCONFIG = "$PWD/server.conf";
       cd tests;
       coverage run --include='*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -v;
-      coverage report -m --fail-under=80;
+      coverage report -m --fail-under=100;

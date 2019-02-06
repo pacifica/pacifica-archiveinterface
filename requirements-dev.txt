@@ -1,6 +1,6 @@
 -r requirements.txt
-codeclimate-test-reporter
-coverage>4.0,<4.4
+coverage
+mock
 pep257
 pre-commit
 pylint<2

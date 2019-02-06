@@ -77,7 +77,7 @@ class ArchiveInterfaceGenerator(object):
         try:
             content_length = int(
                 cherrypy.request.headers.get('Content-Length'))
-        except Exception as ex:
+        except Exception as ex:  # pragma: no cover it's hard to get a client to not do this
             raise ArchiveInterfaceError(
                 "Can't get file content length with error: {}".format(str(ex))
             )

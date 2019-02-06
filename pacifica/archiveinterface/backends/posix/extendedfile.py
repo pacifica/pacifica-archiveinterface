@@ -22,10 +22,10 @@ def extended_file_factory(filepath, mode):
         # pylint: disable=undefined-variable
         file_obj_cls = file  # noqa
         # pylint: enable=undefined-variable
-    elif 'r' in mode:
+    elif 'r' in mode:  # pragma: no cover only one version of python
         from io import BufferedReader
         file_obj_cls = BufferedReader
-    else:
+    else:  # pragma: no cover only one version of python
         from io import BufferedWriter
         file_obj_cls = BufferedWriter
 
@@ -37,7 +37,7 @@ def extended_file_factory(filepath, mode):
             if PY2:  # pragma: no cover only one version of python
                 super(ExtendedFile, self).__init__(
                     filepath, mode, *args, **kwargs)
-            else:
+            else:  # pragma: no cover only one version of python
                 from io import FileIO
                 file_obj = FileIO(filepath, mode)
                 super(ExtendedFile, self).__init__(file_obj)
