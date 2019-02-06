@@ -132,10 +132,7 @@ class PosixBackendArchive(AbstractBackendArchive):
     def patch(self, file_id, old_path):
         """Move a posix file."""
         try:
-            if get_config().get('posix', 'use_id2filename') == 'true':
-                fpath = un_abs_path(id2filename(int(un_abs_path(file_id))))
-            else:
-                fpath = un_abs_path(file_id)
+            fpath = un_abs_path(self._id2filename(file_id))
             new_filepath = os.path.join(self._prefix, fpath)
             new_directories = os.path.dirname(new_filepath)
             if not os.path.exists(new_directories):

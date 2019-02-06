@@ -41,6 +41,17 @@ class ArchiveInterfaceCPTest(helper.CPWebCase):
         self.assertEqual(resp.raw.read(), bytes_type('The data in 1234'))
         resp = requests.head('{}/1234'.format(self.url))
         self.assertEqual(resp.status_code, 204)
+        resp = requests.post('{}/1234'.format(self.url))
+        self.assertEqual(resp.status_code, 200)
+
+        with open('/tmp/cptests/222', 'w') as test_fd:
+            test_fd.write('this is file 222')
+        resp = requests.patch(
+            '{}/1235'.format(self.url),
+            headers={'Content-Type': 'application/json'},
+            data='{ "path": "/tmp/cptests/222" }'
+        )
+        self.assertEqual(resp.status_code, 200)
 
     def test_error_interface(self):
         """Test some error states."""
