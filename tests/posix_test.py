@@ -8,9 +8,10 @@ from six import PY2
 from pacifica.archiveinterface.archive_utils import bytes_type
 from pacifica.archiveinterface.backends.posix.archive import PosixBackendArchive
 import pacifica.archiveinterface.config as pa_config
+from .common_setup_test import SetupTearDown
 
 
-class TestPosixBackendArchive(unittest.TestCase):
+class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
     """Test the Posix backend archive."""
 
     def test_posix_backend_create(self):
@@ -146,11 +147,9 @@ class TestPosixBackendArchive(unittest.TestCase):
     def test_patch(self):
         """Test patching file."""
         old_path = '/tmp/1234'
-        new_path = '5678'
-        mode = 'w'
         backend = PosixBackendArchive('/tmp')
-        my_file = backend.open('1234', mode)
+        my_file = backend.open('1234', 'w')
         my_file.close()
-        backend.patch(new_path, old_path)
+        backend.patch('5678', '/tmp/1234')
         # Error would be thrown on patch so nothing to assert
         self.assertEqual(old_path, '/tmp/1234')

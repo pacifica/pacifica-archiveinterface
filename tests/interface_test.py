@@ -9,9 +9,10 @@ from pacifica.archiveinterface.id2filename import id2filename
 from pacifica.archiveinterface.exception import ArchiveInterfaceError
 from pacifica.archiveinterface.rest_generator import ArchiveInterfaceGenerator
 from pacifica.archiveinterface.backends.factory import ArchiveBackendFactory
+from .common_setup_test import SetupTearDown
 
 
-class TestArchiveUtils(unittest.TestCase):
+class TestArchiveUtils(unittest.TestCase, SetupTearDown):
     """Test the Archive utils class."""
 
     def test_utils_absolute_path(self):
@@ -50,7 +51,7 @@ class TestArchiveUtils(unittest.TestCase):
             self.assertTrue(hit_exception)
 
 
-class TestId2Filename(unittest.TestCase):
+class TestId2Filename(unittest.TestCase, SetupTearDown):
     """Test the id2filename method."""
 
     def test_id2filename_basic(self):
@@ -89,7 +90,7 @@ class TestId2Filename(unittest.TestCase):
         self.assertEqual(filename, '/01/8001')
 
 
-class TestBackendArchive(unittest.TestCase):
+class TestBackendArchive(unittest.TestCase, SetupTearDown):
     """Test the backend archive."""
 
     def test_posix_backend(self):
@@ -108,7 +109,7 @@ class TestBackendArchive(unittest.TestCase):
             factory.get_backend_archive('badbackend', '/tmp')
 
 
-class TestArchiveGenerator(unittest.TestCase):
+class TestArchiveGenerator(unittest.TestCase, SetupTearDown):
     """Test the archive generator."""
 
     @staticmethod

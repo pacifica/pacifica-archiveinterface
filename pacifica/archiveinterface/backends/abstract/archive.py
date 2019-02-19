@@ -100,3 +100,8 @@ class AbstractBackendArchive(object):
     def patch(self, file_id, old_path):
         """Move a file."""
         pass
+
+    @abc.abstractmethod
+    def remove(self):
+        """Remove a file."""
+        pass

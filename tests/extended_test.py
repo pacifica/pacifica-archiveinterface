@@ -5,9 +5,10 @@ import unittest
 import os
 from pacifica.archiveinterface.backends.posix.extendedfile import extended_file_factory
 from pacifica.archiveinterface.backends.posix.status import PosixStatus
+from .common_setup_test import SetupTearDown
 
 
-class TestExtendedFile(unittest.TestCase):
+class TestExtendedFile(unittest.TestCase, SetupTearDown):
     """Test the ExtendedFile Class."""
 
     def test_posix_file_status(self):
@@ -33,7 +34,7 @@ class TestExtendedFile(unittest.TestCase):
         my_file.close()
 
 
-class TestPosixStatus(unittest.TestCase):
+class TestPosixStatus(unittest.TestCase, SetupTearDown):
     """Test the POSIXStatus Class."""
 
     def test_posix_status_object(self):

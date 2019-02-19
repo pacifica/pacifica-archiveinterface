@@ -254,3 +254,19 @@ class HpssBackendArchive(AbstractBackendArchive):
                 old_path, new_filepath, str(ex)
             )
             raise ArchiveInterfaceError(err_str)
+
+    def remove(self):
+        """Remove the file for an HPSS file."""
+        try:
+            if self._filepath:
+                buf_char_p = cast(self._filepath, c_char_p)
+                rcode = self._hpsslib.hpss_Chmod(buf_char_p, 0o644)
+                hpss_unlink = self._hpsslib.hpss_Unlink
+                hpss_unlink.restype = c_int
+                hpss_unlink.argtypes = [c_char_p]
+                rcode = hpss_unlink(buf_char_p)
+                self._check_rcode(rcode, 'Error removing hpss file: {}'.format(rcode))
+            self._filepath = None
+        except Exception as ex:
+            err_str = "Can't remove hpss file with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
