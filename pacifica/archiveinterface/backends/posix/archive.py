@@ -5,8 +5,8 @@
 Module that implements the abstract_backend_archive class for a posix
 backend.
 """
-
 import os
+import stat
 import shutil
 from ...archive_utils import un_abs_path, bytes_type
 from ...config import get_config
@@ -141,4 +141,15 @@ class PosixBackendArchive(AbstractBackendArchive):
             shutil.move(old_path, new_filepath)
         except Exception as ex:
             err_str = "Can't move posix file with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+
+    def remove(self):
+        """Remove the file permissions for a posix file."""
+        try:
+            if self._filepath:
+                os.chmod(self._filepath, stat.S_IWRITE)
+                os.unlink(self._filepath)
+            self._filepath = None
+        except Exception as ex:
+            err_str = "Can't remove posix file with error: {}".format(ex)
             raise ArchiveInterfaceError(err_str)

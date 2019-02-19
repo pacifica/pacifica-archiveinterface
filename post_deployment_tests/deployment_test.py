@@ -73,9 +73,19 @@ class BasicArchiveTests(unittest.TestCase):
         # the len of string 'Writing content for first file'
         self.assertEqual(len(data), 30)
 
+    def test_simple_delete(self):
+        """test reading a simple text file."""
+        fileid = '1238'
+        data = unistr2binary('Writing content for first file')
+        resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
+        self.assertEqual(resp.status_code, 201)
+        resp = requests.delete('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
+        # the len of string 'Writing content for first file'
+        self.assertEqual(resp.status_code, 200)
+
     def test_file_rewrite(self):
         """Test trying to rewrite a file, rewrite should fail."""
-        fileid = '1238'
+        fileid = '1239'
         data = unistr2binary('Writing content for first file')
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)

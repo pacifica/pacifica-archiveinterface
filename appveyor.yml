@@ -24,5 +24,6 @@ test_script:
       pip install .;
       $env:ARCHIVEINTERFACE_CPCONFIG = "$PWD/server.conf";
       cd tests;
-      coverage run --include='*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -v;
+      coverage run --include='*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment;
+      coverage run -a --include='*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv;
       coverage report -m --fail-under=100;

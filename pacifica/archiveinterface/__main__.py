@@ -7,7 +7,7 @@ Any new Backends added need to have the type argument extended
 to support the new Backend Archie type
 
 """
-from os import path
+from os import path, environ
 from time import sleep
 from threading import Thread
 from argparse import ArgumentParser, SUPPRESS
@@ -76,3 +76,45 @@ def main():
         '/',
         args.cp_config
     )
+
+
+def cmd(argv=None):
+    """Command line admin tool for managing ingest."""
+    parser = ArgumentParser(description='Admin command line tool.')
+    parser.add_argument(
+        '-c', '--config', metavar='CONFIG', type=str, default=CONFIG_FILE,
+        dest='config', help='archiveinterface config file'
+    )
+    parser.add_argument(
+        '-t', '--type', dest='type', default='posix',
+        choices=['hpss', 'posix', 'hsmsideband'], help='use the typed backend'
+    )
+    parser.add_argument(
+        '--prefix', metavar='PREFIX', dest='prefix',
+        default='{}tmp'.format(path.sep), help='prefix to save data at'
+    )
+    subparsers = parser.add_subparsers(help='sub-command help')
+    delete_parser = subparsers.add_parser(
+        'delete', help='delete help', description='delete files')
+    delete_parser.add_argument(
+        'FILES', nargs='+',
+        help='delete the files'
+    )
+    delete_parser.set_defaults(func=delete_file)
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+def delete_file(args):
+    """Delete a file in the archive."""
+    environ['ARCHIVEINTERFACE_CONFIG'] = args.config
+    factory = ArchiveBackendFactory()
+    backend = factory.get_backend_archive(args.type, args.prefix)
+    for archfile in args.FILES:
+        backend.open(archfile, 'r')
+        backend.remove()
+    return 0
+
+
+if __name__ == '__main__':
+    main()

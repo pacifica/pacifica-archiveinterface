@@ -54,7 +54,10 @@ setup(
     packages=find_packages(),
     namespace_packages=['pacifica'],
     entry_points={
-        'console_scripts': ['pacifica-archiveinterface=pacifica.archiveinterface.__main__:main'],
+        'console_scripts': [
+            'pacifica-archiveinterface=pacifica.archiveinterface.__main__:main',
+            'pacifica-archiveinterface-cmd=pacifica.archiveinterface.__main__:cmd'
+        ],
     },
     install_requires=[str(ir.req) for ir in INSTALL_REQS],
     ext_modules=EXT_MODULES

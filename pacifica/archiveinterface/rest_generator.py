@@ -126,3 +126,15 @@ class ArchiveInterfaceGenerator(object):
         cherrypy.response.status = '200 OK'
         return {'message': 'File Moved Successfully'}
     # pylint: enable=invalid-name
+
+    # pylint: disable=invalid-name
+    def DELETE(self, filepath):
+        """Delete a file from WSGI request.
+
+        Delete the file specified in the request to disk.
+        """
+        archivefile = self._archive.open(filepath, 'r')
+        archivefile.close()
+        archivefile.remove()
+        cherrypy.response.status = '200 OK'
+    # pylint: enable=invalid-name
