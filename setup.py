@@ -44,7 +44,7 @@ setup(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     description='Pacifica Archive Interface',
-    url='https://pypi.python.org/pypi/pacifica-archiveinterface/',
+    url='https://github.com/pacifica/pacifica-archiveinterface/',
     long_description=open(path.join(
         path.abspath(path.dirname(__file__)),
         'README.md')).read(),
