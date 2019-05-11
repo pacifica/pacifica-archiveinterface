@@ -73,7 +73,7 @@ The HTTP `POST` method is used to stage a file for use.  In posix this
 equates to a no-op on hpss it stages the file to the disk drive.
 
 ```
-curl -X POST http://127.0.0.1:8080/12345
+curl -X POST -d '' http://127.0.0.1:8080/12345
 ```
 
 Sample Output:
@@ -90,19 +90,14 @@ The upload file contains the path to current file on archive
 The Id at the end of the url is where the file will be moved to
 
 ```
-curl -X PATCH --upload-file /tmp/foo.json http://127.0.0.1:8080/2
-
+curl -X PATCH -H 'Content-Type: application/json' http://127.0.0.1:8080/123456 -d'{
+  "path": "/tmp/12345"
+}'
 ```
 
 Sample Output:
 ```
 {
     "message": "File Moved Successfully"
-}
-```
-Sample Upload File
-```
-{
-  "path": "/path/to/file/file.1"
 }
 ```
