@@ -23,7 +23,7 @@ def unistr2binary(data_str):
     """Convert a string to binary in 2/3."""
     if PY2:  # pragma: no cover python 2 only
         return bytearray(data_str)
-    return bytes(data_str, 'utf8')  # pragma: no cover python 3 only
+    return bytearray(data_str, 'utf8')  # pragma: no cover python 3 only
 
 
 class BasicArchiveTests(unittest.TestCase):
@@ -104,7 +104,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_write(self):
         """Write a binary file to the archive."""
         fileid = '4321'
-        data = unistr2binary([123, 3, 255, 0, 100])
+        data = bytearray([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         respdata = resp.json()
@@ -114,7 +114,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_status(self):
         """Get a status for a binary file in the archive."""
         fileid = '4322'
-        data = unistr2binary([123, 3, 255, 0, 100])
+        data = bytearray([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.head('{}/{}'.format(ARCHIVEURL, fileid))
@@ -126,7 +126,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_stage(self):
         """test staging a binary file."""
         fileid = '4323'
-        data = unistr2binary([123, 3, 255, 0, 100])
+        data = bytearray([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.post('{}/{}'.format(ARCHIVEURL, fileid))
@@ -137,7 +137,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_read(self):
         """test reading a binary file back form the archive."""
         fileid = '4324'
-        data = unistr2binary([123, 3, 255, 0, 100])
+        data = bytearray([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.get('{}/{}'.format(ARCHIVEURL, fileid), stream=True)
@@ -147,7 +147,7 @@ class BinaryFileArchiveTests(unittest.TestCase):
     def test_binary_file_rewrite(self):
         """Test trying to rewrite a file, rewrite should fail."""
         fileid = '4325'
-        data = unistr2binary([123, 3, 255, 0, 100])
+        data = bytearray([123, 3, 255, 0, 100])
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
         self.assertEqual(resp.status_code, 201)
         resp = requests.put('{}/{}'.format(ARCHIVEURL, fileid), data=data)
