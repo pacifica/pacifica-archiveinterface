@@ -10,7 +10,7 @@ from ...config import get_config
 from ...exception import ArchiveInterfaceError
 from ..abstract.archive import AbstractBackendArchive
 from ...id2filename import id2filename
-import time
+
 # Due to an update in hpss version we need to lazy load the linked
 # c types.  Doing this with dlopen flags. 8 is the UNIX flag Integer for
 # RTLD_DEEPBIND.
@@ -49,6 +49,7 @@ HPSS_RPC_AUTH_TYPE_PASSWD = 5
 SEEK_SET = 0
 SEEK_CUR = 1
 SEEK_END = 2
+
 
 def path_info_munge(filepath):
     """Munge the path for this filetype."""
@@ -107,15 +108,16 @@ class HpssBackendArchive(AbstractBackendArchive):
                 'Failed opening Hpss File, code: ' + str(self._file)
             )
             if self._file == 0:
-                raise ArchiveInterfaceError("NULL File returned on open")
+                raise ArchiveInterfaceError('NULL File returned on open')
 
-            # this stops a race where open seems to start a read async, and then if you delete the file we get a sigabort
+            # this stops a race where open seems to start a read async,
+            # and then if you delete the file we get a sigabort
             # seeking throws away all the buffers..
             hpss_fseek = self._hpsslib.hpss_Fseek
             hpss_fseek.restype = c_long
-            hpss_fseek.argtypes = [c_void_p,c_long,c_int]
-            rcode = hpss_fseek(self._file,SEEK_SET,0)
-            
+            hpss_fseek.argtypes = [c_void_p, c_long, c_int]
+            hpss_fseek(self._file, SEEK_SET, 0)
+
             return self
         except Exception as ex:
             err_str = "Can't open hpss file with error: " + str(ex)
@@ -238,12 +240,12 @@ class HpssBackendArchive(AbstractBackendArchive):
         user = get_config().get('hpss', 'user')
         auth = get_config().get('hpss', 'auth')
         rcode = self._hpsslib.hpss_SetLoginCred(
-            user.encode("utf8"), HPSS_AUTHN_MECH_UNIX,
-            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth.encode("utf8")
+            user.encode('utf8'), HPSS_AUTHN_MECH_UNIX,
+            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth.encode('utf8')
         )
         self._check_rcode(
             rcode,
-            'Could Not Authenticate, error code is:' + str(rcode) + " User: " + user + " Auth: " + auth
+            'Could Not Authenticate, error code is:' + str(rcode) + ' User: ' + user + ' Auth: ' + auth
         )
 
     def patch(self, file_id, old_path):
