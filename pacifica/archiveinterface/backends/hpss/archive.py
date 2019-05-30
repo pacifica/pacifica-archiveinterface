@@ -4,7 +4,7 @@
 import os
 import sys
 from ctypes import cdll, create_string_buffer, cast
-from ctypes import c_void_p, c_char_p, c_int, c_size_t
+from ctypes import c_void_p, c_char_p, c_int, c_size_t, c_long
 from ...archive_utils import un_abs_path
 from ...config import get_config
 from ...exception import ArchiveInterfaceError
@@ -45,6 +45,10 @@ HPSS_RPC_AUTH_TYPE_KEYTAB = 2
 HPSS_RPC_AUTH_TYPE_KEYFILE = 3
 HPSS_RPC_AUTH_TYPE_KEY = 4
 HPSS_RPC_AUTH_TYPE_PASSWD = 5
+
+SEEK_SET = 0
+SEEK_CUR = 1
+SEEK_END = 2
 
 
 def path_info_munge(filepath):
@@ -96,13 +100,24 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss.ping_core(self._sitename)
             hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
-            hpss_fopen.restype = c_void_p
+            hpss_fopen.restype = c_long
             hpss_fopen.argtypes = [c_char_p, c_char_p]
-            self._file = hpss_fopen(filename, mode)
+            self._file = hpss_fopen(filename.encode('utf8'), mode.encode('utf8'))
             self._check_rcode(
                 self._file,
                 'Failed opening Hpss File, code: ' + str(self._file)
             )
+            if self._file == 0:
+                raise ArchiveInterfaceError('NULL File returned on open')
+
+            # this stops a race where open seems to start a read async,
+            # and then if you delete the file we get a sigabort
+            # seeking throws away all the buffers..
+            hpss_fseek = self._hpsslib.hpss_Fseek
+            hpss_fseek.restype = c_long
+            hpss_fseek.argtypes = [c_void_p, c_long, c_int]
+            hpss_fseek(self._file, SEEK_SET, 0)
+
             return self
         except Exception as ex:
             err_str = "Can't open hpss file with error: " + str(ex)
@@ -139,7 +154,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Read a file from the hpss archive."""
         try:
             if self._filepath:
-                buf = create_string_buffer('\000' * blocksize)
+                buf = create_string_buffer(blocksize)
                 hpss_fread = self._hpsslib.hpss_Fread
                 hpss_fread.restype = c_size_t
                 hpss_fread.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
@@ -211,7 +226,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 hpss = HpssExtended(self._filepath, self._latency)
                 hpss.ping_core(self._sitename)
-                rcode = self._hpsslib.hpss_Chmod(self._filepath, 0o444)
+                rcode = self._hpsslib.hpss_Chmod(self._filepath.encode('utf8'), 0o444)
                 self._check_rcode(
                     rcode,
                     'Failed to chmod hpss file with code: ' + str(rcode)
@@ -225,12 +240,12 @@ class HpssBackendArchive(AbstractBackendArchive):
         user = get_config().get('hpss', 'user')
         auth = get_config().get('hpss', 'auth')
         rcode = self._hpsslib.hpss_SetLoginCred(
-            user, HPSS_AUTHN_MECH_UNIX,
-            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth
+            user.encode('utf8'), HPSS_AUTHN_MECH_UNIX,
+            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth.encode('utf8')
         )
         self._check_rcode(
             rcode,
-            'Could Not Authenticate, error code is:' + str(rcode)
+            'Could Not Authenticate, error code is:' + str(rcode) + ' User: ' + user + ' Auth: ' + auth
         )
 
     def patch(self, file_id, old_path):
@@ -259,11 +274,14 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Remove the file for an HPSS file."""
         try:
             if self._filepath:
-                buf_char_p = cast(self._filepath, c_char_p)
+                buf_char_p = cast(self._filepath.encode(), c_char_p)
                 rcode = self._hpsslib.hpss_Chmod(buf_char_p, 0o644)
+                self._check_rcode(rcode, 'Error chmoding hpss file: {}'.format(rcode))
+
                 hpss_unlink = self._hpsslib.hpss_Unlink
                 hpss_unlink.restype = c_int
                 hpss_unlink.argtypes = [c_char_p]
+                buf_char_p = cast(self._filepath.encode(), c_char_p)
                 rcode = hpss_unlink(buf_char_p)
                 self._check_rcode(rcode, 'Error removing hpss file: {}'.format(rcode))
             self._filepath = None

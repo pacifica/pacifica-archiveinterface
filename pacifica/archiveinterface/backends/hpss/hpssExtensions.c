@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <libgen.h>
+#include "hpss_version.h"
 #include "hpss_api.h"
 #include <sys/types.h>
 #include <utime.h>
@@ -323,7 +324,28 @@ pacifica_archiveinterface_makedirs(PyObject *self, PyObject *args)
     return rec_makedirs(filepath);
 }
 
-static PyMethodDef StatusMethods[] = {
+/* python 2 & 3 support from https://docs.python.org/3/howto/cporting.html */
+
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
+
+/*
+static PyObject *
+error_out(PyObject *m) {
+    struct module_state *st = GETSTATE(m);
+    PyErr_SetString(st->error, "something bad happened");
+    return NULL;
+}
+*/
+static PyMethodDef _hpssExtensions_methods[] = {
     {"hpss_status", pacifica_archiveinterface_status, METH_VARARGS,
         "Get the status for a file in the archive."},
     {"hpss_mtime", pacifica_archiveinterface_mtime, METH_VARARGS,
@@ -343,17 +365,65 @@ static PyMethodDef StatusMethods[] = {
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
+#if PY_MAJOR_VERSION >= 3
+
+static int _hpssExtensions_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int _hpssExtensions_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "_hpssExtensions",
+        NULL,
+        sizeof(struct module_state),
+        _hpssExtensions_methods,
+        NULL,
+        _hpssExtensions_traverse,
+        _hpssExtensions_clear,
+        NULL
+};
+
+#define INITERROR return NULL
+
 PyMODINIT_FUNC
-init_hpssExtensions(void)
+PyInit__hpssExtensions(void)
+
+#else
+#define INITERROR return
+
+void
+init__hpssExtensions(void)
+#endif
 {
-    PyObject * m;
-    m = Py_InitModule("_hpssExtensions", StatusMethods);
-    if (m == NULL)
-    {
-        return;
+#if PY_MAJOR_VERSION >= 3
+    PyObject *module = PyModule_Create(&moduledef);
+#else
+    PyObject *module = Py_InitModule("_hpssExtensions", _hpssExtensions_methods);
+#endif
+
+    if (module == NULL)
+        INITERROR;
+    struct module_state *st = GETSTATE(module);
+
+    st->error = PyErr_NewException("_hpssExtensions.Error", NULL, NULL);
+    if (st->error == NULL) {
+        Py_DECREF(module);
+        INITERROR;
     }
+
 
     archiveInterfaceError = PyErr_NewException("archiveInterface.error", NULL, NULL);
     Py_INCREF(archiveInterfaceError);
-    PyModule_AddObject(m,"error",archiveInterfaceError);
+    PyModule_AddObject(module,"error",archiveInterfaceError);
+
+#if PY_MAJOR_VERSION >= 3
+    return module;
+#endif
 }
