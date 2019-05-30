@@ -94,8 +94,12 @@ There are a few global variables at the top of the file that need to be adjusted
 
 ```
 export ARCHIVE_URL='http://127.0.0.1:8080/'
+export LARGE_FILE_SIZE=$(( 1024 * 1024 * 1024))
+export MANY_FILES_TEST_COUNT=1000
 ```
  - ARCHIVE_URL is the URL to the newly deployed archive_interface
+ - LARGE_FILE_SIZE is the size of the large file to test with (default 1Gib)
+ - MANY_FILES_TEST_COUNT is the number of small files to spam (default 1000)
 
 ## Running
 

@@ -180,7 +180,7 @@ class RandomFile(object):
 class LargeBinaryFileArchiveTests(unittest.TestCase):
     """Class that tests the writing and reading of a large binary file."""
 
-    large_file_size = 1024 * 1024 * 1024
+    large_file_size = int(os.getenv('LARGE_FILE_SIZE', 1024 * 1024 * 1024))
 
     def test_large_binary_file_write(self):
         """test writing a large binary file to the archive."""
@@ -258,7 +258,7 @@ class ManyFileArchiveTests(unittest.TestCase):
             new_thread.daemon = True
             new_thread.start()
 
-        for i in range(3000, 4000):
+        for i in range(3000, int(os.getenv('MANY_FILES_TEST_COUNT', 1000))+3000):
             job_id_queue.put(i)
 
         for i in range(num_worker_threads):
