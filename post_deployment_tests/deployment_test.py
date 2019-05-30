@@ -239,7 +239,7 @@ class ManyFileArchiveTests(unittest.TestCase):
         num_worker_threads = 8
         job_id_queue = Queue()
 
-        def worker():
+        def worker_put():
             """Thread worker to send the test data."""
             work = job_id_queue.get()
             while work:
@@ -254,7 +254,31 @@ class ManyFileArchiveTests(unittest.TestCase):
             job_id_queue.task_done()
 
         for i in range(num_worker_threads):
-            new_thread = Thread(target=worker)
+            new_thread = Thread(target=worker_put)
+            new_thread.daemon = True
+            new_thread.start()
+
+        for i in range(3000, int(os.getenv('MANY_FILES_TEST_COUNT', 1000))+3000):
+            job_id_queue.put(i)
+
+        for i in range(num_worker_threads):
+            job_id_queue.put(False)
+        job_id_queue.join()
+
+        def worker_get():
+            """Thread worker to send the test data."""
+            work = job_id_queue.get()
+            while work:
+                resp = requests.get(
+                    '{}/{}'.format(ARCHIVEURL, work))
+                self.assertEqual(resp.status_code, 200)
+                self.assertEqual(resp.content, unistr2binary('Writing content for first file'))
+                job_id_queue.task_done()
+                work = job_id_queue.get()
+            job_id_queue.task_done()
+
+        for i in range(num_worker_threads):
+            new_thread = Thread(target=worker_get)
             new_thread.daemon = True
             new_thread.start()
 
