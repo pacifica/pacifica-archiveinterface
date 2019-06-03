@@ -399,7 +399,7 @@ PyInit__hpssExtensions(void)
 #define INITERROR return
 
 void
-init__hpssExtensions(void)
+init_hpssExtensions(void)
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
