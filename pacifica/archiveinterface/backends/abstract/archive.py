@@ -10,7 +10,7 @@ the child object will not be able to be instantiated.
 import abc
 
 
-class AbstractBackendArchive(object):
+class AbstractBackendArchive:
     """Abstract Base Class for Archive Backends."""
 
     __metaclass__ = abc.ABCMeta
@@ -18,7 +18,6 @@ class AbstractBackendArchive(object):
     @abc.abstractmethod
     def __init__(self, prefix):
         """Constructor to build backend archive."""
-        pass
 
     @abc.abstractmethod
     def open(self, filepath, mode):
@@ -29,7 +28,6 @@ class AbstractBackendArchive(object):
         This method is also responsible for making sure the dirname of
         the filepath exists before trying to open.
         """
-        pass
 
     @abc.abstractmethod
     def close(self):
@@ -38,7 +36,6 @@ class AbstractBackendArchive(object):
         Method that closes an open file for the backend archive that
         implements this class.
         """
-        pass
 
     @abc.abstractmethod
     def read(self, blocksize):
@@ -47,7 +44,6 @@ class AbstractBackendArchive(object):
         Method that reads an open file for the backend archive that
         implements this class and returns the contents.
         """
-        pass
 
     @abc.abstractmethod
     def write(self, buf):
@@ -56,7 +52,6 @@ class AbstractBackendArchive(object):
         Method that writes an open file for the backend archive that
         implements this class.
         """
-        pass
 
     @abc.abstractmethod
     def stage(self):
@@ -66,7 +61,6 @@ class AbstractBackendArchive(object):
         this class Stage moves a file to an appropriate location to be
         downloaded.
         """
-        pass
 
     @abc.abstractmethod
     def status(self):
@@ -76,7 +70,6 @@ class AbstractBackendArchive(object):
         Needs to return an implemented object of the abstract_status_class
         The abstract_status_class should be implemented for each backend type.
         """
-        pass
 
     @abc.abstractmethod
     def set_mod_time(self, mod_time):
@@ -85,7 +78,6 @@ class AbstractBackendArchive(object):
         Method that sets a files mod time for the backend archive that
         implements this class.
         """
-        pass
 
     @abc.abstractmethod
     def set_file_permissions(self):
@@ -94,14 +86,11 @@ class AbstractBackendArchive(object):
         Method that sets a files permissions for the backend archive that
         implements this class.
         """
-        pass
 
     @abc.abstractmethod
     def patch(self, file_id, old_path):
         """Move a file."""
-        pass
 
     @abc.abstractmethod
     def remove(self):
         """Remove a file."""
-        pass

@@ -18,7 +18,7 @@ from .status import HpssStatus
 from ...exception import ArchiveInterfaceError
 
 
-class HpssExtended(object):
+class HpssExtended:
     """Provide the interface for the hpss ctypes."""
 
     def __init__(self, filepath, accept_latency=5):

@@ -49,7 +49,7 @@ class BaseModel(Model):
             cls._meta.database.close()
         # pylint: enable=no-member
 
-    class Meta(object):
+    class Meta:
         """Meta object containing the database connection."""
 
         database = DB
@@ -78,7 +78,7 @@ class SamArchive(BaseModel):
     stale = IntegerField(null=True)
     vsn = CharField()
 
-    class Meta(object):
+    class Meta:
         """Contain index/key info for table."""
 
         db_table = 'sam_archive'
@@ -99,7 +99,7 @@ class SamFile(BaseModel):
     p_gen = IntegerField()
     p_ino = IntegerField()
 
-    class Meta(object):
+    class Meta:
         """Contain index/key info for table."""
 
         db_table = 'sam_file'
@@ -124,7 +124,7 @@ class SamInode(BaseModel):
     type = IntegerField()
     uid = IntegerField()
 
-    class Meta(object):
+    class Meta:
         """Contain index/key info for table."""
 
         db_table = 'sam_inode'
@@ -141,7 +141,7 @@ class SamPath(BaseModel):
     ino = IntegerField()
     path = CharField(index=True, null=True)
 
-    class Meta(object):
+    class Meta:
         """Contain index/key info for table."""
 
         db_table = 'sam_path'
@@ -157,7 +157,7 @@ class SamVersion(BaseModel):
     id = IntegerField()
     version = FloatField()
 
-    class Meta(object):
+    class Meta:
         """Contain index/key info for table."""
 
         db_table = 'sam_version'

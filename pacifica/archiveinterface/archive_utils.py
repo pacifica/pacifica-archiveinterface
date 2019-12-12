@@ -7,20 +7,14 @@ Used in various parts of the archive interface.
 import email.utils as eut
 import time
 from os import path
-from six import integer_types, PY2
 from .exception import ArchiveInterfaceError
 
-# pylint: disable=invalid-name
-if PY2:  # pragma: no cover
-    bytes_type = str
-else:  # pragma: no cover only will work on one version of python
-    def bytes_type(unicode_obj):
-        """Convert the unicode object into bytes."""
-        if isinstance(unicode_obj, bytes):
-            return unicode_obj
-        return bytes(unicode_obj, 'UTF-8')
-int_type = integer_types[-1]
-# pylint: enable=invalid-name
+
+def bytes_type(unicode_obj):
+    """Convert the unicode object into bytes."""
+    if isinstance(unicode_obj, bytes):
+        return unicode_obj
+    return bytes(unicode_obj, 'UTF-8')
 
 
 def file_status(status, response):
