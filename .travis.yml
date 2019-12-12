@@ -1,24 +1,31 @@
 language: python
-dist: xenial
+dist: bionic
 python: 3.6
 stages:
-- lint
-- test
-- test-docker
-- deploy
+  - lint
+  - test
+  - test-docker
+  - deploy
+script:
+  - pip install .
+  - export ARCHIVEINTERFACE_CPCONFIG=$PWD/server.conf
+  - cd tests
+  - coverage run --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment
+  - coverage run -a --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv
+  - coverage report -m --fail-under 100
 jobs:
   include:
   - stage: lint
     script: pre-commit run -a
+  - python: 3.7
+    script: pre-commit run -a
+  - python: 3.8
+    script: pre-commit run -a
   - stage: test
-    script:
-      - pip install .
-      - export ARCHIVEINTERFACE_CPCONFIG=$PWD/server.conf
-      - cd tests
-      - coverage run --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment
-      - coverage run -a --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv
-      - coverage report -m --fail-under 100
+  - python: 3.7
+  - python: 3.8
   - stage: test-docker
+    python: 3.8
     sudo: required
     services:
       - docker
@@ -28,6 +35,7 @@ jobs:
       - cd post_deployment_tests
       - python -m unittest deployment_test
   - stage: deploy
+    python: 3.8
     deploy:
       distributions: sdist bdist_wheel
       skip_cleanup: true
