@@ -1,10 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """Configuration reading and validation module."""
-try:
-    from ConfigParser import SafeConfigParser
-except ImportError:  # pragma: no cover python 2 vs 3 issue
-    from configparser import ConfigParser as SafeConfigParser
+from configparser import ConfigParser as SafeConfigParser
 from pacifica.archiveinterface.globals import CONFIG_FILE
 
 
@@ -17,6 +14,7 @@ def get_config():
     configparser.set('hpss', 'user', 'hpss.unix')
     configparser.set('hpss', 'auth', '/var/hpss/etc/hpss.unix.keytab')
     configparser.set('hpss', 'sitename', 'example.com')
+    configparser.set('hpss', 'accept_latency', '5')
     configparser.add_section('hsm_sideband')
     configparser.set('hsm_sideband', 'sam_qfs_prefix', '/data/pacifica/test/')
     configparser.set('hsm_sideband', 'schema', 'samqfs1db')
