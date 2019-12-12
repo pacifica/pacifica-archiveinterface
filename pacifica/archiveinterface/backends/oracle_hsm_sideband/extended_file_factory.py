@@ -2,23 +2,16 @@
 # -*- coding: utf-8 -*-
 """Module that allows for the extension of the hsm sideband archive."""
 import os
-from six import PY2
-from ...archive_utils import int_type
+from io import FileIO, BufferedReader, BufferedWriter
 from .status import HsmSidebandStatus
 from .orm import SamInode, SamFile, SamPath
 
 
 def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
     """Return appropiate binary io object with additional methods."""
-    if PY2:  # pragma: no cover only one version of python
-        # pylint: disable=undefined-variable
-        file_obj_cls = file  # noqa
-        # pylint: enable=undefined-variable
-    elif 'r' in mode:
-        from io import BufferedReader
+    if 'r' in mode:
         file_obj_cls = BufferedReader
     else:
-        from io import BufferedWriter
         file_obj_cls = BufferedWriter
 
     class ExtendedHsmSideband(file_obj_cls):
@@ -26,12 +19,8 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
 
         def __init__(self, filepath, mode, sam_qfs_path):
             """Extended HSM Sideband Constructor."""
-            if PY2:  # pragma: no cover only one version of python
-                super(ExtendedHsmSideband, self).__init__(filepath, mode)
-            else:
-                from io import FileIO
-                file_obj = FileIO(filepath, mode)
-                super(ExtendedHsmSideband, self).__init__(file_obj)
+            file_obj = FileIO(filepath, mode)
+            super(ExtendedHsmSideband, self).__init__(file_obj)
             self._path = filepath
             self._sam_qfs_path = sam_qfs_path
 
@@ -46,10 +35,10 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
                 ctime = stat_record['ctime']
                 # if the record is online then on disk, else say not on disk but on tape
                 if stat_record['online'] == 1:
-                    bytes_per_level = (int_type(stat_record['size']),)
+                    bytes_per_level = (int(stat_record['size']),)
                 else:
                     bytes_per_level = (
-                        int_type(0), int_type(stat_record['size']))
+                        int(0), int(stat_record['size']))
                 filesize = stat_record['size']
                 status = HsmSidebandStatus(
                     mtime, ctime, bytes_per_level, filesize)

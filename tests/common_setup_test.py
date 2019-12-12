@@ -6,7 +6,7 @@ from os import remove, chmod, rmdir
 from os.path import isdir, isfile, join, sep
 
 
-class SetupTearDown(object):
+class SetupTearDown:
     """Clean up temporary files before and after tests."""
 
     @staticmethod

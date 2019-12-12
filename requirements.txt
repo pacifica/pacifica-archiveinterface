@@ -2,4 +2,3 @@ cherrypy
 peewee>2
 PyMySQL
 requests
-six

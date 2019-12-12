@@ -25,7 +25,7 @@ def error_page_default(**kwargs):
     })
 
 
-class ArchiveInterfaceGenerator(object):
+class ArchiveInterfaceGenerator:
     """Archive Interface Generator.
 
     Defines the methods that can be used on files for request types.

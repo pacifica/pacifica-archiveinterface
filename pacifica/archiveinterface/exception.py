@@ -10,5 +10,3 @@ class ArchiveInterfaceError(Exception):
     Basic exception class for this module.
     Will be used to throw exceptions up to the top level of the application
     """
-
-    pass
