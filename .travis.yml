@@ -1,67 +1,43 @@
 language: python
 dist: xenial
+python: 3.6
 stages:
 - lint
 - test
 - test-docker
 - deploy
-".lint_block": &3
-  stage: lint
-  script: pre-commit run -a
-".docker_block": &2
-  stage: test-docker
-  sudo: required
-  services:
-  - docker
-  script:
-  - docker-compose build --pull
-  - docker-compose up -d
-  - cd post_deployment_tests
-  - python -m unittest deployment_test
-".test_block": &1
-  stage: test
-  script:
-  - pip install .
-  - export ARCHIVEINTERFACE_CPCONFIG=$PWD/server.conf
-  - cd tests
-  - coverage run --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment
-  - coverage run -a --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv
-  - coverage report -m --fail-under 100
-".deploy_block": &4
-  stage: deploy
-  language: python
-  script: skip
-".deploy_attrs": &5
-  skip_cleanup: true
-  provider: pypi
-  user: dmlb2000
-  password:
-    secure: S/O36Q5SiMtYF8Gtovo0hO7tczJc+YB79RGyBylmGjhmXlMfYv0bHAtYTEwGbqSrB1gGZgV0JMTvOKFmfHPIOm0mYxobPBgzNqAK0uqI+zueVf2+KmxwzC45uXRAzsRjcjMr66bPf04WRYP1vT7Lhp/JJ5nwfAT81TGERo1rP2w4gs/8fvZWJPmexFOocyNRYpf8yg+bQrIQzco/neNgjvPtYd7P1tBhJcxngkMRAd0HXc6ehegUbqHVotvTXH8BG+h9ZRZd5szrRlyfl5+u8YcBKx4cm4i2ayJ43/vurIJIs6CULsvFTClHol/4mFW2uyg3mqw1E37fd0HoHsY7FPR81cdPnpgA5ljieJIh6XCVF8rE7rYoPuedAcFlqTHSkqZoCNK/uodY91SQFyyYW2msWWYAGMDrJ4bHQEWYIkkNf+wCFHG6wAIVIhlJiOZa0Y5aopVtlrpRVgKPw5U0XfqNjI82yXU+W8H3WC0bXK3ggrHE+JPFNqEd2bAS4a3NOFNxeVRtql/qYw7QN4EUa6XHTl6IRbeSVSJX43BeREktDdIFKnZ/i3jUutbSX4jwsDUsstobQjmdksi97QkAsNIBTiG67QqJJloSf6Kv4gbpYfDZ3zaPkzVgrjJnViqyLUU/JS2iTimsB/gq3EMUNgPSQWCLtOlOeo4sDNG5Pbg=
-  on:
-    tags: true
 jobs:
   include:
-  - python: 3.6
-    <<: *3
-  - python: 2.7
-    <<: *3
-  - python: 3.6
-    <<: *1
-  - python: 2.7
-    <<: *1
-  - python: 3.6
-    <<: *2
-  - python: 2.7
-    <<: *2
-  - python: 3.6
+  - stage: lint
+    script: pre-commit run -a
+  - stage: test
+    script:
+      - pip install .
+      - export ARCHIVEINTERFACE_CPCONFIG=$PWD/server.conf
+      - cd tests
+      - coverage run --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment
+      - coverage run -a --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv
+      - coverage report -m --fail-under 100
+  - stage: test-docker
+    sudo: required
+    services:
+      - docker
+    script:
+      - docker-compose build --pull
+      - docker-compose up -d
+      - cd post_deployment_tests
+      - python -m unittest deployment_test
+  - stage: deploy
     deploy:
       distributions: sdist bdist_wheel
-      <<: *5
-    <<: *4
-  - python: 2.7
-    deploy:
-      distributions: bdist_wheel
-      <<: *5
-    <<: *4
+      skip_cleanup: true
+      provider: pypi
+      user: dmlb2000
+      password:
+        secure: S/O36Q5SiMtYF8Gtovo0hO7tczJc+YB79RGyBylmGjhmXlMfYv0bHAtYTEwGbqSrB1gGZgV0JMTvOKFmfHPIOm0mYxobPBgzNqAK0uqI+zueVf2+KmxwzC45uXRAzsRjcjMr66bPf04WRYP1vT7Lhp/JJ5nwfAT81TGERo1rP2w4gs/8fvZWJPmexFOocyNRYpf8yg+bQrIQzco/neNgjvPtYd7P1tBhJcxngkMRAd0HXc6ehegUbqHVotvTXH8BG+h9ZRZd5szrRlyfl5+u8YcBKx4cm4i2ayJ43/vurIJIs6CULsvFTClHol/4mFW2uyg3mqw1E37fd0HoHsY7FPR81cdPnpgA5ljieJIh6XCVF8rE7rYoPuedAcFlqTHSkqZoCNK/uodY91SQFyyYW2msWWYAGMDrJ4bHQEWYIkkNf+wCFHG6wAIVIhlJiOZa0Y5aopVtlrpRVgKPw5U0XfqNjI82yXU+W8H3WC0bXK3ggrHE+JPFNqEd2bAS4a3NOFNxeVRtql/qYw7QN4EUa6XHTl6IRbeSVSJX43BeREktDdIFKnZ/i3jUutbSX4jwsDUsstobQjmdksi97QkAsNIBTiG67QqJJloSf6Kv4gbpYfDZ3zaPkzVgrjJnViqyLUU/JS2iTimsB/gq3EMUNgPSQWCLtOlOeo4sDNG5Pbg=
+      on:
+        tags: true
+    language: python
+    script: skip
 install:
 - pip install -r requirements-dev.txt
