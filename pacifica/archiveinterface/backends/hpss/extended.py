@@ -16,14 +16,15 @@ except ImportError:
 # pylint: enable=no-name-in-module
 from .status import HpssStatus
 from ...exception import ArchiveInterfaceError
+from ...config import get_config
 
 
 class HpssExtended:
     """Provide the interface for the hpss ctypes."""
 
-    def __init__(self, filepath, accept_latency=5):
+    def __init__(self, filepath):
         """Constructor for the HPSS Extended File type."""
-        self._accept_latency = accept_latency
+        self._accept_latency = get_config().get('hpss', 'accept_latency')
         self._latency = None
         self._filepath = filepath
 
