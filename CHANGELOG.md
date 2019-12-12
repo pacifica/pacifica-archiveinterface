@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin Supporting HPSS
 - Plugin Supporting Oracle HSM
 
+## [0.3.0] - 2019-12-12
+### Changed
+- Pull #100 Add Python 3.7 and 3.8 testing by [@dmlb2000](https://github.com/dmlb2000)
+- Fix #96 add HPSS Latency configuration by [@karcaw](https://github.com/karcaw)
+- Pull #98 Use Pylint 2.0+ by [@dmlb2000](https://github.com/dmlb2000)
+- Pull #97 Remove Python 2.7 support by [@dmlb2000](https://github.com/dmlb2000)
+
 ## [0.2.2] - 2019-05-30
 ### Changed
 - Fix #87 and #88 More post deployment testing features by [@dmlb2000](https://github.com/dmlb2000)
