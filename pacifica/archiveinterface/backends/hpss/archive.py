@@ -68,7 +68,6 @@ class HpssBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._hpsslib = None
-        self._latency = 5  # number not significant
         # need to load  the hpss libraries/ extensions
         try:
             self._hpsslib = cdll.LoadLibrary(HPSS_LIBRARY_PATH)
@@ -96,7 +95,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             fpath = un_abs_path(filepath)
             self._filepath = filename = os.path.join(
                 self._prefix, path_info_munge(fpath))
-            hpss = HpssExtended(self._filepath, self._latency)
+            hpss = HpssExtended(self._filepath)
             hpss.ping_core(self._sitename)
             hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
@@ -127,7 +126,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Close an HPSS File."""
         try:
             if self._file:
-                hpss = HpssExtended(self._filepath, self._latency)
+                hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
                 hpss_fflush = self._hpsslib.hpss_Fflush
                 hpss_fflush.restype = c_int
@@ -189,7 +188,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Stage an hpss file to the top level drive."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
+                hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
                 hpss.stage()
         except Exception as ex:
@@ -200,7 +199,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Get the status of a file in the hpss archive."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
+                hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
                 return hpss.status()
         except Exception as ex:
@@ -213,7 +212,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Set the mod time for an hpss archive file."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
+                hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
                 hpss.set_mod_time(mod_time)
         except Exception as ex:
@@ -224,7 +223,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Set the file permissions for an hpss archive file."""
         try:
             if self._filepath:
-                hpss = HpssExtended(self._filepath, self._latency)
+                hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
                 rcode = self._hpsslib.hpss_Chmod(self._filepath.encode('utf8'), 0o444)
                 self._check_rcode(
