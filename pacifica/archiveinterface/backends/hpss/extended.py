@@ -24,7 +24,7 @@ class HpssExtended:
 
     def __init__(self, filepath):
         """Constructor for the HPSS Extended File type."""
-        self._accept_latency = get_config().get('hpss', 'accept_latency')
+        self._accept_latency = get_config().getint('hpss', 'accept_latency')
         self._latency = None
         self._filepath = filepath
 
