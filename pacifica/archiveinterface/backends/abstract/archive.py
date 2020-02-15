@@ -46,6 +46,14 @@ class AbstractBackendArchive:
         """
 
     @abc.abstractmethod
+    def seek(self, offset):
+        """Seek to an offset in the file.
+
+        Method that seeks to an offset in the file for the backend
+        archive that implements this class.
+        """
+
+    @abc.abstractmethod
     def write(self, buf):
         """Write File.
 

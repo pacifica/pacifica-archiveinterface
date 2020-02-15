@@ -76,6 +76,17 @@ class PosixBackendArchive(AbstractBackendArchive):
         err_str = 'Internal file handle invalid'
         raise ArchiveInterfaceError(err_str)
 
+    def seek(self, offset):
+        """Seek in the file to the offset."""
+        try:
+            if self._file:
+                return self._file.seek(offset)
+        except Exception as ex:
+            err_str = "Can't seek posix file with error: " + str(ex)
+            raise ArchiveInterfaceError(err_str)
+        err_str = 'Internal file handle invalid'
+        raise ArchiveInterfaceError(err_str)
+
     def write(self, buf):
         """Write a posix file to the archive."""
         try:

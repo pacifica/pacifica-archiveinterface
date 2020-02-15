@@ -169,6 +169,13 @@ class HpssBackendArchive(AbstractBackendArchive):
         err_str = 'Internal file path invalid'
         raise ArchiveInterfaceError(err_str)
 
+    def seek(self, offset):
+        """Seek in the file to offset."""
+        hpss_fseek = self._hpsslib.hpss_Fseek
+        hpss_fseek.restype = c_long
+        hpss_fseek.argtypes = [c_void_p, c_long, c_int]
+        hpss_fseek(self._file, SEEK_SET, offset)
+
     def write(self, buf):
         """Write a file to the hpss archive."""
         try:
