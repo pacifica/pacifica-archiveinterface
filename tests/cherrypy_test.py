@@ -72,6 +72,22 @@ class ArchiveInterfaceCPTest(helper.CPWebCase, SetupTearDown):
         data = resp.raw.read()
         self.assertEqual(len(data), BLOCK_SIZE+1, '{} does not equal {}'.format(len(data), BLOCK_SIZE+1))
 
+    def test_byte_range_error(self):
+        """Test the byte range error code."""
+        resp = requests.put(
+            '{}/5432'.format(self.url),
+            data='0'*20
+        )
+        self.assertEqual(resp.status_code, 201)
+        resp = requests.get(
+            '{}/5432'.format(self.url),
+            params={'byte_range': 'blah-blah'},
+            stream=True
+        )
+        self.assertEqual(resp.status_code, 500)
+        self.assertTrue(
+            'Invalid byte range format' in resp.json()['traceback'])
+
     def test_error_interface(self):
         """Test some error states."""
         resp = requests.get('{}/12345'.format(self.url), stream=True)

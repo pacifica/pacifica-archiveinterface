@@ -92,6 +92,22 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         self.assertTrue("Can't read posix file with error" in str(exc.exception))
         backend.close()
 
+    def test_posix_backend_failed_seek(self):
+        """Test seeking to a failed file."""
+        backend = PosixBackendArchive('/tmp/')
+        backend.open('1234', 'w')
+        backend.close()
+        backend.open('1234', 'r')
+
+        # easiest way to unit test is look at class variable
+        # pylint: disable=protected-access
+        backend._file.seek = mock.MagicMock(side_effect=IOError('Unable to Seek!'))
+        # pylint: enable=protected-access
+        with self.assertRaises(ArchiveInterfaceError) as exc:
+            backend.seek(0)
+        self.assertTrue("Can't seek posix file with error" in str(exc.exception))
+        backend.close()
+
     def test_posix_backend_failed_fd(self):
         """Test reading to a failed file fd."""
         backend = PosixBackendArchive('/tmp/')
@@ -113,6 +129,9 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         self.assertTrue('Internal file handle invalid' in str(exc.exception))
         with self.assertRaises(ArchiveInterfaceError) as exc:
             backend.status()
+        self.assertTrue('Internal file handle invalid' in str(exc.exception))
+        with self.assertRaises(ArchiveInterfaceError) as exc:
+            backend.seek(0)
         self.assertTrue('Internal file handle invalid' in str(exc.exception))
 
     def test_posix_backend_failed_stage(self):
