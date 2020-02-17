@@ -154,7 +154,6 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         # Error would be thrown on patch so nothing to assert
         self.assertEqual(old_path, '/tmp/1234')
 
-
     def test_seek(self):
         """Test patching file."""
         backend = PosixBackendArchive('/tmp')

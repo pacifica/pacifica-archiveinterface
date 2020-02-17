@@ -6,7 +6,7 @@ import cherrypy
 from cherrypy.test import helper
 from pacifica.archiveinterface.globals import CHERRYPY_CONFIG
 from pacifica.archiveinterface.archive_utils import bytes_type
-from pacifica.archiveinterface.rest_generator import ArchiveInterfaceGenerator, error_page_default
+from pacifica.archiveinterface.rest_generator import ArchiveInterfaceGenerator, error_page_default, BLOCK_SIZE
 from pacifica.archiveinterface.backends.factory import ArchiveBackendFactory
 from .common_setup_test import SetupTearDown
 
@@ -55,6 +55,22 @@ class ArchiveInterfaceCPTest(helper.CPWebCase, SetupTearDown):
             data='{ "path": "/tmp/cptests/222" }'
         )
         self.assertEqual(resp.status_code, 200)
+
+    def test_large_file(self):
+        """Test a large file."""
+        resp = requests.put(
+            '{}/5432'.format(self.url),
+            data='0'*(BLOCK_SIZE+BLOCK_SIZE+17)
+        )
+        self.assertEqual(resp.status_code, 201)
+        resp = requests.get(
+            '{}/5432'.format(self.url),
+            params={'byte_range': '{}-{}'.format(BLOCK_SIZE, BLOCK_SIZE+BLOCK_SIZE+1)},
+            stream=True
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.raw.read()
+        self.assertEqual(len(data), BLOCK_SIZE+1, '{} does not equal {}'.format(len(data), BLOCK_SIZE+1))
 
     def test_error_interface(self):
         """Test some error states."""

@@ -39,8 +39,35 @@ class ArchiveInterfaceGenerator:
         self._response = None
         print('Pacifica Archive Interface Up and Running')
 
+    @staticmethod
+    def _byte_range_get(archivefile, byte_range):
+        """Perform a byte range get and return generator."""
+        try:
+            start, finish = byte_range.split('-')
+            start = int(start)
+            finish = int(finish)
+        except ValueError:
+            raise ArchiveInterfaceError(
+                'Invalid byte range format (int-int) given {}'.format(byte_range)
+            )
+        archivefile.seek(start)
+
+        def read():
+            """Read the data from the file."""
+            total = finish - start
+            while total > 0:
+                if total < BLOCK_SIZE:
+                    buf = archivefile.read(total)
+                    total = 0
+                else:
+                    buf = archivefile.read(BLOCK_SIZE)
+                    total -= BLOCK_SIZE
+                yield buf
+            archivefile.close()
+        return read()
+
     # pylint: disable=invalid-name
-    def GET(self, *args):
+    def GET(self, *args, **kwargs):
         """Get a file from WSGI request.
 
         Gets a file specified in the request and writes back the data.
@@ -51,6 +78,8 @@ class ArchiveInterfaceGenerator:
             return bytes_type(dumps({'message': 'Pacifica Archive Interface Up and Running'}))
         archivefile = self._archive.open(args[0], 'r')
         cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
+        if kwargs.get('byte_range', None):
+            return self._byte_range_get(archivefile, kwargs.get('byte_range'))
 
         def read():
             """Read the data from the file."""
@@ -58,6 +87,7 @@ class ArchiveInterfaceGenerator:
             while buf:
                 yield buf
                 buf = archivefile.read(BLOCK_SIZE)
+            archivefile.close()
         return read()
     # as documented in cherrypy wiki
     # pylint: disable=protected-access

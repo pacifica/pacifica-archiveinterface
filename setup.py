@@ -51,7 +51,7 @@ setup(
     long_description_content_type='text/markdown',
     author='David Brown',
     author_email='david.brown@pnnl.gov',
-    packages=find_packages(),
+    packages=find_packages(include='pacifica.*'),
     namespace_packages=['pacifica'],
     entry_points={
         'console_scripts': [
