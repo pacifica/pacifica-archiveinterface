@@ -68,7 +68,7 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         mode = 'w'
         my_file = backend.open('/a/b/d', mode)
         temp_cfg_file = pa_config.CONFIG_FILE
-        pa_config.CONFIG_FILE = 'test_configs/posix-id2filename.cfg'
+        pa_config.CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'test_configs', 'posix-id2filename.cfg')
         backend = PosixBackendArchive('/tmp')
         my_file = backend.open(12345, mode)
         my_file.write('this is file 12345')
@@ -153,3 +153,15 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         backend.patch('5678', '/tmp/1234')
         # Error would be thrown on patch so nothing to assert
         self.assertEqual(old_path, '/tmp/1234')
+
+
+    def test_seek(self):
+        """Test patching file."""
+        backend = PosixBackendArchive('/tmp')
+        my_file = backend.open('1234', 'w')
+        my_file.write('something')
+        my_file.close()
+        my_file = backend.open('1234', 'r')
+        my_file.seek(4)
+        data = my_file.read(-1).decode('utf8')
+        self.assertEqual(data, 'thing')
