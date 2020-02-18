@@ -5,7 +5,7 @@ from json import loads
 import unittest
 import time
 from pacifica.archiveinterface.archive_utils import un_abs_path, get_http_modified_time
-from pacifica.archiveinterface.id2filename import id2filename
+from pacifica.archiveinterface.id2filename import id2filename, filename2id
 from pacifica.archiveinterface.exception import ArchiveInterfaceError
 from pacifica.archiveinterface.rest_generator import ArchiveInterfaceGenerator
 from pacifica.archiveinterface.backends.factory import ArchiveBackendFactory
@@ -88,6 +88,21 @@ class TestId2Filename(unittest.TestCase, SetupTearDown):
         """Test the correct creation of an over shift point filename."""
         filename = id2filename((32 * 1024) + 1)
         self.assertEqual(filename, '/01/8001')
+
+    def test_filename2id_all(self):
+        """Test all the filenames to ids and vice versa."""
+        filemap = {
+            '/01/8001': (32*1024)+1,
+            '/00/8000': (32*1024),
+            '/ff/7fff': (32*1024)-1,
+            '/file.1': 1,
+            '/file.0': 0,
+            '/file.-1': -1,
+            '/d2/4d2': 1234
+        }
+        for filename, fileid in filemap.items():
+            self.assertEqual(fileid, filename2id(filename), '{} should equal {}'.format(fileid, filename2id(filename)))
+            self.assertEqual(id2filename(fileid), filename, '{} should equal {}'.format(id2filename(fileid), filename))
 
 
 class TestBackendArchive(unittest.TestCase, SetupTearDown):

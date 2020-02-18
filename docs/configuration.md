@@ -60,6 +60,7 @@ into bytes. Each byte is then represented in hex and used to build the directory
 tree.
 
 For example `id2filename(12345)` becomes `/39/3039` on the backend file system.
+See more documentation in the [id2filename module](archivei.id2filename).
 
 ## Running It
 
