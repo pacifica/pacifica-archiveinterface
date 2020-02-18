@@ -47,6 +47,7 @@ class ArchiveInterfaceGenerator:
             start = int(start)
             finish = int(finish)
         except ValueError:
+            archivefile.close()
             raise ArchiveInterfaceError(
                 'Invalid byte range format (int-int) given {}'.format(byte_range)
             )
