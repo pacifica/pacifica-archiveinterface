@@ -16,6 +16,7 @@ class SetupTearDown:
             '{}{}'.format(sep, join('tmp', '1234')),
             '{}{}'.format(sep, join('tmp', '1235')),
             '{}{}'.format(sep, join('tmp', 'cptests', '1235')),
+            '{}{}'.format(sep, join('tmp', 'cptests', '5432')),
             '{}{}'.format(sep, join('tmp', '12345')),
             '{}{}'.format(sep, join('tmp', '5678')),
             '{}{}'.format(sep, join('tmp', '15', 'cd', '5b', '75bcd15')),
