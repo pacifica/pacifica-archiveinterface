@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin Supporting HPSS
 - Plugin Supporting Oracle HSM
 
+## [0.4.0] - 2020-02-28
+### Changed
+- Pull #105 Pacifica Namespace fixes by [@dmlb2000](https://github.com/dmlb2000)
+- Fix #102 HPSS Latency is an integer by [@dmlb2000](https://github.com/dmlb2000)
+- Pull #106 Add Seek and Byte Range Options by [@dmlb2000](https://github.com/dmlb2000)
+- Fix #95 Add id2filename documentation by [@dmlb2000](https://github.com/dmlb2000)
+
 ## [0.3.0] - 2019-12-12
 ### Changed
 - Pull #100 Add Python 3.7 and 3.8 testing by [@dmlb2000](https://github.com/dmlb2000)
