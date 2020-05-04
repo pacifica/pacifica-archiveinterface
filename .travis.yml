@@ -6,13 +6,7 @@ stages:
   - test
   - test-docker
   - deploy
-script:
-  - pip install .
-  - export ARCHIVEINTERFACE_CPCONFIG=$PWD/server.conf
-  - cd tests
-  - coverage run --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pacifica.archiveinterface --stop-after-a-moment
-  - coverage run -a --include '*/site-packages/pacifica/archiveinterface/*' --omit '*/site-packages/pacifica/archiveinterface/backends/abstract/*' -m pytest -xv
-  - coverage report -m --fail-under 100
+script: tox -e $TOX_ENV
 jobs:
   include:
   - stage: lint
@@ -22,8 +16,11 @@ jobs:
   - python: 3.8
     script: pre-commit run -a
   - stage: test
+    env: [ 'TOX_ENV=py36' ]
   - python: 3.7
+    env: [ 'TOX_ENV=py37' ]
   - python: 3.8
+    env: [ 'TOX_ENV=py38' ]
   - stage: test-docker
     python: 3.8
     sudo: required
@@ -48,4 +45,5 @@ jobs:
     language: python
     script: skip
 install:
-- pip install -r requirements-dev.txt
+- pip install tox pre-commit pep257 pylint requests recommonmark
+- pip install .
