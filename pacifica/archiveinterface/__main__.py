@@ -7,6 +7,7 @@ Any new Backends added need to have the type argument extended
 to support the new Backend Archie type
 
 """
+from sys import argv as sys_argv
 from os import path, environ
 from time import sleep
 from threading import Thread
@@ -35,7 +36,7 @@ def stop_later(doit=False):
     sleep_thread.start()
 
 
-def main():
+def main(*argv):
     """Main method to start the wsgi ref server."""
     parser = ArgumentParser(description='Run the archive interface.')
 
@@ -60,7 +61,9 @@ def main():
                         default=False, dest='stop_later',
                         action='store_true')
 
-    args = parser.parse_args()
+    if not argv:  # pragma: no cover
+        argv = sys_argv[1:]
+    args = parser.parse_args(argv)
 
     # Get the specified Backend Archive
     factory = ArchiveBackendFactory()
@@ -114,7 +117,3 @@ def delete_file(args):
         backend.open(archfile, 'r')
         backend.remove()
     return 0
-
-
-if __name__ == '__main__':
-    main()

@@ -1,0 +1,7 @@
+[run]
+include = */site-packages/pacifica/archiveinterface/*
+omit = */site-packages/pacifica/archiveinterface/backends/abstract/*
+
+[report]
+include = */site-packages/pacifica/archiveinterface/*
+omit = */site-packages/pacifica/archiveinterface/backends/abstract/*

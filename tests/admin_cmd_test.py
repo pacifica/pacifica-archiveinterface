@@ -4,11 +4,11 @@
 from os.path import sep
 import unittest
 import mock
-from pacifica.archiveinterface.__main__ import cmd
+from pacifica.archiveinterface.__main__ import cmd, main
 from .common_setup_test import SetupTearDown
 
 
-class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
+class TestAIAdminCmd(unittest.TestCase, SetupTearDown):
     """Test the Posix backend archive."""
 
     @mock.patch('os.unlink')
@@ -24,3 +24,13 @@ class TestPosixBackendArchive(unittest.TestCase, SetupTearDown):
         mock_unlink.assert_called_with('{sep}tmp{sep}1234'.format(sep=sep))
         mock_chmod.assert_called_with('{sep}tmp{sep}1234'.format(sep=sep), 0o200)
         self.assertEqual(res, 0)
+
+    def test_main(self):
+        """Test that main works."""
+        hit_exception = False
+        try:
+            main('--stop-after-a-moment')
+        # pylint: disable=broad-except
+        except Exception:
+            hit_exception = True
+        self.assertFalse(hit_exception)

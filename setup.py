@@ -4,19 +4,8 @@
 import sys
 from os.path import isfile
 from os import path
-# pylint: disable=no-name-in-module
-# pylint: disable=import-error
 from setuptools.extension import Extension
-# pylint: enable=import-error
-# pylint: enable=no-name-in-module
 from setuptools import setup, find_packages
-try:  # pip version 9
-    from pip.req import parse_requirements
-except ImportError:
-    from pip._internal.req import parse_requirements
-
-# parse_requirements() returns generator of pip.req.InstallRequirement objects
-INSTALL_REQS = parse_requirements('requirements.txt', session='hack')
 
 HPSS = Extension(
     'pacifica.archiveinterface.backends.hpss._hpssExtensions',
@@ -59,6 +48,10 @@ setup(
             'pacifica-archiveinterface-cmd=pacifica.archiveinterface.__main__:cmd'
         ],
     },
-    install_requires=[str(ir.req) for ir in INSTALL_REQS],
+    install_requires=[
+        'cherrypy',
+        'peewee>2',
+        'PyMySQL',
+    ],
     ext_modules=EXT_MODULES
 )
