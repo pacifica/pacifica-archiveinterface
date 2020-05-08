@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin Supporting HPSS
 - Plugin Supporting Oracle HSM
 
+## [0.4.1] - 2020-05-08
+### Changed
+- Pull #111 Packaging Improvements Pip>=20 by [@dmlb2000](https://github.com/dmlb2000)
+
 ## [0.4.0] - 2020-02-28
 ### Changed
 - Pull #105 Pacifica Namespace fixes by [@dmlb2000](https://github.com/dmlb2000)
