@@ -68,6 +68,8 @@ class HpssBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._hpsslib = None
+        self._lazyopen = False
+        self._lazymode = 'r'
         # need to load  the hpss libraries/ extensions
         try:
             self._hpsslib = cdll.LoadLibrary(HPSS_LIBRARY_PATH)
@@ -91,17 +93,26 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Open an hpss file."""
         # want to close any open files first
         self.close()
+        fpath = un_abs_path(filepath)
+        self._filepath = os.path.join(
+            self._prefix, path_info_munge(fpath))
+        self._lazyopen = True
+        self._lazymode = mode
+        self._file = None
+
+        return self
+
+    def lazy_open(self):
+        """Open an hpss file."""
+        # want to close any open files first
         try:
-            fpath = un_abs_path(filepath)
-            self._filepath = filename = os.path.join(
-                self._prefix, path_info_munge(fpath))
             hpss = HpssExtended(self._filepath)
             hpss.ping_core(self._sitename)
             hpss.makedirs()
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_long
             hpss_fopen.argtypes = [c_char_p, c_char_p]
-            self._file = hpss_fopen(filename.encode('utf8'), mode.encode('utf8'))
+            self._file = hpss_fopen(self._filepath.encode('utf8'), self._lazymode.encode('utf8'))
             self._check_rcode(
                 self._file,
                 'Failed opening Hpss File, code: ' + str(self._file)
@@ -116,7 +127,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_fseek.restype = c_long
             hpss_fseek.argtypes = [c_void_p, c_long, c_int]
             hpss_fseek(self._file, SEEK_SET, 0)
-
+            self._lazyopen = False
             return self
         except Exception as ex:
             err_str = "Can't open hpss file with error: " + str(ex)
@@ -145,6 +156,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                     'Failed to close hpss file with code: ' + str(rcode)
                 )
                 self._file = None
+            self._lazyopen = False
         except Exception as ex:
             err_str = "Can't close hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -152,6 +164,8 @@ class HpssBackendArchive(AbstractBackendArchive):
     def read(self, blocksize):
         """Read a file from the hpss archive."""
         try:
+            if self._lazyopen:
+                self.lazy_open()
             if self._filepath:
                 buf = create_string_buffer(blocksize)
                 hpss_fread = self._hpsslib.hpss_Fread
@@ -171,6 +185,8 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def seek(self, offset):
         """Seek in the file to offset."""
+        if self._lazyopen:
+            self.lazy_open()
         hpss_fseek = self._hpsslib.hpss_Fseek
         hpss_fseek.restype = c_long
         hpss_fseek.argtypes = [c_void_p, c_long, c_int]
@@ -179,6 +195,8 @@ class HpssBackendArchive(AbstractBackendArchive):
     def write(self, buf):
         """Write a file to the hpss archive."""
         try:
+            if self._lazyopen:
+                self.lazy_open()
             if self._filepath:
                 buf_char_p = cast(buf, c_char_p)
                 hpss_fwrite = self._hpsslib.hpss_Fwrite
@@ -260,6 +278,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             fpath = un_abs_path(file_id)
             # want to open the hpss file first so that it creates the dirs
             self.open(fpath, 'w')
+            self.lazy_open()
             new_filepath = self._filepath
             self.close()  # close the file so we can do the rename
             hpss_rename = self._hpsslib.hpss_Rename
