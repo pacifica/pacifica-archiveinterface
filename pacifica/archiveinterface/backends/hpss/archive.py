@@ -284,7 +284,7 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_rename = self._hpsslib.hpss_Rename
             hpss_rename.restype = c_int
             hpss_rename.argtypes = [c_char_p, c_char_p]
-            ret_val = hpss_rename(str(old_path), str(new_filepath))
+            ret_val = hpss_rename(old_path.encode('utf8'), new_filepath.encode('utf8'))
             self._check_rcode(
                 ret_val,
                 'Hpss rename error. Return val is: ' + str(ret_val)
