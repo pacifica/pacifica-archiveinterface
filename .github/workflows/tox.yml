@@ -1,4 +1,4 @@
-name: Run PyTest
+name: Run Tox
 
 on:
   pull_request: {}
