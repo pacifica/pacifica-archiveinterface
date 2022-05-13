@@ -70,7 +70,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         self._filepath = None
         self._hpsslib = None
         self._lazyopen = False
-        self._lazymode = 'r'
+        self._lazymode = "r"
         # need to load  the hpss libraries/ extensions
         try:
             self._hpsslib = cdll.LoadLibrary(HPSS_LIBRARY_PATH)
@@ -95,8 +95,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         # want to close any open files first
         self.close()
         fpath = un_abs_path(filepath)
-        self._filepath = os.path.join(
-            self._prefix, path_info_munge(fpath))
+        self._filepath = os.path.join(self._prefix, path_info_munge(fpath))
         self._lazyopen = True
         self._lazymode = mode
         self._file = None
@@ -113,7 +112,9 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_fopen = self._hpsslib.hpss_Fopen
             hpss_fopen.restype = c_long
             hpss_fopen.argtypes = [c_char_p, c_char_p]
-            self._file = hpss_fopen(self._filepath.encode('utf8'), self._lazymode.encode('utf8'))
+            self._file = hpss_fopen(
+                self._filepath.encode("utf8"), self._lazymode.encode("utf8")
+            )
             self._check_rcode(
                 self._file, "Failed opening Hpss File, code: " + str(self._file)
             )
@@ -281,14 +282,14 @@ class HpssBackendArchive(AbstractBackendArchive):
         try:
             fpath = un_abs_path(file_id)
             # want to open the hpss file first so that it creates the dirs
-            self.open(fpath, 'w')
+            self.open(fpath, "w")
             self.lazy_open()
             new_filepath = self._filepath
             self.close()  # close the file so we can do the rename
             hpss_rename = self._hpsslib.hpss_Rename
             hpss_rename.restype = c_int
             hpss_rename.argtypes = [c_char_p, c_char_p]
-            ret_val = hpss_rename(old_path.encode('utf8'), new_filepath.encode('utf8'))
+            ret_val = hpss_rename(old_path.encode("utf8"), new_filepath.encode("utf8"))
             self._check_rcode(
                 ret_val, "Hpss rename error. Return val is: " + str(ret_val)
             )
