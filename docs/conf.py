@@ -47,6 +47,7 @@ release = ""
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
+    "readthedocs_ext.readthedocs",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -56,9 +57,9 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 source_parsers = {
-    ".md": CommonMarkParser,
+    ".rst": "restructuredtext",
+    ".md": "markdown",
 }
-source_suffix = [".rst", ".md"]
 
 # The master toctree document.
 master_doc = "index"
