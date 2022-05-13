@@ -19,6 +19,7 @@
 from os import environ
 from os.path import abspath, join
 from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 
 environ["ARCHIVEINTERFACE_CPCONFIG"] = join(abspath(".."), "server.conf")
 
@@ -202,3 +203,20 @@ autodoc_default_options = {
     "undoc-members": None,
     "exclude-members": "__weakref__",
 }
+
+# app setup hook
+
+
+def setup(app):
+    """Setup the hooks for recommonmark."""
+    app.add_config_value(
+        "recommonmark_config",
+        {
+            # 'url_resolver': lambda url: github_doc_root + url,
+            "auto_toc_tree_section": "Contents",
+            "enable_eval_rst": True,
+        },
+        True,
+    )
+    app.add_source_parser(CommonMarkParser)
+    app.add_transform(AutoStructify)
