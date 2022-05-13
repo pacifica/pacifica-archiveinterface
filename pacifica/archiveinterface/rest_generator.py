@@ -16,13 +16,15 @@ BLOCK_SIZE = 1 << 20
 
 def error_page_default(**kwargs):
     """The default error page should always enforce json."""
-    cherrypy.response.headers['Content-Type'] = 'application/json'
-    return dumps({
-        'status': kwargs['status'],
-        'message': kwargs['message'],
-        'traceback': kwargs['traceback'],
-        'version': kwargs['version']
-    })
+    cherrypy.response.headers["Content-Type"] = "application/json"
+    return dumps(
+        {
+            "status": kwargs["status"],
+            "message": kwargs["message"],
+            "traceback": kwargs["traceback"],
+            "version": kwargs["version"],
+        }
+    )
 
 
 class ArchiveInterfaceGenerator:
@@ -37,19 +39,19 @@ class ArchiveInterfaceGenerator:
         """Create an archive interface generator."""
         self._archive = archive
         self._response = None
-        print('Pacifica Archive Interface Up and Running')
+        print("Pacifica Archive Interface Up and Running")
 
     @staticmethod
     def _byte_range_get(archivefile, byte_range):
         """Perform a byte range get and return generator."""
         try:
-            start, finish = byte_range.split('-')
+            start, finish = byte_range.split("-")
             start = int(start)
             finish = int(finish)
         except ValueError:
             archivefile.close()
             raise ArchiveInterfaceError(
-                'Invalid byte range format (int-int) given {}'.format(byte_range)
+                "Invalid byte range format (int-int) given {}".format(byte_range)
             )
         archivefile.seek(start)
 
@@ -65,6 +67,7 @@ class ArchiveInterfaceGenerator:
                     total -= BLOCK_SIZE
                 yield buf
             archivefile.close()
+
         return read()
 
     # pylint: disable=invalid-name
@@ -75,12 +78,14 @@ class ArchiveInterfaceGenerator:
         """
         # if asking for / then return a message that the archive is working
         if not args:
-            cherrypy.response.headers['Content-Type'] = 'application/json'
-            return bytes_type(dumps({'message': 'Pacifica Archive Interface Up and Running'}))
-        archivefile = self._archive.open(args[0], 'r')
-        cherrypy.response.headers['Content-Type'] = 'application/octet-stream'
-        if kwargs.get('byte_range', None):
-            return self._byte_range_get(archivefile, kwargs.get('byte_range'))
+            cherrypy.response.headers["Content-Type"] = "application/json"
+            return bytes_type(
+                dumps({"message": "Pacifica Archive Interface Up and Running"})
+            )
+        archivefile = self._archive.open(args[0], "r")
+        cherrypy.response.headers["Content-Type"] = "application/octet-stream"
+        if kwargs.get("byte_range", None):
+            return self._byte_range_get(archivefile, kwargs.get("byte_range"))
 
         def read():
             """Read the data from the file."""
@@ -89,10 +94,12 @@ class ArchiveInterfaceGenerator:
                 yield buf
                 buf = archivefile.read(BLOCK_SIZE)
             archivefile.close()
+
         return read()
+
     # as documented in cherrypy wiki
     # pylint: disable=protected-access
-    GET._cp_config = {'response.stream': True}
+    GET._cp_config = {"response.stream": True}
     # pylint: enable=protected-access
     # pylint: enable=invalid-name
 
@@ -104,10 +111,9 @@ class ArchiveInterfaceGenerator:
         Writes a file passed in the request to the archive.
         """
         mod_time = get_http_modified_time(cherrypy.request.headers)
-        archivefile = self._archive.open(filepath, 'w')
+        archivefile = self._archive.open(filepath, "w")
         try:
-            content_length = int(
-                cherrypy.request.headers.get('Content-Length'))
+            content_length = int(cherrypy.request.headers.get("Content-Length"))
         except Exception as ex:  # pragma: no cover it's hard to get a client to not do this
             raise ArchiveInterfaceError(
                 "Can't get file content length with error: {}".format(str(ex))
@@ -116,8 +122,9 @@ class ArchiveInterfaceGenerator:
         archivefile.close()
         archivefile.set_mod_time(mod_time)
         archivefile.set_file_permissions()
-        cherrypy.response.status = '201 Created'
-        return {'message': 'File added to archive', 'total_bytes': content_length}
+        cherrypy.response.status = "201 Created"
+        return {"message": "File added to archive", "total_bytes": content_length}
+
     # pylint: enable=invalid-name
 
     # pylint: disable=invalid-name
@@ -126,10 +133,11 @@ class ArchiveInterfaceGenerator:
 
         Gets the status of a file specified in the request.
         """
-        archivefile = self._archive.open(filepath, 'r')
+        archivefile = self._archive.open(filepath, "r")
         status = archivefile.status()
         file_status(status, cherrypy.response)
         archivefile.close()
+
     # pylint: enable=invalid-name
 
     @cherrypy.tools.json_out()
@@ -139,11 +147,12 @@ class ArchiveInterfaceGenerator:
 
         Stage the file specified in the request to disk.
         """
-        archivefile = self._archive.open(filepath, 'r')
+        archivefile = self._archive.open(filepath, "r")
         archivefile.stage()
         archivefile.close()
-        cherrypy.response.status = '200 OK'
-        return {'message': 'File was staged', 'file': filepath}
+        cherrypy.response.status = "200 OK"
+        return {"message": "File was staged", "file": filepath}
+
     # pylint: enable=invalid-name
 
     @cherrypy.tools.json_in()
@@ -151,11 +160,12 @@ class ArchiveInterfaceGenerator:
     # pylint: disable=invalid-name
     def PATCH(self, filepath):
         """Move a file from the original path to the new one specified."""
-        file_path = cherrypy.request.json['path']
+        file_path = cherrypy.request.json["path"]
         file_id = filepath
         self._archive.patch(file_id, file_path)
-        cherrypy.response.status = '200 OK'
-        return {'message': 'File Moved Successfully'}
+        cherrypy.response.status = "200 OK"
+        return {"message": "File Moved Successfully"}
+
     # pylint: enable=invalid-name
 
     # pylint: disable=invalid-name
@@ -164,8 +174,9 @@ class ArchiveInterfaceGenerator:
 
         Delete the file specified in the request to disk.
         """
-        archivefile = self._archive.open(filepath, 'r')
+        archivefile = self._archive.open(filepath, "r")
         archivefile.close()
         archivefile.remove()
-        cherrypy.response.status = '200 OK'
+        cherrypy.response.status = "200 OK"
+
     # pylint: enable=invalid-name

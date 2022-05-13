@@ -37,8 +37,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         self._fpath = None
         self._filepath = None
         # since the database prefix may be different then the system the file is mounted on
-        self._sam_qfs_prefix = get_config().get(
-            'hsm_sideband', 'sam_qfs_prefix')
+        self._sam_qfs_prefix = get_config().get("hsm_sideband", "sam_qfs_prefix")
 
     def open(self, filepath, mode):
         """Open a hsm sideband file."""
@@ -46,8 +45,10 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         try:
             self.close()
         except ArchiveInterfaceError as ex:
-            err_str = "Can't close previous HSM Sideband file before opening new "\
-                'one with error: ' + str(ex)
+            err_str = (
+                "Can't close previous HSM Sideband file before opening new "
+                "one with error: " + str(ex)
+            )
             raise ArchiveInterfaceError(err_str)
         try:
             self._fpath = un_abs_path(filepath)
@@ -55,12 +56,14 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
             self._filepath = filename
             # path database refers to, rather then just the file system mount path
             sam_qfs_path = os.path.join(
-                self._sam_qfs_prefix, path_info_munge(self._fpath))
+                self._sam_qfs_prefix, path_info_munge(self._fpath)
+            )
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname, 0o755)
             self._file = extended_hsmsideband_factory(
-                self._filepath, mode, sam_qfs_path)
+                self._filepath, mode, sam_qfs_path
+            )
             return self
         except Exception as ex:
             err_str = "Can't open HSM Sideband file with error: " + str(ex)
@@ -84,7 +87,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't read HSM Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def seek(self, offset):
@@ -95,7 +98,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't seek HSM Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
@@ -106,7 +109,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't write HSM Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
@@ -115,8 +118,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 os.utime(self._filepath, (mod_time, mod_time))
         except Exception as ex:
-            err_str = "Can't set HSM Sideband file mod time with error: " + \
-                str(ex)
+            err_str = "Can't set HSM Sideband file mod time with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def set_file_permissions(self):
@@ -125,8 +127,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 os.chmod(self._filepath, 0o444)
         except Exception as ex:
-            err_str = "Can't set HSM Sideband file permissions with error: " + \
-                str(ex)
+            err_str = "Can't set HSM Sideband file permissions with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def stage(self):
@@ -137,7 +138,7 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't stage HSM Sideband file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def status(self):
@@ -146,10 +147,9 @@ class HsmSidebandBackendArchive(AbstractBackendArchive):
             if self._file:
                 return self._file.status()
         except Exception as ex:
-            err_str = "Can't get HSM Sideband file status with error: " + \
-                str(ex)
+            err_str = "Can't get HSM Sideband file status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def patch(self, file_id, old_path):

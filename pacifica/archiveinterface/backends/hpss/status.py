@@ -16,15 +16,13 @@ class HpssStatus(AbstractStatus):
     needs mtime,ctime, bytes per level array.
     """
 
-    _disk = 'disk'
-    _tape = 'tape'
-    _error = 'error'
+    _disk = "disk"
+    _tape = "tape"
+    _error = "error"
 
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         """HPSS Status Constructor."""
-        super(HpssStatus, self).__init__(
-            mtime, ctime, bytes_per_level, filesize
-        )
+        super(HpssStatus, self).__init__(mtime, ctime, bytes_per_level, filesize)
         self.mtime = mtime
         self.ctime = ctime
         self.bytes_per_level = bytes_per_level
@@ -49,8 +47,7 @@ class HpssStatus(AbstractStatus):
         # This defines what hpss integer levels really mean
         # handle error if on level 4 or 5 since those are suppose to be null
         # UPDATE LEVEL NAMES AS NEEDED
-        type_per_level = [self._disk, self._tape, self._tape,
-                          self._error, self._error]
+        type_per_level = [self._disk, self._tape, self._tape, self._error, self._error]
         return type_per_level
 
     def set_filepath(self, filepath):

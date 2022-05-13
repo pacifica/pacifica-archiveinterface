@@ -24,7 +24,7 @@ class ArchiveBackendFactory:
         if backend_class:
             return backend_class(prefix)
         raise NotImplementedError(
-            'The requested Archive Backend has not been implemented'
+            "The requested Archive Backend has not been implemented"
         )
 
     def load_backend_archive(self, name):
@@ -32,15 +32,18 @@ class ArchiveBackendFactory:
 
         Only want to load backend type being used.
         """
-        if name == 'hpss':  # pragma: no cover licensing issues for testing
+        if name == "hpss":  # pragma: no cover licensing issues for testing
             # pylint: disable=import-outside-toplevel
             from .hpss.archive import HpssBackendArchive
-            self.share_classes = {'hpss': HpssBackendArchive}
-        elif name == 'posix':
+
+            self.share_classes = {"hpss": HpssBackendArchive}
+        elif name == "posix":
             # pylint: disable=import-outside-toplevel
             from .posix.archive import PosixBackendArchive
-            self.share_classes = {'posix': PosixBackendArchive}
-        elif name == 'hsmsideband':  # pragma: no cover don't have example database yet
+
+            self.share_classes = {"posix": PosixBackendArchive}
+        elif name == "hsmsideband":  # pragma: no cover don't have example database yet
             # pylint: disable=import-outside-toplevel
             from .oracle_hsm_sideband.archive import HsmSidebandBackendArchive
-            self.share_classes = {'hsmsideband': HsmSidebandBackendArchive}
+
+            self.share_classes = {"hsmsideband": HsmSidebandBackendArchive}
