@@ -9,7 +9,7 @@ from .orm import SamInode, SamFile, SamPath
 
 def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
     """Return appropiate binary io object with additional methods."""
-    if 'r' in mode:
+    if "r" in mode:
         file_obj_cls = BufferedReader
     else:
         file_obj_cls = BufferedWriter
@@ -28,20 +28,18 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
             """Return status of file."""
             filename = os.path.basename(self._sam_qfs_path)
             # need to add a slash for sideband db
-            directory = os.path.dirname(self._sam_qfs_path) + '/'
+            directory = os.path.dirname(self._sam_qfs_path) + "/"
             stat_record = self._stat_ino_sql(filename, directory)
             if stat_record:
-                mtime = stat_record['mtime']
-                ctime = stat_record['ctime']
+                mtime = stat_record["mtime"]
+                ctime = stat_record["ctime"]
                 # if the record is online then on disk, else say not on disk but on tape
-                if stat_record['online'] == 1:
-                    bytes_per_level = (int(stat_record['size']),)
+                if stat_record["online"] == 1:
+                    bytes_per_level = (int(stat_record["size"]),)
                 else:
-                    bytes_per_level = (
-                        int(0), int(stat_record['size']))
-                filesize = stat_record['size']
-                status = HsmSidebandStatus(
-                    mtime, ctime, bytes_per_level, filesize)
+                    bytes_per_level = (int(0), int(stat_record["size"]))
+                filesize = stat_record["size"]
+                status = HsmSidebandStatus(mtime, ctime, bytes_per_level, filesize)
                 status.set_filepath(self._path)
                 return status
             return None
@@ -71,7 +69,13 @@ def extended_hsmsideband_factory(filepath, mode, sam_qfs_path):
         @staticmethod
         def _make_status_dictionary(result):
             """Break the query results into a dictionary."""
-            status = {'ino': result.ino, 'size': result.size, 'ctime': result.create_time,
-                      'mtime': result.modify_time, 'online': result.online}
+            status = {
+                "ino": result.ino,
+                "size": result.size,
+                "ctime": result.create_time,
+                "mtime": result.modify_time,
+                "online": result.online,
+            }
             return status
+
     return ExtendedHsmSideband(filepath, mode, sam_qfs_path)

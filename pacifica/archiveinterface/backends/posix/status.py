@@ -16,16 +16,11 @@ class PosixStatus(AbstractStatus):
     needs mtime,ctime, bytes per level array.
     """
 
-    _disk = 'disk'
+    _disk = "disk"
 
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         """Constructor for posix status class."""
-        super(PosixStatus, self).__init__(
-            mtime,
-            ctime,
-            bytes_per_level,
-            filesize
-        )
+        super(PosixStatus, self).__init__(mtime, ctime, bytes_per_level, filesize)
         self.mtime = mtime
         self.ctime = ctime
         self.bytes_per_level = bytes_per_level

@@ -13,23 +13,23 @@ class SetupTearDown:
     def _cleanup():
         """Clean up temporary files in /tmp."""
         file_list = [
-            '{}{}'.format(sep, join('tmp', '1234')),
-            '{}{}'.format(sep, join('tmp', '1235')),
-            '{}{}'.format(sep, join('tmp', 'cptests', '1235')),
-            '{}{}'.format(sep, join('tmp', 'cptests', '5432')),
-            '{}{}'.format(sep, join('tmp', '12345')),
-            '{}{}'.format(sep, join('tmp', '5678')),
-            '{}{}'.format(sep, join('tmp', '15', 'cd', '5b', '75bcd15')),
-            '{}{}'.format(sep, join('tmp', 'a', 'b', 'd'))
+            "{}{}".format(sep, join("tmp", "1234")),
+            "{}{}".format(sep, join("tmp", "1235")),
+            "{}{}".format(sep, join("tmp", "cptests", "1235")),
+            "{}{}".format(sep, join("tmp", "cptests", "5432")),
+            "{}{}".format(sep, join("tmp", "12345")),
+            "{}{}".format(sep, join("tmp", "5678")),
+            "{}{}".format(sep, join("tmp", "15", "cd", "5b", "75bcd15")),
+            "{}{}".format(sep, join("tmp", "a", "b", "d")),
         ]
         dir_list = [
-            '{}{}'.format(sep, join('tmp', 'cptests')),
-            '{}{}'.format(sep, join('tmp', 'a', 'b')),
-            '{}{}'.format(sep, join('tmp', 'a')),
-            '{}{}'.format(sep, join('tmp', '15', 'cd', '5b')),
-            '{}{}'.format(sep, join('tmp', '15', 'cd')),
-            '{}{}'.format(sep, join('tmp', '15')),
-            '{}{}'.format(sep, join('tmp', '39')),
+            "{}{}".format(sep, join("tmp", "cptests")),
+            "{}{}".format(sep, join("tmp", "a", "b")),
+            "{}{}".format(sep, join("tmp", "a")),
+            "{}{}".format(sep, join("tmp", "15", "cd", "5b")),
+            "{}{}".format(sep, join("tmp", "15", "cd")),
+            "{}{}".format(sep, join("tmp", "15")),
+            "{}{}".format(sep, join("tmp", "39")),
         ]
         for fname in file_list:
             if isfile(fname):

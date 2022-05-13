@@ -5,6 +5,7 @@
 Module that holds the class to the interface for the hpss c extensions.
 """
 from os.path import dirname
+
 # c extension import not picked up by pylint, so disabling
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
@@ -24,7 +25,7 @@ class HpssExtended:
 
     def __init__(self, filepath):
         """Constructor for the HPSS Extended File type."""
-        self._accept_latency = get_config().getint('hpss', 'accept_latency')
+        self._accept_latency = get_config().getint("hpss", "accept_latency")
         self._latency = None
         self._filepath = filepath
 
@@ -37,8 +38,10 @@ class HpssExtended:
         latency = self.parse_latency(latency_tuple)
 
         if latency > acceptable_latency:
-            err_str = 'The archive core server is slow to respond'\
-                      ' Latency is: ' + str(latency) + ' second(s)'
+            err_str = (
+                "The archive core server is slow to respond"
+                " Latency is: " + str(latency) + " second(s)"
+            )
             raise ArchiveInterfaceError(err_str)
 
     def parse_latency(self, latency_tuple):
@@ -54,10 +57,10 @@ class HpssExtended:
         # LatencyTuple[3] = microseconds relative before ping
 
         lat_seconds = float(latency_tuple[0])
-        lat_microseconds = (float(latency_tuple[1]) / 1000000)
+        lat_microseconds = float(latency_tuple[1]) / 1000000
         response_time = lat_seconds + lat_microseconds
         before_ping_seconds = float(latency_tuple[2])
-        before_ping_microseconds = (float(latency_tuple[3]) / 1000000)
+        before_ping_microseconds = float(latency_tuple[3]) / 1000000
         before_ping_time = before_ping_seconds + before_ping_microseconds
         latency = response_time - before_ping_time
         self._latency = latency
@@ -70,10 +73,10 @@ class HpssExtended:
         Found the documentation for this in the hpss programmers reference
         section 2.3.6.2.8 "Get Extanded Attributes".
         """
-        mtime = ''
-        ctime = ''
-        bytes_per_level = ''
-        filesize = ''
+        mtime = ""
+        ctime = ""
+        bytes_per_level = ""
+        filesize = ""
         try:
             mtime = _hpssExtensions.hpss_mtime(self._filepath)
             ctime = _hpssExtensions.hpss_ctime(self._filepath)
@@ -83,8 +86,9 @@ class HpssExtended:
             status.set_filepath(self._filepath)
         except Exception as ex:
             # Push the excpetion up the chain to the response
-            err_str = 'Error using c extensions for hpss status'\
-                      ' exception: ' + str(ex)
+            err_str = "Error using c extensions for hpss status" " exception: " + str(
+                ex
+            )
             raise ArchiveInterfaceError(err_str)
         return status
 
@@ -100,8 +104,7 @@ class HpssExtended:
 
         except Exception as ex:
             # Push the excpetion up the chain to the response
-            err_str = 'Error using c extension for hpss stage'\
-                      ' exception: ' + str(ex)
+            err_str = "Error using c extension for hpss stage" " exception: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
@@ -111,8 +114,7 @@ class HpssExtended:
 
         except Exception as ex:
             # Push the excpetion up the chain to the response
-            err_str = 'Error using c extension for hpss utime'\
-                      ' exception: ' + str(ex)
+            err_str = "Error using c extension for hpss utime" " exception: " + str(ex)
             raise ArchiveInterfaceError(err_str)
 
     def makedirs(self):
@@ -121,6 +123,7 @@ class HpssExtended:
             _hpssExtensions.hpss_makedirs(dirname(self._filepath))
         except Exception as ex:
             # Push the excpetion up the chain to the response
-            err_str = 'Error using c extension for hpss makedirs'\
-                      ' exception: ' + str(ex)
+            err_str = "Error using c extension for hpss makedirs" " exception: " + str(
+                ex
+            )
             raise ArchiveInterfaceError(err_str)
