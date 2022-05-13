@@ -11,17 +11,19 @@ from peewee import IntegerField, BigIntegerField
 from peewee import Model, CompositeKey, FloatField
 from ...config import get_config
 
-MYSQL_ADDR = get_config().get('hsm_sideband', 'host')
-MYSQL_PORT = get_config().get('hsm_sideband', 'port')
-MYSQL_USER = get_config().get('hsm_sideband', 'user')
-MYSQL_PASS = get_config().get('hsm_sideband', 'password')
-MYSQL_SCHEMA = get_config().get('hsm_sideband', 'schema')
+MYSQL_ADDR = get_config().get("hsm_sideband", "host")
+MYSQL_PORT = get_config().get("hsm_sideband", "port")
+MYSQL_USER = get_config().get("hsm_sideband", "user")
+MYSQL_PASS = get_config().get("hsm_sideband", "password")
+MYSQL_SCHEMA = get_config().get("hsm_sideband", "schema")
 
-DB = MySQLDatabase(MYSQL_SCHEMA,
-                   host=MYSQL_ADDR,
-                   port=int(MYSQL_PORT),
-                   user=MYSQL_USER,
-                   passwd=MYSQL_PASS)
+DB = MySQLDatabase(
+    MYSQL_SCHEMA,
+    host=MYSQL_ADDR,
+    port=int(MYSQL_PORT),
+    user=MYSQL_USER,
+    passwd=MYSQL_PASS,
+)
 
 
 class BaseModel(Model):
@@ -83,12 +85,12 @@ class SamArchive(BaseModel):
     class Meta:
         """Contain index/key info for table."""
 
-        db_table = 'sam_archive'
+        db_table = "sam_archive"
         indexes = (
-            (('ino', 'gen', 'copy', 'seq'), True),
-            (('media_type', 'vsn'), False),
+            (("ino", "gen", "copy", "seq"), True),
+            (("media_type", "vsn"), False),
         )
-        primary_key = CompositeKey('copy', 'gen', 'ino', 'seq')
+        primary_key = CompositeKey("copy", "gen", "ino", "seq")
 
 
 class SamFile(BaseModel):
@@ -104,12 +106,12 @@ class SamFile(BaseModel):
     class Meta:
         """Contain index/key info for table."""
 
-        db_table = 'sam_file'
+        db_table = "sam_file"
         indexes = (
-            (('ino', 'gen'), False),
-            (('p_ino', 'p_gen', 'name_hash', 'name'), True),
+            (("ino", "gen"), False),
+            (("p_ino", "p_gen", "name_hash", "name"), True),
         )
-        primary_key = CompositeKey('name', 'name_hash', 'p_gen', 'p_ino')
+        primary_key = CompositeKey("name", "name_hash", "p_gen", "p_ino")
 
 
 class SamInode(BaseModel):
@@ -129,11 +131,9 @@ class SamInode(BaseModel):
     class Meta:
         """Contain index/key info for table."""
 
-        db_table = 'sam_inode'
-        indexes = (
-            (('ino', 'gen'), True),
-        )
-        primary_key = CompositeKey('gen', 'ino')
+        db_table = "sam_inode"
+        indexes = ((("ino", "gen"), True),)
+        primary_key = CompositeKey("gen", "ino")
 
 
 class SamPath(BaseModel):
@@ -146,11 +146,9 @@ class SamPath(BaseModel):
     class Meta:
         """Contain index/key info for table."""
 
-        db_table = 'sam_path'
-        indexes = (
-            (('ino', 'gen'), True),
-        )
-        primary_key = CompositeKey('gen', 'ino')
+        db_table = "sam_path"
+        indexes = ((("ino", "gen"), True),)
+        primary_key = CompositeKey("gen", "ino")
 
 
 class SamVersion(BaseModel):
@@ -162,4 +160,4 @@ class SamVersion(BaseModel):
     class Meta:
         """Contain index/key info for table."""
 
-        db_table = 'sam_version'
+        db_table = "sam_version"

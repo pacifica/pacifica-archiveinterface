@@ -17,22 +17,17 @@ from .rest_generator import ArchiveInterfaceGenerator, error_page_default
 from .backends.factory import ArchiveBackendFactory
 from .globals import CHERRYPY_CONFIG
 
-BACKEND_TYPE = getenv('PAI_BACKEND_TYPE', 'posix')
-PREFIX = getenv('PAI_PREFIX', '/tmp')
+BACKEND_TYPE = getenv("PAI_BACKEND_TYPE", "posix")
+PREFIX = getenv("PAI_PREFIX", "/tmp")
 
 # Get the specified Backend Archive
 FACTORY = ArchiveBackendFactory()
-BACKEND = FACTORY.get_backend_archive(
-    BACKEND_TYPE,
-    PREFIX
-)
+BACKEND = FACTORY.get_backend_archive(BACKEND_TYPE, PREFIX)
 
-cherrypy.config.update({'error_page.default': error_page_default})
+cherrypy.config.update({"error_page.default": error_page_default})
 # pylint doesn't realize that application is actually a callable
 # pylint: disable=invalid-name
 application = cherrypy.Application(
-    ArchiveInterfaceGenerator(BACKEND),
-    '/',
-    CHERRYPY_CONFIG
+    ArchiveInterfaceGenerator(BACKEND), "/", CHERRYPY_CONFIG
 )
 # pylint: enable=invalid-name

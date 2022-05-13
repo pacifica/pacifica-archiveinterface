@@ -17,14 +17,14 @@ class TestArchiveUtils(unittest.TestCase, SetupTearDown):
 
     def test_utils_absolute_path(self):
         """Test the return of un_abs_path."""
-        return_one = un_abs_path('tmp/foo.text')
-        return_two = un_abs_path('/tmp/foo.text')
-        return_three = un_abs_path('/tmp/foo.text')
-        return_four = un_abs_path('foo.text')
-        self.assertEqual(return_one, 'tmp/foo.text')
-        self.assertEqual(return_two, 'tmp/foo.text')
-        self.assertNotEqual(return_three, '/tmp/foo.text')
-        self.assertEqual(return_four, 'foo.text')
+        return_one = un_abs_path("tmp/foo.text")
+        return_two = un_abs_path("/tmp/foo.text")
+        return_three = un_abs_path("/tmp/foo.text")
+        return_four = un_abs_path("foo.text")
+        self.assertEqual(return_one, "tmp/foo.text")
+        self.assertEqual(return_two, "tmp/foo.text")
+        self.assertNotEqual(return_three, "/tmp/foo.text")
+        self.assertEqual(return_four, "foo.text")
         hit_exception = False
         try:
             un_abs_path(47)
@@ -35,7 +35,7 @@ class TestArchiveUtils(unittest.TestCase, SetupTearDown):
     def test_get_http_modified_time(self):
         """Test to see if the path size of a directory is returned."""
         env = dict()
-        env['HTTP_LAST_MODIFIED'] = 'SUN, 06 NOV 1994 08:49:37 GMT'
+        env["HTTP_LAST_MODIFIED"] = "SUN, 06 NOV 1994 08:49:37 GMT"
         mod_time = get_http_modified_time(env)
         self.assertEqual(mod_time, 784111777)
         env = dict()
@@ -44,7 +44,7 @@ class TestArchiveUtils(unittest.TestCase, SetupTearDown):
         for thing in (None, [], 46):
             hit_exception = False
             try:
-                env['HTTP_LAST_MODIFIED'] = thing
+                env["HTTP_LAST_MODIFIED"] = thing
                 get_http_modified_time(env)
             except ArchiveInterfaceError:
                 hit_exception = True
@@ -57,52 +57,60 @@ class TestId2Filename(unittest.TestCase, SetupTearDown):
     def test_id2filename_basic(self):
         """Test the correct creation of a basicfilename."""
         filename = id2filename(1234)
-        self.assertEqual(filename, '/d2/4d2')
+        self.assertEqual(filename, "/d2/4d2")
 
     def test_id2filename_negative(self):
         """Test the correct creation of a negative filename."""
         filename = id2filename(-1)
-        self.assertEqual(filename, '/file.-1')
+        self.assertEqual(filename, "/file.-1")
 
     def test_id2filename_zero(self):
         """Test the correct creation of a zero filename."""
         filename = id2filename(0)
-        self.assertEqual(filename, '/file.0')
+        self.assertEqual(filename, "/file.0")
 
     def test_id2filename_simple(self):
         """Test the correct creation of a simple filename."""
         filename = id2filename(1)
-        self.assertEqual(filename, '/file.1')
+        self.assertEqual(filename, "/file.1")
 
     def test_id2filename_u_shift_point(self):
         """Test the correct creation of an under shift point filename."""
         filename = id2filename((32 * 1024) - 1)
-        self.assertEqual(filename, '/ff/7fff')
+        self.assertEqual(filename, "/ff/7fff")
 
     def test_id2filename_shift_point(self):
         """Test the correct creation of the shift point filename."""
         filename = id2filename((32 * 1024))
-        self.assertEqual(filename, '/00/8000')
+        self.assertEqual(filename, "/00/8000")
 
     def test_id2filename_o_shift_point(self):
         """Test the correct creation of an over shift point filename."""
         filename = id2filename((32 * 1024) + 1)
-        self.assertEqual(filename, '/01/8001')
+        self.assertEqual(filename, "/01/8001")
 
     def test_filename2id_all(self):
         """Test all the filenames to ids and vice versa."""
         filemap = {
-            '/01/8001': (32*1024)+1,
-            '/00/8000': (32*1024),
-            '/ff/7fff': (32*1024)-1,
-            '/file.1': 1,
-            '/file.0': 0,
-            '/file.-1': -1,
-            '/d2/4d2': 1234
+            "/01/8001": (32 * 1024) + 1,
+            "/00/8000": (32 * 1024),
+            "/ff/7fff": (32 * 1024) - 1,
+            "/file.1": 1,
+            "/file.0": 0,
+            "/file.-1": -1,
+            "/d2/4d2": 1234,
         }
         for filename, fileid in filemap.items():
-            self.assertEqual(fileid, filename2id(filename), '{} should equal {}'.format(fileid, filename2id(filename)))
-            self.assertEqual(id2filename(fileid), filename, '{} should equal {}'.format(id2filename(fileid), filename))
+            self.assertEqual(
+                fileid,
+                filename2id(filename),
+                "{} should equal {}".format(fileid, filename2id(filename)),
+            )
+            self.assertEqual(
+                id2filename(fileid),
+                filename,
+                "{} should equal {}".format(id2filename(fileid), filename),
+            )
 
 
 class TestBackendArchive(unittest.TestCase, SetupTearDown):
@@ -111,17 +119,17 @@ class TestBackendArchive(unittest.TestCase, SetupTearDown):
     def test_posix_backend(self):
         """Test the creation of a posix backend."""
         factory = ArchiveBackendFactory()
-        backend = factory.get_backend_archive('posix', '/tmp')
+        backend = factory.get_backend_archive("posix", "/tmp")
         # pylint: disable=protected-access
         prefix = backend._prefix
         # pylint: enable=protected-access
-        self.assertEqual('/tmp', prefix)
+        self.assertEqual("/tmp", prefix)
 
     def test_invalid_backend(self):
         """Test the creation of an invalid backend."""
         with self.assertRaises(NotImplementedError):
             factory = ArchiveBackendFactory()
-            factory.get_backend_archive('badbackend', '/tmp')
+            factory.get_backend_archive("badbackend", "/tmp")
 
 
 class TestArchiveGenerator(unittest.TestCase, SetupTearDown):
@@ -135,7 +143,7 @@ class TestArchiveGenerator(unittest.TestCase, SetupTearDown):
     def test_generator_creation(self):
         """Test the creation of a archive generator."""
         factory = ArchiveBackendFactory()
-        backend = factory.get_backend_archive('posix', '/tmp')
+        backend = factory.get_backend_archive("posix", "/tmp")
         generator = ArchiveInterfaceGenerator(backend)
         # pylint: disable=protected-access
         archive = generator._archive
@@ -145,8 +153,7 @@ class TestArchiveGenerator(unittest.TestCase, SetupTearDown):
     def test_generator_get(self):
         """Test the creation of a archive generator."""
         factory = ArchiveBackendFactory()
-        backend = factory.get_backend_archive('posix', '/tmp')
+        backend = factory.get_backend_archive("posix", "/tmp")
         generator = ArchiveInterfaceGenerator(backend)
         jsn = loads(generator.GET())
-        self.assertEqual(
-            jsn['message'], 'Pacifica Archive Interface Up and Running')
+        self.assertEqual(jsn["message"], "Pacifica Archive Interface Up and Running")

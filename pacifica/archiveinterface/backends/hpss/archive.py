@@ -24,10 +24,11 @@ sys.setdlopenflags(RTLD_LAZY | RTLD_DEEPBIND)
 # import cant be at top due to lazy load
 # pylint: disable=wrong-import-position
 from ..hpss.extended import HpssExtended  # noqa: E402
+
 # pylint: enable=wrong-import-position
 
 # place where hpss lib is installed on a unix machine
-HPSS_LIBRARY_PATH = '/opt/hpss/lib/libhpss.so'
+HPSS_LIBRARY_PATH = "/opt/hpss/lib/libhpss.so"
 # HPSS Values from their documentation
 HPSS_AUTHN_MECH_INVALID = 0
 HPSS_AUTHN_MECH_KRB5 = 1
@@ -64,7 +65,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         """Constructor for the HPSS Backend Archive."""
         super(HpssBackendArchive, self).__init__(prefix)
         self._prefix = prefix
-        self._sitename = get_config().get('hpss', 'sitename')
+        self._sitename = get_config().get("hpss", "sitename")
         self._file = None
         self._filepath = None
         self._hpsslib = None
@@ -114,11 +115,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_fopen.argtypes = [c_char_p, c_char_p]
             self._file = hpss_fopen(self._filepath.encode('utf8'), self._lazymode.encode('utf8'))
             self._check_rcode(
-                self._file,
-                'Failed opening Hpss File, code: ' + str(self._file)
+                self._file, "Failed opening Hpss File, code: " + str(self._file)
             )
             if self._file == 0:
-                raise ArchiveInterfaceError('NULL File returned on open')
+                raise ArchiveInterfaceError("NULL File returned on open")
 
             # this stops a race where open seems to start a read async,
             # and then if you delete the file we get a sigabort
@@ -144,16 +144,14 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss_fflush.argtypes = [c_void_p]
                 rcode = hpss_fflush(self._file)
                 self._check_rcode(
-                    rcode,
-                    'Failed to flush hpss file with code: ' + str(rcode)
+                    rcode, "Failed to flush hpss file with code: " + str(rcode)
                 )
                 hpss_fclose = self._hpsslib.hpss_Fclose
                 hpss_fclose.restype = c_int
                 hpss_fclose.argtypes = [c_void_p]
                 rcode = hpss_fclose(self._file)
                 self._check_rcode(
-                    rcode,
-                    'Failed to close hpss file with code: ' + str(rcode)
+                    rcode, "Failed to close hpss file with code: " + str(rcode)
                 )
                 self._file = None
             self._lazyopen = False
@@ -173,14 +171,13 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss_fread.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
                 rcode = hpss_fread(buf, 1, blocksize, self._file)
                 self._check_rcode(
-                    rcode,
-                    'Failed During HPSS Fread, return value is: ' + str(rcode)
+                    rcode, "Failed During HPSS Fread, return value is: " + str(rcode)
                 )
                 return buf.raw[:rcode]
         except Exception as ex:
             err_str = "Can't read hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file path invalid'
+        err_str = "Internal file path invalid"
         raise ArchiveInterfaceError(err_str)
 
     def seek(self, offset):
@@ -204,7 +201,7 @@ class HpssBackendArchive(AbstractBackendArchive):
                 hpss_fwrite.argtypes = [c_void_p, c_size_t, c_size_t, c_void_p]
                 rcode = hpss_fwrite(buf_char_p, 1, len(buf), self._file)
                 if rcode != len(buf):
-                    raise ArchiveInterfaceError('Short write for hpss file')
+                    raise ArchiveInterfaceError("Short write for hpss file")
         except Exception as ex:
             err_str = "Can't write hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -230,7 +227,7 @@ class HpssBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't get hpss status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file path invalid'
+        err_str = "Internal file path invalid"
         raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
@@ -250,10 +247,9 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
-                rcode = self._hpsslib.hpss_Chmod(self._filepath.encode('utf8'), 0o444)
+                rcode = self._hpsslib.hpss_Chmod(self._filepath.encode("utf8"), 0o444)
                 self._check_rcode(
-                    rcode,
-                    'Failed to chmod hpss file with code: ' + str(rcode)
+                    rcode, "Failed to chmod hpss file with code: " + str(rcode)
                 )
         except Exception as ex:
             err_str = "Can't set hpss file permissions with error: " + str(ex)
@@ -261,15 +257,23 @@ class HpssBackendArchive(AbstractBackendArchive):
 
     def authenticate(self):
         """Authenticate the user with the hpss system."""
-        user = get_config().get('hpss', 'user')
-        auth = get_config().get('hpss', 'auth')
+        user = get_config().get("hpss", "user")
+        auth = get_config().get("hpss", "auth")
         rcode = self._hpsslib.hpss_SetLoginCred(
-            user.encode('utf8'), HPSS_AUTHN_MECH_UNIX,
-            HPSS_RPC_CRED_CLIENT, HPSS_RPC_AUTH_TYPE_KEYTAB, auth.encode('utf8')
+            user.encode("utf8"),
+            HPSS_AUTHN_MECH_UNIX,
+            HPSS_RPC_CRED_CLIENT,
+            HPSS_RPC_AUTH_TYPE_KEYTAB,
+            auth.encode("utf8"),
         )
         self._check_rcode(
             rcode,
-            'Could Not Authenticate, error code is:' + str(rcode) + ' User: ' + user + ' Auth: ' + auth
+            "Could Not Authenticate, error code is:"
+            + str(rcode)
+            + " User: "
+            + user
+            + " Auth: "
+            + auth,
         )
 
     def patch(self, file_id, old_path):
@@ -286,11 +290,10 @@ class HpssBackendArchive(AbstractBackendArchive):
             hpss_rename.argtypes = [c_char_p, c_char_p]
             ret_val = hpss_rename(old_path.encode('utf8'), new_filepath.encode('utf8'))
             self._check_rcode(
-                ret_val,
-                'Hpss rename error. Return val is: ' + str(ret_val)
+                ret_val, "Hpss rename error. Return val is: " + str(ret_val)
             )
         except Exception as ex:
-            err_str = 'Can not rename hpss file {} to {} with error: {}'.format(
+            err_str = "Can not rename hpss file {} to {} with error: {}".format(
                 old_path, new_filepath, str(ex)
             )
             raise ArchiveInterfaceError(err_str)
@@ -301,14 +304,14 @@ class HpssBackendArchive(AbstractBackendArchive):
             if self._filepath:
                 buf_char_p = cast(self._filepath.encode(), c_char_p)
                 rcode = self._hpsslib.hpss_Chmod(buf_char_p, 0o644)
-                self._check_rcode(rcode, 'Error chmoding hpss file: {}'.format(rcode))
+                self._check_rcode(rcode, "Error chmoding hpss file: {}".format(rcode))
 
                 hpss_unlink = self._hpsslib.hpss_Unlink
                 hpss_unlink.restype = c_int
                 hpss_unlink.argtypes = [c_char_p]
                 buf_char_p = cast(self._filepath.encode(), c_char_p)
                 rcode = hpss_unlink(buf_char_p)
-                self._check_rcode(rcode, 'Error removing hpss file: {}'.format(rcode))
+                self._check_rcode(rcode, "Error removing hpss file: {}".format(rcode))
             self._filepath = None
         except Exception as ex:
             err_str = "Can't remove hpss file with error: " + str(ex)

@@ -30,7 +30,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         self._file = None
         self._filepath = None
         self._id2filename = lambda x: x
-        if get_config().getboolean('posix', 'use_id2filename'):
+        if get_config().getboolean("posix", "use_id2filename"):
             self._id2filename = lambda x: id2filename(int(x))
 
     def open(self, filepath, mode):
@@ -39,8 +39,10 @@ class PosixBackendArchive(AbstractBackendArchive):
         try:
             self.close()
         except ArchiveInterfaceError as ex:
-            err_str = "Can't close previous posix file before opening new "\
-                      'one with error: ' + str(ex)
+            err_str = (
+                "Can't close previous posix file before opening new "
+                "one with error: " + str(ex)
+            )
             raise ArchiveInterfaceError(err_str)
         try:
             fpath = un_abs_path(self._id2filename(filepath))
@@ -73,7 +75,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't read posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def seek(self, offset):
@@ -84,7 +86,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't seek posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def write(self, buf):
@@ -97,7 +99,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't write posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def set_mod_time(self, mod_time):
@@ -126,7 +128,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't stage posix file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def status(self):
@@ -137,7 +139,7 @@ class PosixBackendArchive(AbstractBackendArchive):
         except Exception as ex:
             err_str = "Can't get posix file status with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
-        err_str = 'Internal file handle invalid'
+        err_str = "Internal file handle invalid"
         raise ArchiveInterfaceError(err_str)
 
     def patch(self, file_id, old_path):

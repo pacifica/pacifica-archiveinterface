@@ -14,17 +14,12 @@ class HsmSidebandStatus(AbstractStatus):
     Needs mtime,ctime, bytes per level array
     """
 
-    _disk = 'disk'
-    _tape = 'tape'
+    _disk = "disk"
+    _tape = "tape"
 
     def __init__(self, mtime, ctime, bytes_per_level, filesize):
         """Constructor to build the object."""
-        super(HsmSidebandStatus, self).__init__(
-            mtime,
-            ctime,
-            bytes_per_level,
-            filesize
-        )
+        super(HsmSidebandStatus, self).__init__(mtime, ctime, bytes_per_level, filesize)
         self.mtime = mtime
         self.ctime = ctime
         self.bytes_per_level = bytes_per_level

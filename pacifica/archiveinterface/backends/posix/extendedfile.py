@@ -17,7 +17,7 @@ from .status import PosixStatus
 
 def extended_file_factory(filepath, mode):
     """Return appropiate binary io object with additional methods."""
-    if 'r' in mode:  # pragma: no cover only one version of python
+    if "r" in mode:  # pragma: no cover only one version of python
         file_obj_cls = BufferedReader
     else:  # pragma: no cover only one version of python
         file_obj_cls = BufferedWriter
@@ -46,4 +46,5 @@ def extended_file_factory(filepath, mode):
         def stage(self):
             """Stage a file. Since POSIX, essentially a no op."""
             self._staged = True
+
     return ExtendedFile(filepath, mode)
