@@ -155,7 +155,6 @@ class HpssBackendArchive(AbstractBackendArchive):
                     rcode, "Failed to close hpss file with code: " + str(rcode)
                 )
                 self._file = None
-            self._lazyopen = False
         except Exception as ex:
             err_str = "Can't close hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
@@ -234,6 +233,8 @@ class HpssBackendArchive(AbstractBackendArchive):
     def set_mod_time(self, mod_time):
         """Set the mod time for an hpss archive file."""
         try:
+            if self._lazyopen:
+                self.lazy_open()
             if self._filepath:
                 hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
@@ -245,6 +246,8 @@ class HpssBackendArchive(AbstractBackendArchive):
     def set_file_permissions(self):
         """Set the file permissions for an hpss archive file."""
         try:
+            if self._lazyopen:
+                self.lazy_open()
             if self._filepath:
                 hpss = HpssExtended(self._filepath)
                 hpss.ping_core(self._sitename)
