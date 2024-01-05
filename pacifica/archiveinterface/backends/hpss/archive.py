@@ -155,7 +155,6 @@ class HpssBackendArchive(AbstractBackendArchive):
                     rcode, "Failed to close hpss file with code: " + str(rcode)
                 )
                 self._file = None
-            self._lazyopen = False
         except Exception as ex:
             err_str = "Can't close hpss file with error: " + str(ex)
             raise ArchiveInterfaceError(err_str)
