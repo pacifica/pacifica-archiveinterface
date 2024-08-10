@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 HPSS = Extension(
     "pacifica.archiveinterface.backends.hpss._hpssExtensions",
     sources=["pacifica/archiveinterface/backends/hpss/hpssExtensions.c"],
-    include_dirs=["/opt/hpss/include"],
+    include_dirs=["/opt/hpss/include", "/usr/include/tirpc/"],
     library_dirs=["/opt/hpss/lib"],
     libraries=["tirpc", "hpsscs", "hpss"],
     extra_compile_args=["-DLINUX", "-DHPSS51", "-DLITTLEEND"],
